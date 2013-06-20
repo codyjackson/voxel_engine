@@ -11,12 +11,22 @@ class Window
 {
 	public:
 		Window();
+		Window(std::string);
+		Window(int.int);
+		Window(int, int, std::string);
 		~Window();
-		void init();
-		void swapBuffer();
+		void open_window();
+		void swap_buffer();
 		void update();
 		void clear();
-
+		void close_window();
+		void set_width(int);
+		void set_height(int);
+		static int get_width();
+		static int get_height();
+	
 	private:
 		GLFWwindow* window;
+		bool openedWindow;
+		bool fullscreen;
 };

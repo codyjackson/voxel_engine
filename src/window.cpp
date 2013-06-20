@@ -15,12 +15,12 @@ Window::~Window()
     glfwTerminate();
 }
 
-void Window::init()
+void Window::open_window()
 {
 	glfwMakeContextCurrent(window);
 }
 
-void Window::swapBuffer()
+void Window::swap_buffer()
 {
 	glfwSwapBuffers(window);
 }
