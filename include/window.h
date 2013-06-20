@@ -12,7 +12,7 @@ class Window
 	public:
 		Window();
 		Window(std::string);
-		Window(int.int);
+		Window(int, int);
 		Window(int, int, std::string);
 		~Window();
 		void open_window();
