@@ -1,6 +1,3 @@
-voxel_engine
+Voxel Engine
 ============
-
 A basic voxel rendering engine.
-
-Authors: Cody Jackson and Johnathan Alvarez
