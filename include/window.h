@@ -1,29 +1,24 @@
 #pragma once
 
-#include <GLFW\glfw3.h>
-#include <iostream>
 #include <string>
-
-#define DEFAULT_HEIGHT 480
-#define DEFAULT_WIDTH 640
+#include <GLFW\glfw3.h>
+class Bitmap; //to be replaced with actual class header
 
 class Window
 {
 	public:
 		Window();
-		Window(std::string);
-		Window(int, int);
-		Window(int, int, std::string);
+		Window(const std::string& title );
+		Window(const int& width, const int& height);
+		Window(const int& width, const int& height, const std::string& title);
 		~Window();
-		void open_window();
-		void swap_buffer();
-		void update();
-		void clear();
-		void close_window();
-		void set_width(int);
-		void set_height(int);
-		static int get_width();
-		static int get_height();
+		void open();
+		void draw(const Bitmap& scene);
+		void close();
+		void update_width(int);
+		void update_height(int);
+		const int get_width() const;
+		const int get_height() const;
 	
 	private:
 		GLFWwindow* window;
