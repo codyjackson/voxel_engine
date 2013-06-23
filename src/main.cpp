@@ -1,4 +1,4 @@
-#include <iostream>
+#include "window.h"
 #include <glm/glm.hpp>
 #include <GLFW/glfw3.h>
 
@@ -7,26 +7,13 @@ int main(void)
 	glm::vec2 v(0,0);
 
     GLFWwindow* window;
+	Window win;
 
-    /* Initialize the library */
-    if (!glfwInit())
-        return -1;
-
-    /* Create a windowed mode window and its OpenGL context */
-    window = glfwCreateWindow(640, 480, "Hello World", NULL, NULL);
-    if (!window)
-    {
-        glfwTerminate();
-        return -1;
-    }
-
-    /* Make the window's context current */
-    glfwMakeContextCurrent(window);
-
+	win.open();
     /* Loop until the user closes the window */
-    while (!glfwWindowShouldClose(window))
+	while (win.is_opened())
     {
-        /* Render here */
+        /* Render here 
 		float ratio;
         int width, height;
         glfwGetFramebufferSize(window, &width, &height);
@@ -48,11 +35,10 @@ int main(void)
         glVertex3f(0.f, 0.6f, 0.f);
         glEnd();
 
-        /* Swap front and back buffers */
         glfwSwapBuffers(window);
 
         /* Poll for and process events */
-        glfwPollEvents();
+        glfwPollEvents(); 
     }
 
     glfwTerminate();

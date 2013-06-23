@@ -14,14 +14,16 @@ class Window
 		~Window();
 		void open();
 		void draw(const Bitmap& scene);
-		void close();
-		void update_width(int);
-		void update_height(int);
+		void hide();
+		void update_width(const int& newWidth);
+		void update_height(const int& newHeight);
 		const int get_width() const;
 		const int get_height() const;
-	
+		bool is_opened();
 	private:
 		GLFWwindow* window;
-		bool openedWindow;
+		bool openWindow;
 		bool fullscreen;
+		int width;
+		int height;
 };
