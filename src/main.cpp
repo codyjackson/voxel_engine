@@ -1,60 +1,32 @@
-#include <iostream>
+#include "window.h"
 #include <glm/glm.hpp>
 #include <GLFW/glfw3.h>
 
 int main(void)
 {
-	glm::vec2 v(0,0);
-
-    GLFWwindow* window;
-
-    /* Initialize the library */
-    if (!glfwInit())
-        return -1;
-
-    /* Create a windowed mode window and its OpenGL context */
-    window = glfwCreateWindow(640, 480, "Hello World", NULL, NULL);
-    if (!window)
-    {
-        glfwTerminate();
-        return -1;
-    }
-
-    /* Make the window's context current */
-    glfwMakeContextCurrent(window);
-
+	Window win(1024, 720);
+	Window win1("testing1");
+	win.open();
+	win1.open();
     /* Loop until the user closes the window */
-    while (!glfwWindowShouldClose(window))
+	while (win.is_open())
     {
-        /* Render here */
-		float ratio;
-        int width, height;
-        glfwGetFramebufferSize(window, &width, &height);
-        ratio = width / (float) height;
-        glViewport(0, 0, width, height);
-        glClear(GL_COLOR_BUFFER_BIT);
-        glMatrixMode(GL_PROJECTION);
-        glLoadIdentity();
-        glOrtho(-ratio, ratio, -1.f, 1.f, 1.f, -1.f);
-        glMatrixMode(GL_MODELVIEW);
-        glLoadIdentity();
-        glRotatef((float) glfwGetTime() * 50.f, 0.f, 0.f, 1.f);
-        glBegin(GL_TRIANGLES);
-        glColor3f(1.f, 0.f, 0.f);
-        glVertex3f(-0.6f, -0.4f, 0.f);
-        glColor3f(0.f, 1.f, 0.f);
-        glVertex3f(0.6f, -0.4f, 0.f);
-        glColor3f(0.f, 0.f, 1.f);
-        glVertex3f(0.f, 0.6f, 0.f);
-        glEnd();
-
-        /* Swap front and back buffers */
-        glfwSwapBuffers(window);
-
         /* Poll for and process events */
-        glfwPollEvents();
+        glfwPollEvents(); 
     }
-
+	win.close();
+	win1.hide();
+	Window win2("testing again");
+	win2.open();
+	while(win2.is_open())
+	{
+		glfwPollEvents();
+	}
+	win1.open();
+	while(win1.is_open())
+	{
+		glfwPollEvents();
+	}
     glfwTerminate();
     return 0;
 }
