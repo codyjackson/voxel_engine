@@ -15,7 +15,7 @@ int main(void)
         glfwPollEvents(); 
     }
 	win.close();
-	win1.hide();
+	win1.update_width(800);
 	Window win2("testing again");
 	win2.open();
 	while(win2.is_open())

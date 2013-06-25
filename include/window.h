@@ -14,10 +14,9 @@ class Window
 		~Window();
 		void open();
 		void draw(const Bitmap& scene);
-		void hide();
 		void close();
-		void update_width(const int& newWidth);
-		void update_height(const int& newHeight);
+		void update_width(const int newWidth);
+		void update_height(const int newHeight);
 		const int get_width() const;
 		const int get_height() const;
 		const bool is_open() const;

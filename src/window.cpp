@@ -58,15 +58,11 @@ void Window::draw(const Bitmap& scene)
 	glfwMakeContextCurrent(window);
 }
 
-void Window::hide()
-{
-	glfwHideWindow(window);
-}
 
 void Window::close()
 {
 	glfwSetWindowShouldClose(window,GL_TRUE);
-	hide();
+	glfwHideWindow(window);
 }
 
 void Window::update_width(const int& newWidth)
@@ -81,23 +77,21 @@ void Window::update_height(const int& newHeight)
 
 const int Window::get_width() const
 {
-	int* width;
-	int* trash;
-	glfwGetWindowSize(window, width, trash);
-	return *width;
+	int width;
+	int trash;
+	glfwGetWindowSize(window, &width, &trash);
+	return width;
 }
 
 const int Window::get_height() const
 {
-	int* height;
-	int* trash;
-	glfwGetWindowSize(window, trash, height);
-	return *height;
+	int height;
+	int trash;
+	glfwGetWindowSize(window, &trash, &height);
+	return height;
 }
 
 const bool Window::is_open() const 
 {
-	if(glfwWindowShouldClose(window))
-		return false;
-	return true;
+	return !glfwWindowShouldClose(window);
 }
