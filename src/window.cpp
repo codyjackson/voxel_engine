@@ -12,10 +12,6 @@ Window::Window()
 	window = glfwCreateWindow(DEFAULT_WIDTH, DEFAULT_HEIGHT, "window", NULL, NULL);
 	if(!window)
 		std::cout<<"Error: glfw window not open"<<std::endl;
-	fullscreen = false;
-	openWindow = false;
-	this->width =	DEFAULT_WIDTH;
-	this->height = DEFAULT_HEIGHT;
 	glfwHideWindow(window);
 }
 
@@ -26,83 +22,82 @@ Window::Window(const std::string& title )
 	window = glfwCreateWindow(DEFAULT_WIDTH, DEFAULT_HEIGHT, title.c_str(), NULL, NULL);
 	if(!window)
 		std::cout<<"Error: glfw window not open"<<std::endl;
-	fullscreen = false;
-	openWindow = false;
-	this->width = DEFAULT_WIDTH;
-	this->height = DEFAULT_HEIGHT;
 	glfwHideWindow(window);
 }
-Window::Window(const int& width, const int& height)
+Window::Window(const int width, const int height)
 {
 	if(!glfwInit())
 		std::cout<<"Error: glfw not initilized"<<std::endl;
 	window = glfwCreateWindow(width, height, "window", NULL, NULL);
 	if(!window)
 		std::cout<<"Error: glfw window not open"<<std::endl;
-	fullscreen = false;
-	openWindow = false;
-	this->width = width;
-	this->height = height;
 	glfwHideWindow(window);
 }
-Window::Window(const int& width, const int& height, const std::string& title)
+Window::Window(const int width, const int height, const std::string& title)
 {
 	if(!glfwInit())
 		std::cout<<"Error: glfw not initilized"<<std::endl;
 	window = glfwCreateWindow(width, height, title.c_str(), NULL, NULL);
 	if(!window)
 		std::cout<<"Error: glfw window not open"<<std::endl;
-	fullscreen = false;
-	openWindow = false;
-	this->width = width;
-	this->height = height;
 	glfwHideWindow(window);
 }
 
 Window::~Window()
 {
 	glfwDestroyWindow(window);
-    glfwTerminate();
 }
 
 void Window::open()
 {
-	openWindow = true;
-	glfwMakeContextCurrent(window);
 	glfwShowWindow(window);
 }
 
 void Window::draw(const Bitmap& scene)
 {
-
+	glfwMakeContextCurrent(window);
 }
 
 void Window::hide()
 {
 	glfwHideWindow(window);
 }
-void Window::update_width(const int& newWidth)
+
+void Window::close()
 {
-	this->width = newWidth;
-	glfwSetWindowSize(window, newWidth, height);
-}
-void Window::update_height(const int& newHeight)
-{
-	this->height = newHeight;
-	glfwSetWindowSize(window, width, newHeight);
-}
-const int Window::get_width() const
-{
-	return width;
-}
-const int Window::get_height() const
-{
-	return height;
+	glfwSetWindowShouldClose(window,GL_TRUE);
+	hide();
 }
 
-bool Window::is_opened() 
+void Window::update_width(const int& newWidth)
+{
+	glfwSetWindowSize(window, newWidth, get_height());
+}
+
+void Window::update_height(const int& newHeight)
+{
+	glfwSetWindowSize(window, get_width(), newHeight);
+}
+
+const int Window::get_width() const
+{
+	int* width;
+	int* trash;
+	glfwGetWindowSize(window, width, trash);
+	return *width;
+}
+
+const int Window::get_height() const
+{
+	int* height;
+	int* trash;
+	glfwGetWindowSize(window, trash, height);
+	return *height;
+}
+
+const bool Window::is_open() const 
 {
 	if(glfwWindowShouldClose(window))
-		openWindow = false;
-	return openWindow;
+		return false;
+	return true;
 }
