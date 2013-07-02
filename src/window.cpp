@@ -52,21 +52,18 @@ void Window::open()
 {
 	glfwShowWindow(window);
 	glfwMakeContextCurrent(window);
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
 
-	glOrtho(0.0f, DEFAULT_WIDTH, DEFAULT_HEIGHT, 0.0f, -1.0, 1.0);
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
+	glEnable(GL_DEPTH_TEST);
+	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 }
 
 void Window::draw(const Bitmap& scene)
 {
 	
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	glRasterPos2i(0,0);
-	glDrawPixels(scene.get_width(), scene.get_height(), GL_LUMINANCE, GL_UNSIGNED_BYTE, scene.get_pixels());
-	glPixelZoom(2,2);
+	glRasterPos2f(-1.0f, -1.0f);
+	glDrawPixels(scene.get_width(), scene.get_height(), GL_RGB, GL_UNSIGNED_BYTE, scene.get_pixels());
+	glfwSwapBuffers(window);
 }
 
 

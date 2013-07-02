@@ -2,12 +2,12 @@
 
 Bitmap::Bitmap()
 {
-	width = 640;
-	height = 480;
+	width = 1024;
+	height = 768;
 	pixels = new Color[width *height];
 	for(int i = 0; i < width*height; i++)
 	{
-		pixels[i].red = 'A';
+		pixels[i].red = i%120;
 		pixels[i].green = 0;
 		pixels[i].blue = 0;
 	}
