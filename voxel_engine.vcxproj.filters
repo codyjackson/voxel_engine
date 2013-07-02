@@ -15,9 +15,21 @@
     <ClCompile Include="src\window.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="src\bitmap.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\color.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\window.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\bitmap.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="color.h">
       <Filter>include</Filter>
     </ClInclude>
   </ItemGroup>

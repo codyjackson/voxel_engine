@@ -2,7 +2,7 @@
 
 #include <string>
 #include <GLFW\glfw3.h>
-class Bitmap; //to be replaced with actual class header
+#include "bitmap.h"
 
 class Window
 {
