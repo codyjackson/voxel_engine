@@ -1,14 +1,14 @@
 #pragma once
 
 #include<vector>
-
-struct Color
+#include "color.h"
+/*struct Color
 {
 	char red;
 	char green;
 	char blue;
 };
-
+*/
 class Bitmap
 {
 	public:
@@ -18,9 +18,9 @@ class Bitmap
 		void set_pixel(int x, int y, char color);
 		const int get_width() const;
 		const int get_height() const;
-		const Color* get_pixels() const;
+		const std::vector<Color> get_pixels() const;
 	private:
-		Color* pixels;
+		std::vector<Color> pixels;
 		int width;
 		int height;
 };

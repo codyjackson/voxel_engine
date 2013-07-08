@@ -4,18 +4,17 @@ Bitmap::Bitmap()
 {
 	width = 1024;
 	height = 768;
-	pixels = new Color[width *height];
+	Color red(255,0,0);
+	Color black;
 	for(int i = 0; i < width*height; i++)
 	{
-		pixels[i].red = i%120;
-		pixels[i].green = 0;
-		pixels[i].blue = 0;
+		pixels.push_back(red);
 	}
 }
 
 Bitmap::~Bitmap()
 {
-	delete [] pixels;
+	pixels.clear();
 }
 
 const int Bitmap::get_width() const
@@ -28,7 +27,7 @@ const int Bitmap::get_height() const
 	return height;
 }
 
-const Color* Bitmap::get_pixels() const
+const std::vector<Color> Bitmap::get_pixels() const
 {
 	return pixels;
 }

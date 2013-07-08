@@ -6,11 +6,12 @@ class Color
 		Color();
 		Color(const char red, const char green, const char blue);
 		~Color();
-		const char get_red() const;
-		const char get_green() const;
-		const char get_blue() const;
+		const unsigned char get_red() const;
+		const unsigned char get_green() const;
+		const unsigned char get_blue() const;
+		Color operator=( Color rhs);
 	private:
-		char red;
-		char green;
-		char blue;
+		unsigned char red;
+		unsigned char green;
+		unsigned char blue;
 };

@@ -2,7 +2,7 @@
 
 Color::Color()
 {
-	red = 255;
+	red = 0;
 	green = 0;
 	blue = 0;
 }
@@ -19,17 +19,25 @@ Color::~Color()
 
 }
 
-const char Color::get_red() const
+const unsigned char Color::get_red() const
 {
 	return red;
 }
 
-const char Color::get_green() const
+const unsigned char Color::get_green() const
 {
 	return green;
 }
 
-const char Color::get_blue() const
+const unsigned char Color::get_blue() const
 {
 	return blue;
+}
+
+Color Color::operator=( Color rhs)
+{
+	this->red = rhs.get_red();
+	this->green = rhs.get_green();
+	this->blue = rhs.get_blue();
+	return *this;
 }
