@@ -1,51 +1,19 @@
 #include "window.h"
 
-#include <iostream>
-
-const int DEFAULT_WIDTH = 480;
-const int DEFAULT_HEIGHT = 640;
-
 Window::Window()
 {
 	if(!glfwInit())
-		std::cout<<"Error: glfw not initilized"<<std::endl;
-	window = glfwCreateWindow(DEFAULT_WIDTH, DEFAULT_HEIGHT, "window", NULL, NULL);
-	if(!window)
-		std::cout<<"Error: glfw window not open"<<std::endl;
-	glfwHideWindow(window);
-}
-
-Window::Window(const std::string& title )
-{
-	if(!glfwInit())
-		std::cout<<"Error: glfw not initilized"<<std::endl;
-	window = glfwCreateWindow(DEFAULT_WIDTH, DEFAULT_HEIGHT, title.c_str(), NULL, NULL);
-	if(!window)
-		std::cout<<"Error: glfw window not open"<<std::endl;
-	glfwHideWindow(window);
-}
-Window::Window(const int width, const int height)
-{
-	if(!glfwInit())
-		std::cout<<"Error: glfw not initilized"<<std::endl;
-	window = glfwCreateWindow(width, height, "window", NULL, NULL);
-	if(!window)
-		std::cout<<"Error: glfw window not open"<<std::endl;
-	glfwHideWindow(window);
-}
-Window::Window(const int width, const int height, const std::string& title)
-{
-	if(!glfwInit())
-		std::cout<<"Error: glfw not initilized"<<std::endl;
-	window = glfwCreateWindow(width, height, title.c_str(), NULL, NULL);
-	if(!window)
-		std::cout<<"Error: glfw window not open"<<std::endl;
+		throw std::runtime_error("Failed to initialize glfw.");
+	if(!(window = glfwCreateWindow(1, 1, "", NULL, NULL)))
+		throw std::runtime_error("Failed to create window.");
 	glfwHideWindow(window);
 }
 
 Window::~Window()
 {
-	glfwDestroyWindow(window);
+	if(window)
+		glfwDestroyWindow(window);
+	glfwTerminate();
 }
 
 void Window::open()
@@ -59,7 +27,6 @@ void Window::open()
 
 void Window::draw(const Bitmap& scene)
 {
-	
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glRasterPos2f(-1.0f, -1.0f);
 	glDrawPixels(scene.get_width(), scene.get_height(), GL_RGB, GL_UNSIGNED_BYTE, scene.get_pixels().data());
@@ -71,6 +38,11 @@ void Window::close()
 {
 	glfwSetWindowShouldClose(window,GL_TRUE);
 	glfwHideWindow(window);
+}
+
+void Window::update_title(const std::string& title)
+{
+	glfwSetWindowTitle(window, title.c_str());
 }
 
 void Window::update_width(const int newWidth)
@@ -102,4 +74,9 @@ const int Window::get_height() const
 const bool Window::is_open() const 
 {
 	return !glfwWindowShouldClose(window);
+}
+
+void Window::poll_events() const
+{
+	glfwPollEvents();
 }

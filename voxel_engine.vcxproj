@@ -88,11 +88,13 @@
     <ClCompile Include="src\bitmap.cpp" />
     <ClCompile Include="src\color.cpp" />
     <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\main_loop.cpp" />
     <ClCompile Include="src\window.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="color.h" />
     <ClInclude Include="include\bitmap.h" />
+    <ClInclude Include="include\color.h" />
+    <ClInclude Include="include\main_loop.h" />
     <ClInclude Include="include\window.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

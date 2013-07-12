@@ -1,20 +1,19 @@
-#include "window.h"
+#include "main_loop.h"
 #include <glm/glm.hpp>
 #include <GLFW/glfw3.h>
 
 int main(void)
 {
-	Window win(1024, 720);
-	Bitmap scene(1024, 720, Color(0, 255,0));
-	win.open();
-    /* Loop until the user closes the window */
-	while (win.is_open())
-    {
-        /* Poll for and process events */
-		win.draw(scene);
-        glfwPollEvents(); 
-    }
+	Bitmap scene(1024, 768, Color(0, 255,0));
+	auto onInitialize = [&](Window& window){
+		window.update_width(1024);
+		window.update_height(768);
+		window.update_title("Voxel Engine");
+	};
+	auto onIterate = [&](Window& window){
+		window.draw(scene);
+	};
+	MainLoop loop(onInitialize, onIterate);
 
-    glfwTerminate();
     return 0;
 }
