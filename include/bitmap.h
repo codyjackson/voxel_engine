@@ -9,7 +9,7 @@ class Bitmap
 		Bitmap();
 		Bitmap(const int width, const int height, const Color color);
 		~Bitmap();
-		void set_pixel(int x, int y, char color);
+		void set_pixel(const int x,const int y,const char color);
 		const int get_width() const;
 		const int get_height() const;
 		const std::vector<Color> get_pixels() const;
