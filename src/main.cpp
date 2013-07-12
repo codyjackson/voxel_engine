@@ -5,28 +5,16 @@
 int main(void)
 {
 	Window win(1024, 720);
-	Window win1("testing1");
+	Bitmap scene(1024, 720, Color(0, 255,0));
 	win.open();
-	win1.open();
     /* Loop until the user closes the window */
 	while (win.is_open())
     {
         /* Poll for and process events */
+		win.draw(scene);
         glfwPollEvents(); 
     }
-	win.close();
-	win1.update_width(800);
-	Window win2("testing again");
-	win2.open();
-	while(win2.is_open())
-	{
-		glfwPollEvents();
-	}
-	win1.open();
-	while(win1.is_open())
-	{
-		glfwPollEvents();
-	}
+
     glfwTerminate();
     return 0;
 }
