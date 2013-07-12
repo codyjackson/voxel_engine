@@ -51,11 +51,19 @@ Window::~Window()
 void Window::open()
 {
 	glfwShowWindow(window);
+	glfwMakeContextCurrent(window);
+
+	glEnable(GL_DEPTH_TEST);
+	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 }
 
 void Window::draw(const Bitmap& scene)
 {
-	glfwMakeContextCurrent(window);
+	
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glRasterPos2f(-1.0f, -1.0f);
+	glDrawPixels(scene.get_width(), scene.get_height(), GL_RGB, GL_UNSIGNED_BYTE, scene.get_pixels().data());
+	glfwSwapBuffers(window);
 }
 
 
@@ -65,12 +73,12 @@ void Window::close()
 	glfwHideWindow(window);
 }
 
-void Window::update_width(const int& newWidth)
+void Window::update_width(const int newWidth)
 {
 	glfwSetWindowSize(window, newWidth, get_height());
 }
 
-void Window::update_height(const int& newHeight)
+void Window::update_height(const int newHeight)
 {
 	glfwSetWindowSize(window, get_width(), newHeight);
 }
