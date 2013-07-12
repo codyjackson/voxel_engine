@@ -5,7 +5,7 @@
 int main(void)
 {
 	Window win(1024, 720);
-	Bitmap scene;
+	Bitmap scene(1024, 720, Color(0, 255,0));
 	win.open();
     /* Loop until the user closes the window */
 	while (win.is_open())

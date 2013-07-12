@@ -9,7 +9,7 @@ class Color
 		const unsigned char get_red() const;
 		const unsigned char get_green() const;
 		const unsigned char get_blue() const;
-		Color operator=( Color rhs);
+		const Color operator=( Color rhs);
 	private:
 		unsigned char red;
 		unsigned char green;

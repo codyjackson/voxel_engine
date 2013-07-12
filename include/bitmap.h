@@ -2,13 +2,7 @@
 
 #include<vector>
 #include "color.h"
-/*struct Color
-{
-	char red;
-	char green;
-	char blue;
-};
-*/
+
 class Bitmap
 {
 	public:
