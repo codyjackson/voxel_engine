@@ -21,6 +21,9 @@
     <ClCompile Include="src\color.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="src\main_loop.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\window.h">
@@ -29,7 +32,10 @@
     <ClInclude Include="include\bitmap.h">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="color.h">
+    <ClInclude Include="include\main_loop.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\color.h">
       <Filter>include</Filter>
     </ClInclude>
   </ItemGroup>
