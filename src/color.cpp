@@ -5,7 +5,7 @@ Color::Color(): red(255), green(0), blue(0)
 
 }
 
-Color::Color(const char red, const char green, const char blue)
+Color::Color(const unsigned char red, const unsigned char green, const unsigned char blue)
 	:red(red), green(green), blue(blue)
 {
 
