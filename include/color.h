@@ -4,7 +4,7 @@ class Color
 {
 	public:
 		Color();
-		Color(const char red, const char green, const char blue, const char alpha);
+		Color(const unsigned char red, const unsigned char green, const unsigned char blue, const unsigned char alpha);
 		~Color();
 		const unsigned char get_red() const;
 		const unsigned char get_green() const;

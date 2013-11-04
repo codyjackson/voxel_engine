@@ -1,4 +1,4 @@
-#include "window.h"
+#include "main_loop.h"
 
 #include "chunk.h"
 
@@ -7,13 +7,16 @@
 
 int main(void)
 {
-	Window win(1024, 720);
-	win.open();
-	Chunk<16> chunk(glm::vec3(0,0,0));
-	Chunk<16> chunk2(glm::vec3(15,0,0));
-    /* Loop until the user closes the window */
-	while (win.is_open())
-    {
+	auto onInitialize = [&](Window& window){
+		window.update_width(1024);
+		window.update_height(768);
+		window.update_title("Voxel Engine");
+	};
+
+	Chunk<16> chunk(glm::vec3(0.0f, 0.0f, 0.0f));
+	Chunk<16> chunk2(glm::vec3(15.0f, 0.0f, 0.0f));
+
+	auto onIterate = [&](Window& window){
 		glClearColor(0.0, 0.0, 0.0, 1.0);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -26,11 +29,10 @@ int main(void)
 
 		chunk.draw(glm::mat4());
 		chunk2.draw(glm::mat4());
-        /* Poll for and process events */
-		win.draw();
-        glfwPollEvents(); 
-    }
 
-    glfwTerminate();
+		window.draw();
+	};
+	MainLoop loop(onInitialize, onIterate);
+
     return 0;
 }
