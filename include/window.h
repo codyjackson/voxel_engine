@@ -11,6 +11,7 @@ class Window
 
 		void draw();
 
+
 		void close();
 
 		void update_title(const std::string& title);
