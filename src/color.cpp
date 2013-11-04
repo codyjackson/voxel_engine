@@ -1,12 +1,14 @@
 #include "color.h"
 
-Color::Color(): red(255), green(0), blue(0)
+const Color Color::INVISIBLE(0,0,0,0);
+
+Color::Color(): _red(255), _green(0), _blue(0)
 {
 
 }
 
-Color::Color(const char red, const char green, const char blue)
-	:red(red), green(green), blue(blue)
+Color::Color(const char red, const char green, const char blue, const char alpha)
+	:_red(red), _green(green), _blue(blue), _alpha(alpha)
 {
 
 }
@@ -18,23 +20,23 @@ Color::~Color()
 
 const unsigned char Color::get_red() const
 {
-	return red;
+	return _red;
 }
 
 const unsigned char Color::get_green() const
 {
-	return green;
+	return _green;
 }
 
 const unsigned char Color::get_blue() const
 {
-	return blue;
+	return _blue;
 }
 
 const Color Color::operator=( Color rhs)
 {
-	this->red = rhs.get_red();
-	this->green = rhs.get_green();
-	this->blue = rhs.get_blue();
+	this->_red = rhs.get_red();
+	this->_green = rhs.get_green();
+	this->_blue = rhs.get_blue();
 	return *this;
 }

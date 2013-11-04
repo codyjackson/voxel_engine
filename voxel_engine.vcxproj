@@ -91,8 +91,9 @@
     <ClCompile Include="src\window.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="color.h" />
     <ClInclude Include="include\bitmap.h" />
+    <ClInclude Include="include\chunk.h" />
+    <ClInclude Include="include\color.h" />
     <ClInclude Include="include\window.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

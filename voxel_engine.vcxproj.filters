@@ -29,7 +29,10 @@
     <ClInclude Include="include\bitmap.h">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="color.h">
+    <ClInclude Include="include\color.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\chunk.h">
       <Filter>include</Filter>
     </ClInclude>
   </ItemGroup>

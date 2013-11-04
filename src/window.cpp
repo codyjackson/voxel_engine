@@ -57,12 +57,8 @@ void Window::open()
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 }
 
-void Window::draw(const Bitmap& scene)
+void Window::draw()
 {
-	
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	glRasterPos2f(-1.0f, -1.0f);
-	glDrawPixels(scene.get_width(), scene.get_height(), GL_RGB, GL_UNSIGNED_BYTE, scene.get_pixels().data());
 	glfwSwapBuffers(window);
 }
 
