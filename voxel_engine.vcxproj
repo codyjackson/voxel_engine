@@ -10,6 +10,18 @@
       <Platform>Win32</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\main_loop.h" />
+    <ClInclude Include="src\rendering\chunk.h" />
+    <ClInclude Include="src\rendering\color.h" />
+    <ClInclude Include="src\window.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\main_loop.cpp" />
+    <ClCompile Include="src\rendering\color.cpp" />
+    <ClCompile Include="src\window.cpp" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{278E7F88-EEC1-4890-9995-0F89AFE54C9F}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
@@ -84,20 +96,6 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClCompile Include="src\bitmap.cpp" />
-    <ClCompile Include="src\color.cpp" />
-    <ClCompile Include="src\main.cpp" />
-    <ClCompile Include="src\main_loop.cpp" />
-    <ClCompile Include="src\window.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="include\bitmap.h" />
-    <ClInclude Include="include\chunk.h" />
-    <ClInclude Include="include\color.h" />
-    <ClInclude Include="include\main_loop.h" />
-    <ClInclude Include="include\window.h" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

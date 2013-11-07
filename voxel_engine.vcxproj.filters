@@ -4,46 +4,36 @@
     <Filter Include="src">
       <UniqueIdentifier>{9aaf6216-c9c2-44b2-b246-7c2e184a184b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="include">
-      <UniqueIdentifier>{c8eabe34-5ac6-4a9d-9a4b-d8c9966f3ff1}</UniqueIdentifier>
+    <Filter Include="src\rendering">
+      <UniqueIdentifier>{f6068dbd-e132-467d-9676-314576088e87}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\rendering\chunk.h">
+      <Filter>src\rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="src\rendering\color.h">
+      <Filter>src\rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="src\main_loop.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\window.h">
+      <Filter>src</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\rendering\color.cpp">
+      <Filter>src\rendering</Filter>
+    </ClCompile>
     <ClCompile Include="src\main.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="src\window.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="src\bitmap.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="src\color.cpp">
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="src\main_loop.cpp">
       <Filter>src</Filter>
     </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="include\window.h">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="include\bitmap.h">
-      <Filter>include</Filter>
-    </ClInclude>
-
-    <ClInclude Include="include\main_loop.h">
-      <Filter>include</Filter>
-    </ClInclude>
-
-    <ClInclude Include="include\color.h">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="include\chunk.h">
-      <Filter>include</Filter>
-    </ClInclude>
-
-    
+    <ClCompile Include="src\window.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

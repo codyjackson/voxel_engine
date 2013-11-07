@@ -1,6 +1,6 @@
 #include "main_loop.h"
 
-#include "chunk.h"
+#include "rendering/chunk.h"
 
 #include <glm/glm.hpp>
 #include <GLFW/glfw3.h>
