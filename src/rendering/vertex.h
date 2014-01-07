@@ -12,6 +12,8 @@ public:
 	void draw_with_color() const;
 	void draw_without_color() const;
 
-	const glm::vec3 _position;
-	const Color _color;
+
+private:
+	glm::vec3 _position;
+	Color _color;
 };

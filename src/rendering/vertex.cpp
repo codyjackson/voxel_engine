@@ -8,11 +8,7 @@ Vertex::Vertex(const glm::vec3& p, const Color& c)
 
 void Vertex::draw_with_color() const
 {
-	const float red = static_cast<float>(_color.get_blue())/255.0f;
-	const float green = static_cast<float>(_color.get_blue())/255.0f;
-	const float blue = static_cast<float>(_color.get_blue())/255.0f;
-
-	glColor3f(red, green, blue);
+	glColor3ub(_color.get_red(), _color.get_green(), _color.get_blue());
 	draw_without_color();
 }
 

@@ -34,10 +34,16 @@ const unsigned char Color::get_blue() const
 	return _blue;
 }
 
+const unsigned char Color::get_alpha() const
+{
+	return _alpha;
+}
+
 const Color Color::operator=( Color rhs)
 {
-	this->_red = rhs.get_red();
-	this->_green = rhs.get_green();
-	this->_blue = rhs.get_blue();
+	this->_red = rhs._red;
+	this->_green = rhs._green;
+	this->_blue = rhs._blue;
+	this->_alpha = rhs._alpha;
 	return *this;
 }

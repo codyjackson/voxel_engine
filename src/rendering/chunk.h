@@ -17,76 +17,40 @@ public:
 	Chunk(const glm::vec3 topLeftFront)
 		:_topLeftFront(topLeftFront)
 	{
-		generate_mesh();
+		for(int x = 0; x < SIDE_LENGTH; ++x)
+			for(int y = 0; y < SIDE_LENGTH; ++y)
+				for(int z = 0; z < SIDE_LENGTH; ++z)
+					_voxels[x][y][z] = y == 0 ? Color(255, 0, 0, 255) : Color::INVISIBLE;
+
+		_mesh = generate_mesh();
 	}
 
 	void draw(const glm::mat4& projectionView)
 	{
-		for(int x = 1; x < SIDE_LENGTH; ++x)
-			for(int y = 1; y < SIDE_LENGTH; ++y)
-				for(int z = 1; z < SIDE_LENGTH; ++z)
-					draw_complete_voxel(glm::vec3(x,y,z)+_topLeftFront);
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+			glLineWidth(8);
+			glColor3f(0,0,0);
+			draw_mesh();
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+
+		glEnable(GL_POLYGON_OFFSET_FILL);
+		glPolygonOffset(1.0, 1.0);
+			glColor3f(1,1,1);
+			draw_mesh();
+		glDisable(GL_POLYGON_OFFSET_FILL);
 	}
 
 	void show_voxel(const glm::uvec3& position, const Color& color){}
 	void hide_voxel(const glm::uvec3& position){}
 
 private:
-	void draw_complete_voxel(const glm::vec3& offset)
+	void draw_mesh() const
 	{
-		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-			glLineWidth(8);
-			glColor3f(0,0,0);
-			draw_voxel(offset);
-		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-
-		glEnable(GL_POLYGON_OFFSET_FILL);
-		glPolygonOffset(1.0, 1.0);
-			glColor3f(1,1,1);
-			draw_voxel(offset);
-		glDisable(GL_POLYGON_OFFSET_FILL);
-	}
-
-	void draw_voxel(const glm::vec3& offset) const
-	{
-		float l_length = 0.5f;
-		float l_height = 0.5f;
-		float l_width = 0.5f;
-
 		glPushMatrix();
 		glScalef(0.05f, 0.05f, 0.05f);
-		glTranslatef(offset.x, offset.y, offset.z);
 
 		glBegin(GL_QUADS);
-			glVertex3f(l_length, -l_height, -l_width);
-			glVertex3f(-l_length, -l_height, -l_width);
-			glVertex3f(-l_length, l_height, -l_width);
-			glVertex3f(l_length, l_height, -l_width);
-
-			glVertex3f(-l_length, -l_height, l_width);
-			glVertex3f(l_length, -l_height, l_width);
-			glVertex3f(l_length, l_height, l_width);
-			glVertex3f(-l_length, l_height, l_width);
-
-			glVertex3f(l_length, -l_height, l_width);
-			glVertex3f(l_length, -l_height, -l_width);
-			glVertex3f(l_length, l_height, -l_width);
-			glVertex3f(l_length, l_height, l_width);
-
-			glVertex3f(-l_length, -l_height, -l_width);
-			glVertex3f(-l_length, -l_height, l_width);
-			glVertex3f(-l_length, l_height, l_width);
-			glVertex3f(-l_length, l_height, -l_width);
-
-			glVertex3f(-l_length, -l_height, -l_width);
-			glVertex3f(l_length, -l_height, -l_width);
-			glVertex3f(l_length, -l_height, l_width);
-			glVertex3f(-l_length, -l_height, l_width);
-
-			glVertex3f(l_length, l_height, -l_width);
-			glVertex3f(-l_length, l_height, -l_width);
-			glVertex3f(-l_length, l_height, l_width);
-			glVertex3f(l_length, l_height, l_width);
+		_mesh.draw();
 		glEnd();
 
 		glPopMatrix();
@@ -100,51 +64,84 @@ private:
 			: _chunk(chunk), _x(x), _y(y), _z(z)
 		{}
 
+		glm::vec3 get_top_left() const
+		{
+			return glm::vec3(_x, _y, _z) + _chunk._topLeftFront;
+		}
+
+		Color get_color() const
+		{
+			return _chunk._voxels[_x][_y][_z];
+		}
+
 		bool is_visible() const
 		{
-			return _chunk[x][y][z] != Color::INVISIBLE;
+			return get_color().get_alpha() > 0;
 		}
 
 		bool is_top_occluded() const
 		{
 			if(_y == 0)
 				return false;
-			return Voxel(_x, _y-1, _z).is_visible();
+			return Voxel(_chunk, _x, _y-1, _z).is_visible();
 		}
 
 		bool is_bottom_occluded() const
 		{
 			if(_y == (SIDE_LENGTH-1))
 				return false;
-			return Voxel(_x, _y+1, _z).is_visible();
+			return Voxel(_chunk, _x, _y+1, _z).is_visible();
 		}
 
 		bool is_front_occluded() const
 		{
 			if(_z == 0)
 				return false;
-			return Voxel(_x, _y, _z-1).is_visible();
+			return Voxel(_chunk, _x, _y, _z-1).is_visible();
 		}
 
 		bool is_back_occluded() const
 		{
 			if(_z == (SIDE_LENGTH-1))
 				return false;
-			return Voxel(_x, _y, _z+1).is_visible();
+			return Voxel(_chunk, _x, _y, _z+1).is_visible();
 		}
 
 		bool is_left_occluded() const
 		{
 			if(_x == 0)
 				return false;
-			return Voxel(_x-1, _y, _z).is_visible();
+			return Voxel(_chunk, _x-1, _y, _z).is_visible();
 		}
 
 		bool is_right_occluded() const
 		{
 			if(_x == (SIDE_LENGTH-1))
 				return false;
-			return Voxel(_x+1, _y, _z).is_visible();
+			return Voxel(_chunk, _x+1, _y, _z).is_visible();
+		}
+
+		Mesh generate_mesh() const
+		{
+			Mesh m;
+			if(!is_visible())
+				return m;
+
+			if(!is_front_occluded())
+				m.push_back(Quad::generate_xy_quad(get_color(), get_top_left(), Quad::ClockWise()));
+			if(!is_top_occluded())
+				m.push_back(Quad::generate_xz_quad(get_color(), get_top_left(), Quad::ClockWise()));
+			if(!is_left_occluded())
+				m.push_back(Quad::generate_yz_quad(get_color(), get_top_left(), Quad::ClockWise()));
+
+			if(!is_back_occluded())
+				m.push_back(Quad::generate_xy_quad(get_color(), get_top_left()+glm::vec3(0.0f, 0.0f, 1.0f), Quad::CounterClockWise()));
+			if(!is_bottom_occluded())
+				m.push_back(Quad::generate_xz_quad(get_color(), get_top_left()+glm::vec3(0.0f, 1.0f, 0.0f), Quad::CounterClockWise()));
+			if(!is_right_occluded())
+				m.push_back(Quad::generate_yz_quad(get_color(), get_top_left()+glm::vec3(1.0f, 0.0f, 0.0f), Quad::CounterClockWise()));
+
+			return m;
 		}
 
 		int x() const
@@ -187,13 +184,14 @@ private:
 
 	Mesh generate_mesh() const
 	{
-		int zero = 0;
-		reduce<int>(zero, [](int& aggregation, const Voxel& v){
-			++aggregation;
+		Mesh mesh;
+		reduce<Mesh>(mesh, [](Mesh& m, const Voxel& v){
+			m.concatenate(v.generate_mesh());
 		});
-		return Mesh();
+		return mesh;
 	}
 
 	std::array<std::array<std::array<Color, SIDE_LENGTH>, SIDE_LENGTH>, SIDE_LENGTH> _voxels;
 	glm::vec3 _topLeftFront;
+	Mesh _mesh;
 };

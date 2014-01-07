@@ -20,7 +20,7 @@ void Mesh::draw() const
 		return;
 
 	const auto first = _quads.begin();
-	first->draw_with_color();
+	first->draw_without_color();
 
 	const auto second = first+1;
 	std::for_each(second, _quads.end(), [](const Quad& q){q.draw_without_color();});
