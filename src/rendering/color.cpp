@@ -2,7 +2,8 @@
 
 const Color Color::INVISIBLE(0,0,0,0);
 
-Color::Color(): _red(255), _green(0), _blue(0)
+Color::Color()
+	: _red(255), _green(0), _blue(0), _alpha(0)
 {
 
 }
