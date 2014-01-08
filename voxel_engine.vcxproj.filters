@@ -21,6 +21,15 @@
     <ClInclude Include="src\window.h">
       <Filter>src</Filter>
     </ClInclude>
+    <ClInclude Include="src\rendering\mesh.h">
+      <Filter>src\rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="src\rendering\quad.h">
+      <Filter>src\rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="src\rendering\vertex.h">
+      <Filter>src\rendering</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\rendering\color.cpp">
@@ -34,6 +43,15 @@
     </ClCompile>
     <ClCompile Include="src\window.cpp">
       <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\rendering\mesh.cpp">
+      <Filter>src\rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="src\rendering\vertex.cpp">
+      <Filter>src\rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="src\rendering\quad.cpp">
+      <Filter>src\rendering</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
