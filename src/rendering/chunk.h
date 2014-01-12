@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../constants/vector.h"
 #include "color.h"
 #include "mesh.h"
 
@@ -135,11 +136,11 @@ private:
 				m.push_back(Quad::generate_yz_quad(get_color(), get_top_left(), Quad::ClockWise()));
 
 			if(!is_back_occluded())
-				m.push_back(Quad::generate_xy_quad(get_color(), get_top_left()+glm::vec3(0.0f, 0.0f, 1.0f), Quad::CounterClockWise()));
+				m.push_back(Quad::generate_xy_quad(get_color(), get_top_left()+Constants::Vec3::forward, Quad::CounterClockWise()));
 			if(!is_bottom_occluded())
-				m.push_back(Quad::generate_xz_quad(get_color(), get_top_left()+glm::vec3(0.0f, 1.0f, 0.0f), Quad::CounterClockWise()));
+				m.push_back(Quad::generate_xz_quad(get_color(), get_top_left()+Constants::Vec3::down, Quad::CounterClockWise()));
 			if(!is_right_occluded())
-				m.push_back(Quad::generate_yz_quad(get_color(), get_top_left()+glm::vec3(1.0f, 0.0f, 0.0f), Quad::CounterClockWise()));
+				m.push_back(Quad::generate_yz_quad(get_color(), get_top_left()+Constants::Vec3::right, Quad::CounterClockWise()));
 
 			return m;
 		}
