@@ -1,5 +1,6 @@
 #include "main_loop.h"
 
+#include "rendering/camera.h"
 #include "rendering/chunk.h"
 
 #include <glm/glm.hpp>
@@ -13,8 +14,13 @@ int main(void)
 		window.update_title("Voxel Engine");
 	};
 
+	Orientation orientation;
+	orientation.rotate(glm::vec3(1.0f, 1.0f, 0.0f), -30.0f);
+	Camera camera(glm::vec3(-0.5f, -0.5f, -0.5f), orientation);
+
 	Chunk<16> chunk(glm::vec3(0.0f, 0.0f, 0.0f));
 	Chunk<16> chunk2(glm::vec3(15.0f, 0.0f, 0.0f));
+	
 
 	auto onIterate = [&](Window& window){
 		glClearColor(0.0, 0.0, 0.0, 1.0);
@@ -24,8 +30,7 @@ int main(void)
 		glLoadIdentity();
 
 		glTranslatef(-0.5f, -0.5f, -0.5f);
-		glRotatef(-30.0f, 0.0f, 1.0f, 0.0f);
-		glRotatef(-30.0f, 1.0f, 0.0f, 0.0f);
+		glRotatef(-30.0f, 1.0f, 1.0f, 0.0f);
 
 		chunk.draw(glm::mat4());
 		chunk2.draw(glm::mat4());

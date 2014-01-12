@@ -2,8 +2,12 @@
 #include <Windows.h>
 #include <gl\GL.h>
 
+Vertex::Vertex(const glm::vec4& p, const Color& c)
+:_position(p), _color(c)
+{}
+
 Vertex::Vertex(const glm::vec3& p, const Color& c)
-	:_position(p), _color(c)
+: _position(p.x, p.y, p.z, 1.0f), _color(c)
 {}
 
 void Vertex::draw_with_color() const

@@ -7,6 +7,7 @@
 class Vertex
 {
 public:
+	Vertex(const glm::vec4& p, const Color& c);
 	Vertex(const glm::vec3& p, const Color& c);
 
 	void draw_with_color() const;
@@ -14,6 +15,6 @@ public:
 
 
 private:
-	glm::vec3 _position;
+	glm::vec4 _position;
 	Color _color;
 };

@@ -7,6 +7,12 @@
     <Filter Include="src\rendering">
       <UniqueIdentifier>{f6068dbd-e132-467d-9676-314576088e87}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\spatial">
+      <UniqueIdentifier>{ce2d42ff-039b-4b0d-b294-77055b361e80}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\constants">
+      <UniqueIdentifier>{7118bb7f-52d3-48ca-bc03-06abfdf20562}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\rendering\chunk.h">
@@ -30,6 +36,16 @@
     <ClInclude Include="src\rendering\vertex.h">
       <Filter>src\rendering</Filter>
     </ClInclude>
+    <ClInclude Include="src\constants\vector.h">
+      <Filter>src\constants</Filter>
+    </ClInclude>
+    <ClInclude Include="src\spatial\orientation.h">
+      <Filter>src\spatial</Filter>
+    </ClInclude>
+    <ClInclude Include="src\rendering\camera.h" />
+    <ClInclude Include="src\spatial\interfaces\position.h" />
+    <ClInclude Include="src\spatial\interfaces\position_orientation.h" />
+    <ClInclude Include="src\spatial\interfaces\frame_of_reference.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\rendering\color.cpp">
@@ -53,5 +69,12 @@
     <ClCompile Include="src\rendering\quad.cpp">
       <Filter>src\rendering</Filter>
     </ClCompile>
+    <ClCompile Include="src\constants\vector.cpp">
+      <Filter>src\constants</Filter>
+    </ClCompile>
+    <ClCompile Include="src\spatial\orientation.cpp">
+      <Filter>src\spatial</Filter>
+    </ClCompile>
+    <ClCompile Include="src\rendering\camera.cpp" />
   </ItemGroup>
 </Project>
