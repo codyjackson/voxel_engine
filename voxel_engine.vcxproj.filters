@@ -43,9 +43,7 @@
       <Filter>src\spatial</Filter>
     </ClInclude>
     <ClInclude Include="src\rendering\camera.h" />
-    <ClInclude Include="src\spatial\interfaces\position.h" />
-    <ClInclude Include="src\spatial\interfaces\position_orientation.h" />
-    <ClInclude Include="src\spatial\interfaces\frame_of_reference.h" />
+    <ClInclude Include="src\input.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\rendering\color.cpp">
@@ -76,5 +74,6 @@
       <Filter>src\spatial</Filter>
     </ClCompile>
     <ClCompile Include="src\rendering\camera.cpp" />
+    <ClCompile Include="src\input.cpp" />
   </ItemGroup>
 </Project>

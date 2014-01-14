@@ -7,6 +7,7 @@ Orientation::Orientation()
 void Orientation::rotate(const glm::vec3& axis, const float degreesOfRotation)
 {
 	_quaternion = glm::rotate(_quaternion, degreesOfRotation, axis);
+	_quaternion = glm::normalize(_quaternion);
 	const glm::mat4 rotation = get_rotation_matrix();
 	_forward = rotation * Constants::Vec4::forward;
 	_right = rotation * Constants::Vec4::right;
@@ -15,7 +16,7 @@ void Orientation::rotate(const glm::vec3& axis, const float degreesOfRotation)
 
 glm::mat4 Orientation::get_rotation_matrix() const
 {
-	return glm::mat4_cast(_quaternion);
+	return glm::mat4_cast(glm::inverse(_quaternion));
 }
 
 glm::vec3 Orientation::forward() const

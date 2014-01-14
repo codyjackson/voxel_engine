@@ -7,12 +7,21 @@ Window::Window()
 	if(!(_window = glfwCreateWindow(1024, 768, "", NULL, NULL)))
 		throw std::runtime_error("Failed to create window.");
 	glfwHideWindow(_window);
+
+	//Remember to clear callbacks in the destructor
+	glfwSetKeyCallback(_window, Window::on_keyboard_message_forwarder);
+	_glfwWindowToWindowMappingForStaticCallbacks.emplace(_window, this);
 }
 
 Window::~Window()
 {
-	if(_window)
-		glfwDestroyWindow(_window);
+	if (!_window)
+		return;
+
+	glfwSetKeyCallback(_window, nullptr);
+	_glfwWindowToWindowMappingForStaticCallbacks.erase(_window);
+
+	glfwDestroyWindow(_window);
 	glfwTerminate();
 }
 
@@ -33,7 +42,7 @@ void Window::draw()
 
 void Window::close()
 {
-	glfwSetWindowShouldClose(_window,GL_TRUE);
+	glfwSetWindowShouldClose(_window, GL_TRUE);
 	glfwHideWindow(_window);
 }
 
@@ -68,6 +77,11 @@ const int Window::get_height() const
 	return height;
 }
 
+Input& Window::input()
+{
+	return _input;
+}
+
 const bool Window::is_open() const 
 {
 	return !glfwWindowShouldClose(_window);
@@ -77,3 +91,21 @@ void Window::poll_events() const
 {
 	glfwPollEvents();
 }
+
+void Window::on_keyboard_message_forwarder(GLFWwindow* glfwWindow, int key, int scancode, int action, int modifiers)
+{
+	if (action == GLFW_REPEAT)
+		return;
+
+	Window& window = *Window::_glfwWindowToWindowMappingForStaticCallbacks[glfwWindow];
+	const Input::KeyState state = static_cast<Input::KeyState>(action);
+
+	const Input::Modifier possibleModifier = Input::convert_to_modifier(key);
+	if (possibleModifier != Input::Modifier::NONE)
+		return window._input.update(possibleModifier, state);
+
+	const Input::KeyboardTerminal terminal = static_cast<Input::KeyboardTerminal>(key);
+	window._input.update(terminal, state);
+}
+
+std::unordered_map<GLFWwindow*, Window*> Window::_glfwWindowToWindowMappingForStaticCallbacks = std::unordered_map<GLFWwindow*, Window*>();
