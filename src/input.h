@@ -143,6 +143,12 @@ public:
 		NONE
 	};
 
+	enum class PressableEvents
+	{
+		ON_PRESSED,
+		ON_RELEASED
+	};
+
 	enum class Moveable
 	{
 		MOUSE,
@@ -150,39 +156,69 @@ public:
 		NONE
 	};
 
-	enum class PressableState
+	enum class MoveableEvents
 	{
-		UP,
-		DOWN
+		ON_STARTED_MOVING,
+		ON_STOPED_MOVING
 	};
 
+	template<typename TERMINAL_TYPE>
 	class Combo
 	{
 	public:
-		struct Hasher{ size_t operator()(const Combo& s) const; };
+		struct Hasher
+		{ 
+			size_t operator()(const Combo& s) const
+			{
+				const auto hashAccumulateModifier = [](const size_t& l, const Pressable& r) {return l ^ std::hash<size_t>()(static_cast<size_t>(r)); };
+				const size_t modifiersHash = std::accumulate(std::begin(s._modifiers), std::end(s._modifiers), static_cast<size_t>(0), hashAccumulateModifier);
+				const size_t terminalHash = std::hash<size_t>()(static_cast<size_t>(s._terminal));
 
-		Combo(Pressable mod0, Pressable mod1, Pressable mod2, Pressable terminal);
-		Combo(Pressable mod0, Pressable mod1, Pressable terminal);
-		Combo(Pressable mod0, Pressable terminal);
-		Combo(Pressable terminal);
+				return modifiersHash ^ terminalHash;
+			}
+		};
 
-		Combo(Pressable mod0, Pressable mod1, Pressable mod2, Moveable terminal);
-		Combo(Pressable mod0, Pressable mod1, Moveable terminal);
-		Combo(Pressable mod0, Moveable terminal);
-		Combo(Moveable terminal);
-		
-		bool operator==(const Combo& rhs) const;
-		bool is_terminal_pressable() const;
-		Pressable get_pressable_terminal() const;
-		Moveable get_moveable_terminal() const;
+		Combo(Pressable mod0, Pressable mod1, Pressable mod2, TERMINAL_TYPE terminal)
+			:_modifiers{ { mod0, mod1, mod2 } }, _terminal(terminal)
+		{
+			//Necessary for easier equality tests since the order of the modifiers doesn't matter.
+			std::sort(std::begin(_modifiers), std::end(_modifiers));
+		}
 
-		const std::array<Pressable, 3>& get_modifiers() const;
+		Combo(Pressable mod0, Pressable mod1, TERMINAL_TYPE terminal)
+			: Combo(mod0, mod1, Pressable::NONE, terminal)
+		{}
+
+		Combo(Pressable mod0, TERMINAL_TYPE terminal)
+			: Combo(mod0, Pressable::NONE, terminal)
+		{}
+
+		Combo(TERMINAL_TYPE terminal)
+			: Combo(Pressable::NONE, terminal)
+		{}
+
+		bool operator==(const Combo& rhs) const
+		{
+			return (this->_terminal == rhs._terminal) && (this->_modifiers == rhs._modifiers);
+		}
+
+		TERMINAL_TYPE get_terminal() const
+		{
+			return _terminal;
+		}
+
+		const std::array<Pressable, 3>& get_modifiers() const
+		{
+			return _modifiers;
+		}
 
 	private:
 		std::array<Pressable, 3> _modifiers;
-		Pressable _pressableTerminal;
-		Moveable _moveableTerminal;
+		TERMINAL_TYPE _terminal;
 	};
+
+	typedef Combo<Pressable> PressableCombo;
+	typedef Combo<Moveable> MoveableCombo;
 
 	class Mouse
 	{
@@ -198,19 +234,35 @@ public:
 		const int _wheelDelta;
 	};
 
-	void on(const Combo& combo, const std::function<void()>& callback);
-
-	void update(Pressable terminal, PressableState state);
+	void on(const PressableCombo& combo, const std::function<void()>& callback);
 
 private:
-	void call_bound_callback(const Combo& combo) const;
+	friend class Window;
+
+	enum class PressableState
+	{
+		UP,
+		DOWN
+	};
+
+	enum class MoveableState
+	{
+		IDLE,
+		MOVING
+	};
+
+	void update(Pressable terminal, PressableState state);
+	void invoke_bound_callback(const PressableCombo& combo) const;
+	void invoke_bound_callback(const MoveableCombo& combo) const;
 	void signal_key_pressed(Pressable t) const;
+
 	bool is_pressable_pressed(Pressable p) const;
 	bool are_modifiers_pressed(const std::array<Pressable, 3>& modifiers) const;
 
-	std::unordered_map<Pressable, std::vector<Combo>> _pressableTerminalToCombos;
-	std::unordered_map<Moveable, std::vector<Combo>> _moveableTerminalToCombos;
+	std::unordered_map<Pressable, std::vector<PressableCombo>> _pressableTerminalToCombos;
+	std::unordered_map<Moveable, std::vector<MoveableCombo>> _moveableTerminalToCombos;
 
 	std::unordered_map<Pressable, PressableState> _pressableToKeyState;
- 	std::unordered_map<Combo, std::function<void()>, Combo::Hasher> _comboToCallback;
+ 	std::unordered_map<PressableCombo, std::function<void()>, PressableCombo::Hasher> _pressableComboToCallback;
+	std::unordered_map<MoveableCombo, std::function<void()>, MoveableCombo::Hasher> _moveableComboToCallback;
 };

@@ -7,14 +7,14 @@
 #include <glm/gtc/type_ptr.hpp> 
 #include <GLFW/glfw3.h>
 
-int main(void)
+int main()
 {
 	auto onInitialize = [&](Window& window){
 		window.update_width(1024);
 		window.update_height(768);
 		window.update_title("Voxel Engine");
 
-		const Input::Combo combo = Input::Combo(Input::Pressable::LEFT_CONTROL, Input::Pressable::F);
+		const auto combo = Input::PressableCombo(Input::Pressable::LEFT_CONTROL, Input::Pressable::F);
 		window.input().on(combo, [](){std::cout << "test" << std::endl; });
 	};
 
