@@ -98,13 +98,8 @@ void Window::on_keyboard_message_forwarder(GLFWwindow* glfwWindow, int key, int 
 		return;
 
 	Window& window = *Window::_glfwWindowToWindowMappingForStaticCallbacks[glfwWindow];
-	const Input::KeyState state = static_cast<Input::KeyState>(action);
-
-	const Input::Modifier possibleModifier = Input::convert_to_modifier(key);
-	if (possibleModifier != Input::Modifier::NONE)
-		return window._input.update(possibleModifier, state);
-
-	const Input::KeyboardTerminal terminal = static_cast<Input::KeyboardTerminal>(key);
+	const Input::PressableState state = static_cast<Input::PressableState>(action);
+	const Input::Pressable terminal = static_cast<Input::Pressable>(key);
 	window._input.update(terminal, state);
 }
 

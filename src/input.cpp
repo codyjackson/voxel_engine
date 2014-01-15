@@ -2,6 +2,7 @@
 #include "window.h"
 
 #include <algorithm>
+#include <numeric>
 
 Input::Mouse::Mouse(const glm::ivec2& position, const glm::ivec2& positionDelta, int wheelDelta)
 :_position(position), _positionDelta(positionDelta), _wheelDelta(wheelDelta)
@@ -22,88 +23,138 @@ int Input::Mouse::get_wheel_delta() const
 	return _wheelDelta;
 }
 
-Input::KeyboardSequence::KeyboardSequence(Modifier m1, Modifier m2, Modifier m3, KeyboardTerminal terminal)
-:_control(contains_specified_modifier<Modifier::CTRL>(m1, m2, m3)),  
- _alt(contains_specified_modifier<Modifier::ALT>(m1, m2, m3)),
- _shift(contains_specified_modifier<Modifier::SHIFT>(m1, m2, m3)),
- _terminal(terminal)
-{}
-
-bool Input::KeyboardSequence::operator == (const KeyboardSequence& rhs) const
+void Input::call_bound_callback(const Combo& combo) const
 {
-	return (this->_control == rhs._control) && (this->_alt == rhs._alt) && (this->_shift == rhs._shift) && (this->_terminal == rhs._terminal); 
+	const auto iter = _comboToCallback.find(combo);
+	if (iter != _comboToCallback.end())
+		iter->second();
 }
 
-size_t Input::KeyboardSequence::Hasher::operator()(const KeyboardSequence& s) const 
+void Input::signal_key_pressed(Pressable t) const
 {
-	const size_t altHash = static_cast<bool>(s._alt);
-	const size_t controlHash = static_cast<bool>(s._control);
-	const size_t shiftHash = static_cast<bool>(s._shift);
-	const size_t terminalHash = std::hash<int>()(static_cast<int>(s._terminal));
-	return altHash ^ controlHash ^ shiftHash ^ terminalHash;
+	const auto combosIter = _pressableTerminalToCombos.find(t);
+	if (combosIter == _pressableTerminalToCombos.end())
+		return;
+
+	const auto isActionable = [this](const Combo& c){ 
+		return is_pressable_pressed(c.get_pressable_terminal()) && are_modifiers_pressed(c.get_modifiers());
+	};
+
+	const std::vector<Combo>& potentialCombos = combosIter->second;
+	std::vector<Combo> actionableCombos;
+	std::copy_if(std::begin(potentialCombos), std::end(potentialCombos), std::back_inserter(actionableCombos), isActionable);
+	std::for_each(std::begin(actionableCombos), std::end(actionableCombos), std::bind(&Input::call_bound_callback, this, std::placeholders::_1));
 }
 
-void Input::on(const KeyboardSequence& sequence, const std::function<void()>& callback)
+void Input::on(const Combo& combo, const std::function<void()>& callback)
 {
-	_keyboardSequenceToCallback[sequence] = callback;
+	_comboToCallback[combo] = callback;
+	if (combo.is_terminal_pressable())
+		_pressableTerminalToCombos[combo.get_pressable_terminal()].push_back(combo);
+	else
+		_moveableTerminalToCombos[combo.get_moveable_terminal()].push_back(combo);
 }
 
-
-bool Input::is_modifier_down(Modifier m) const
+void Input::update(Pressable terminal, PressableState state)
 {
-	const auto keyState = _modifierToKeyState.find(m);
-	if (keyState == _modifierToKeyState.end())
-		return false;
-	return keyState->second == KeyState::DOWN;
-}
+	if (_pressableToKeyState.find(terminal) == _pressableToKeyState.end())
+		_pressableToKeyState[terminal] = PressableState::UP;
 
-void Input::signal_key_pressed(KeyboardTerminal t) const
-{
-	const Modifier m1 = is_modifier_down(Modifier::CTRL) ? Modifier::CTRL : Modifier::NONE;
-	const Modifier m2 = is_modifier_down(Modifier::SHIFT) ? Modifier::SHIFT : Modifier::NONE;
-	const Modifier m3 = is_modifier_down(Modifier::ALT) ? Modifier::ALT : Modifier::NONE;
-	const KeyboardSequence sequence = KeyboardSequence(m1, m2, m3, t);
-	
-	const auto sequenceToCallbackIter = _keyboardSequenceToCallback.find(sequence);
-	if (sequenceToCallbackIter != _keyboardSequenceToCallback.end())
-		sequenceToCallbackIter->second();
-}
-
-void Input::update(KeyboardTerminal terminal, KeyState state)
-{
-	if (_keyboardTerminalToKeyState.find(terminal) == _keyboardTerminalToKeyState.end())
-		_keyboardTerminalToKeyState[terminal] = KeyState::UP;
-
-	KeyState& keyState = _keyboardTerminalToKeyState[terminal];
-	const KeyState oldKeyState = keyState;
+	PressableState& keyState = _pressableToKeyState[terminal];
+	const PressableState oldKeyState = keyState;
 	keyState = state;
 
-	if (oldKeyState == KeyState::UP && keyState == KeyState::DOWN)
+	if (oldKeyState == PressableState::UP && keyState == PressableState::DOWN)
 		signal_key_pressed(terminal);
 }
 
-void Input::update(Modifier modifier, KeyState state)
+size_t Input::Combo::Hasher::operator()(const Combo& s) const
 {
-	if (modifier == Modifier::NONE)
-		return;
+	const auto hashAccumulateModifier = [](const size_t& l, const Pressable& r) {return l ^ std::hash<size_t>()(static_cast<size_t>(r)); };
+	const size_t modifiersHash = std::accumulate(std::begin(s._modifiers), std::end(s._modifiers), static_cast<size_t>(0), hashAccumulateModifier);
+	const size_t pressableTerminalHash = std::hash<size_t>()(static_cast<size_t>(s._pressableTerminal));
+	const size_t moveableTerminalHash = std::hash<size_t>()(static_cast<size_t>(s._pressableTerminal));
 
-	_modifierToKeyState[modifier] = state;
+	return modifiersHash ^ pressableTerminalHash ^ moveableTerminalHash;
 }
 
- Input::Modifier Input::convert_to_modifier(int modifier)
+Input::Combo::Combo(Pressable mod0, Pressable mod1, Pressable mod2, Pressable terminal)
+:_modifiers{ { mod0, mod1, mod2 } }, _pressableTerminal(terminal), _moveableTerminal(Moveable::NONE)
 {
-	 switch (modifier)
-	 {
-	 case GLFW_KEY_LEFT_ALT:
-	 case GLFW_KEY_RIGHT_ALT:
-		 return Modifier::ALT;
-	 case GLFW_KEY_LEFT_CONTROL:
-	 case GLFW_KEY_RIGHT_CONTROL:
-		 return Modifier::CTRL;
-	 case GLFW_KEY_LEFT_SHIFT:
-	 case GLFW_KEY_RIGHT_SHIFT:
-		 return Modifier::SHIFT;
-	 default:
-		 return Modifier::NONE;
-	 }
+	//Necessary for easier equality tests
+	std::sort(std::begin(_modifiers), std::end(_modifiers));
+}
+
+Input::Combo::Combo(Pressable mod0, Pressable mod1, Pressable terminal)
+: Combo(mod0, mod1, Pressable::NONE, terminal)
+{}
+
+Input::Combo::Combo(Pressable mod0, Pressable terminal)
+: Combo(mod0, Pressable::NONE, terminal)
+{}
+
+Input::Combo::Combo(Pressable terminal)
+: Combo(Pressable::NONE, terminal)
+{}
+
+Input::Combo::Combo(Pressable mod0, Pressable mod1, Pressable mod2, Moveable terminal)
+: _modifiers{ { mod0, mod1, mod2 } }, _pressableTerminal(Pressable::NONE), _moveableTerminal(terminal)
+{
+	//Necessary for easier equality tests
+	std::sort(std::begin(_modifiers), std::end(_modifiers));
+}
+
+Input::Combo::Combo(Pressable mod0, Pressable mod1, Moveable terminal)
+: Combo(mod0, mod1, Pressable::NONE, terminal)
+{}
+
+Input::Combo::Combo(Pressable mod0, Moveable terminal)
+: Combo(mod0, Pressable::NONE, terminal)
+{}
+
+Input::Combo::Combo(Moveable terminal)
+: Combo(Pressable::NONE, terminal)
+{}
+
+bool Input::Combo::operator==(const Combo& rhs) const
+{
+	return (this->_pressableTerminal == rhs._pressableTerminal) && (this->_moveableTerminal == rhs._moveableTerminal) && (this->_modifiers == rhs._modifiers);
+}
+
+bool Input::Combo::is_terminal_pressable() const
+{
+	return _pressableTerminal != Pressable::NONE;
+}
+
+Input::Pressable Input::Combo::get_pressable_terminal() const
+{
+	return _pressableTerminal;
+}
+
+Input::Moveable Input::Combo::get_moveable_terminal() const
+{
+	return _moveableTerminal;
+}
+
+const std::array<Input::Pressable, 3>&  Input::Combo::get_modifiers() const
+{
+	return _modifiers;
+}
+
+bool Input::is_pressable_pressed(Pressable p) const
+{
+	if (p == Pressable::NONE)
+		return true;
+
+	const auto iter = _pressableToKeyState.find(p);
+	if (iter == _pressableToKeyState.end())
+		return false;
+
+	return iter->second == PressableState::DOWN;
+}
+
+bool Input::are_modifiers_pressed(const std::array<Pressable, 3>& modifiers) const
+{
+	const auto boundIsPressablePressed = std::bind(&Input::is_pressable_pressed, this, std::placeholders::_1);
+	return std::all_of(std::begin(modifiers), std::end(modifiers), boundIsPressablePressed);
 }

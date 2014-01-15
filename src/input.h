@@ -12,15 +12,7 @@ class Window;
 class Input
 {
 public:
-	enum class Modifier 
-	{
-		CTRL,
-		SHIFT,
-		ALT,
-		NONE
-	};
-
-	enum class KeyboardTerminal
+	enum class Pressable
 	{
 		SPACE = 32,
 		APOSTROPHE = 39,
@@ -28,16 +20,16 @@ public:
 		MINUS = 45,
 		PERIOD = 46,
 		SLASH = 47,
-		KEY_0 = 48,
-		KEY_1 = 49,
-		KEY_2 = 50,
-		KEY_3 = 51,
-		KEY_4 = 52,
-		KEY_5 = 53,
-		KEY_6 = 54,
-		KEY_7 = 55,
-		KEY_8 = 56,
-		KEY_9 = 57,
+		NUM_0 = 48,
+		NUM_1 = 49,
+		NUM_2 = 50,
+		NUM_3 = 51,
+		NUM_4 = 52,
+		NUM_5 = 53,
+		NUM_6 = 54,
+		NUM_7 = 55,
+		NUM_8 = 56,
+		NUM_9 = 57,
 		SEMICOLON = 59,
 		EQUAL = 61,
 		A = 65,
@@ -133,46 +125,63 @@ public:
 		KP_ADD = 334,
 		KP_ENTER = 335,
 		KP_EQUAL = 336,
-		MENU = 348
+		LEFT_SHIFT = 340,
+		LEFT_CONTROL = 341,
+		LEFT_ALT = 342,
+		LEFT_SUPER = 343,
+		RIGHT_SHIFT = 344,
+		RIGHT_CONTROL = 345,
+		RIGHT_ALT = 346,
+		RIGHT_SUPER = 347,
+		MENU = 348,
+		MOUSE_BUTTON_1,
+		MOUSE_BUTTON_2,
+		MOUSE_BUTTON_3,
+		MOUSE_BUTTON_4,
+		MOUSE_BUTTON_5,
+		MOUSE_BUTTON_6,
+		NONE
 	};
 
-	enum class KeyState
+	enum class Moveable
+	{
+		MOUSE,
+		MOUSE_WHEEL,
+		NONE
+	};
+
+	enum class PressableState
 	{
 		UP,
 		DOWN
 	};
 
-	enum class MouseTerminal
-	{
-	};
-
-
-	class KeyboardSequence
+	class Combo
 	{
 	public:
-		struct Hasher{ size_t operator()(const KeyboardSequence& s) const; };
+		struct Hasher{ size_t operator()(const Combo& s) const; };
 
-		KeyboardSequence(Modifier m1, Modifier m2, Modifier m3, KeyboardTerminal terminal);
-		bool operator==(const KeyboardSequence& rhs) const;
+		Combo(Pressable mod0, Pressable mod1, Pressable mod2, Pressable terminal);
+		Combo(Pressable mod0, Pressable mod1, Pressable terminal);
+		Combo(Pressable mod0, Pressable terminal);
+		Combo(Pressable terminal);
+
+		Combo(Pressable mod0, Pressable mod1, Pressable mod2, Moveable terminal);
+		Combo(Pressable mod0, Pressable mod1, Moveable terminal);
+		Combo(Pressable mod0, Moveable terminal);
+		Combo(Moveable terminal);
+		
+		bool operator==(const Combo& rhs) const;
+		bool is_terminal_pressable() const;
+		Pressable get_pressable_terminal() const;
+		Moveable get_moveable_terminal() const;
+
+		const std::array<Pressable, 3>& get_modifiers() const;
 
 	private:
-		//I'm templating this function to make it less error prone. 
-		//(ex: accidently passing the expected value to m1 instead of the expected value parameter.
-		template<Modifier M>
-		bool contains_specified_modifier(Modifier m1, Modifier m2, Modifier m3)
-		{
-			return (m1 == M) || (m2 == M) || (m3 == M);
-		}
-
-		bool _control;
-		bool _alt;
-		bool _shift;
-		KeyboardTerminal _terminal;
-	};
-
-	class MouseSequence
-	{
-
+		std::array<Pressable, 3> _modifiers;
+		Pressable _pressableTerminal;
+		Moveable _moveableTerminal;
 	};
 
 	class Mouse
@@ -189,19 +198,19 @@ public:
 		const int _wheelDelta;
 	};
 
-	void on(const KeyboardSequence& sequence, const std::function<void()>& callback);
-	void on(const MouseSequence& macro, const std::function<void(const MouseSequence& origin, const Mouse& mouse)>& callback);
+	void on(const Combo& combo, const std::function<void()>& callback);
 
-	void signal_key_pressed(KeyboardTerminal t) const;
-	void update(KeyboardTerminal terminal, KeyState state);
-	void update(Modifier modifier, KeyState state);
-
-	static Modifier convert_to_modifier(int modifier);
+	void update(Pressable terminal, PressableState state);
 
 private:
-	bool is_modifier_down(Modifier m) const;
+	void call_bound_callback(const Combo& combo) const;
+	void signal_key_pressed(Pressable t) const;
+	bool is_pressable_pressed(Pressable p) const;
+	bool are_modifiers_pressed(const std::array<Pressable, 3>& modifiers) const;
 
-	std::unordered_map<Modifier, KeyState> _modifierToKeyState;
-	std::unordered_map<KeyboardTerminal, KeyState> _keyboardTerminalToKeyState;
- 	std::unordered_map<KeyboardSequence, std::function<void()>, KeyboardSequence::Hasher> _keyboardSequenceToCallback;
+	std::unordered_map<Pressable, std::vector<Combo>> _pressableTerminalToCombos;
+	std::unordered_map<Moveable, std::vector<Combo>> _moveableTerminalToCombos;
+
+	std::unordered_map<Pressable, PressableState> _pressableToKeyState;
+ 	std::unordered_map<Combo, std::function<void()>, Combo::Hasher> _comboToCallback;
 };

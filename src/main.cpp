@@ -14,8 +14,8 @@ int main(void)
 		window.update_height(768);
 		window.update_title("Voxel Engine");
 
-		const Input::KeyboardSequence sequence(Input::Modifier::SHIFT, Input::Modifier::CTRL, Input::Modifier::ALT, Input::KeyboardTerminal::F);
-		window.input().on(sequence, [](){std::cout << "test" << std::endl; });
+		const Input::Combo combo = Input::Combo(Input::Pressable::LEFT_CONTROL, Input::Pressable::F);
+		window.input().on(combo, [](){std::cout << "test" << std::endl; });
 	};
 
 	Orientation orientation;
