@@ -27,7 +27,10 @@ class Window
 		friend class MainLoop;
 		Window();
 
-		static void on_keyboard_message_forwarder(GLFWwindow* window, int key, int scancode, int action, int modifiers);
+		static void on_keyboard_message_forwarder(GLFWwindow* glfwWindow, int key, int scancode, int action, int modifiers);
+		static void on_mouse_position_message_forwarder(GLFWwindow* glfwWindow, double x, double y);
+		static void on_mouse_button_message_forwarder(GLFWwindow* glfwWindow, int button, int action, int modifiers);
+		static void on_mouse_scroll_wheel_message_forwarder(GLFWwindow* glfwWindow, double xoffset, double yoffset);
 
 		void open();
 		const bool is_open() const;

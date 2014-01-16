@@ -14,7 +14,7 @@ int main()
 		window.update_height(768);
 		window.update_title("Voxel Engine");
 
-		const auto combo = Input::PressableCombo(Input::Pressable::LEFT_CONTROL, Input::Pressable::F);
+		const auto combo = Input::MoveableCombo(Input::Pressable::LEFT_CONTROL, Input::Moveable::MOUSE_WHEEL);
 		window.input().on(combo, [](){std::cout << "test" << std::endl; });
 	};
 

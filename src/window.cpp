@@ -10,6 +10,9 @@ Window::Window()
 
 	//Remember to clear callbacks in the destructor
 	glfwSetKeyCallback(_window, Window::on_keyboard_message_forwarder);
+	glfwSetCursorPosCallback(_window, Window::on_mouse_position_message_forwarder);
+	glfwSetMouseButtonCallback(_window, Window::on_mouse_button_message_forwarder);
+	glfwSetScrollCallback(_window, Window::on_mouse_scroll_wheel_message_forwarder);
 	_glfwWindowToWindowMappingForStaticCallbacks.emplace(_window, this);
 }
 
@@ -19,6 +22,9 @@ Window::~Window()
 		return;
 
 	glfwSetKeyCallback(_window, nullptr);
+	glfwSetCursorPosCallback(_window, nullptr);
+	glfwSetMouseButtonCallback(_window, nullptr);
+	glfwSetScrollCallback(_window, nullptr);
 	_glfwWindowToWindowMappingForStaticCallbacks.erase(_window);
 
 	glfwDestroyWindow(_window);
@@ -101,6 +107,26 @@ void Window::on_keyboard_message_forwarder(GLFWwindow* glfwWindow, int key, int 
 	const Input::PressableState state = static_cast<Input::PressableState>(action);
 	const Input::Pressable terminal = static_cast<Input::Pressable>(key);
 	window._input.update(terminal, state);
+}
+
+void Window::on_mouse_position_message_forwarder(GLFWwindow* glfwWindow, double x, double y)
+{
+	Window& window = *Window::_glfwWindowToWindowMappingForStaticCallbacks[glfwWindow];
+	window._input.update_mouse_position(glm::ivec2(static_cast<int>(x), static_cast<int>(y)));
+}
+
+void Window::on_mouse_button_message_forwarder(GLFWwindow* glfwWindow, int button, int action, int modifiers)
+{
+	Window& window = *Window::_glfwWindowToWindowMappingForStaticCallbacks[glfwWindow];
+	const Input::PressableState state = static_cast<Input::PressableState>(action);
+	const Input::Pressable terminal = static_cast<Input::Pressable>(button + static_cast<int>(Input::Pressable::MOUSE_BUTTON_1));
+	window._input.update(terminal, state);
+}
+
+void Window::on_mouse_scroll_wheel_message_forwarder(GLFWwindow* glfwWindow, double xoffset, double yoffset)
+{
+	Window& window = *Window::_glfwWindowToWindowMappingForStaticCallbacks[glfwWindow];
+	window._input.update_mouse_scroll_wheel(static_cast<int>(yoffset));
 }
 
 std::unordered_map<GLFWwindow*, Window*> Window::_glfwWindowToWindowMappingForStaticCallbacks = std::unordered_map<GLFWwindow*, Window*>();

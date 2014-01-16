@@ -146,20 +146,15 @@ public:
 	enum class PressableEvents
 	{
 		ON_PRESSED,
-		ON_RELEASED
+		WHILE_PRESSED,
+		ON_RELEASED,
+		WHILE_RELEASED
 	};
 
 	enum class Moveable
 	{
 		MOUSE,
-		MOUSE_WHEEL,
-		NONE
-	};
-
-	enum class MoveableEvents
-	{
-		ON_STARTED_MOVING,
-		ON_STOPED_MOVING
+		MOUSE_WHEEL
 	};
 
 	template<typename TERMINAL_TYPE>
@@ -223,18 +218,24 @@ public:
 	class Mouse
 	{
 	public: 
-		Mouse(const glm::ivec2& position, const glm::ivec2& positionDelta, int wheelDelta);
 		glm::ivec2 get_position() const;
 		glm::ivec2 get_position_delta() const;
 		int get_wheel_delta() const;
 
 	private:
-		const glm::ivec2 _position;
-		const glm::ivec2 _positionDelta;
-		const int _wheelDelta;
+		friend class Input;
+		Mouse();
+
+		void update_position(const glm::ivec2& position);
+
+		glm::ivec2 _position;
+		glm::ivec2 _oldPosition;
+		int _wheelDelta;
 	};
 
+	const Mouse& mouse() const;
 	void on(const PressableCombo& combo, const std::function<void()>& callback);
+	void on(const MoveableCombo& combo, const std::function<void()>& callback);
 
 private:
 	friend class Window;
@@ -245,24 +246,27 @@ private:
 		DOWN
 	};
 
-	enum class MoveableState
-	{
-		IDLE,
-		MOVING
-	};
-
+	void tick();
 	void update(Pressable terminal, PressableState state);
+	void update_mouse_position(const glm::ivec2& xy);
+	void update_mouse_scroll_wheel(int clicks);
+
 	void invoke_bound_callback(const PressableCombo& combo) const;
 	void invoke_bound_callback(const MoveableCombo& combo) const;
+
 	void signal_key_pressed(Pressable t) const;
+	void signal_moveable(Moveable m) const;
 
 	bool is_pressable_pressed(Pressable p) const;
 	bool are_modifiers_pressed(const std::array<Pressable, 3>& modifiers) const;
 
+	Mouse _mouse;
+
 	std::unordered_map<Pressable, std::vector<PressableCombo>> _pressableTerminalToCombos;
 	std::unordered_map<Moveable, std::vector<MoveableCombo>> _moveableTerminalToCombos;
 
-	std::unordered_map<Pressable, PressableState> _pressableToKeyState;
- 	std::unordered_map<PressableCombo, std::function<void()>, PressableCombo::Hasher> _pressableComboToCallback;
+	std::unordered_map<PressableCombo, std::function<void()>, PressableCombo::Hasher> _pressableComboToCallback;
 	std::unordered_map<MoveableCombo, std::function<void()>, MoveableCombo::Hasher> _moveableComboToCallback;
+
+	std::unordered_map<Pressable, PressableState> _pressableToKeyState;
 };
