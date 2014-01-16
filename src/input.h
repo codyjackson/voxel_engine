@@ -299,9 +299,7 @@ namespace std
 	{
 		size_t operator()(const Input::PressableTerminal& x) const
 		{
-			const size_t pressableHash = std::hash<size_t>()(static_cast<size_t>(x.get_pressable()));
-			const size_t eventHash = std::hash<size_t>()(static_cast<size_t>(x.get_event()));
-			return  pressableHash ^ eventHash;
+			return  Input::PressableTerminal::Hasher()(x);
 		}
 	};
 }
