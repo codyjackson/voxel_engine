@@ -20,9 +20,10 @@ class Window
 
 		const int get_width() const;
 		const int get_height() const;
+		const glm::ivec2 get_center() const;
 
 		Input& input();
-
+		
 	private:
 		friend class MainLoop;
 		Window();

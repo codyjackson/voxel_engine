@@ -83,6 +83,11 @@ const int Window::get_height() const
 	return height;
 }
 
+const glm::ivec2 Window::get_center() const
+{
+	return glm::ivec2(get_width() / 2, get_height()/2);
+}
+
 Input& Window::input()
 {
 	return _input;
@@ -113,7 +118,12 @@ void Window::on_keyboard_message_forwarder(GLFWwindow* glfwWindow, int key, int 
 void Window::on_mouse_position_message_forwarder(GLFWwindow* glfwWindow, double x, double y)
 {
 	Window& window = *Window::_glfwWindowToWindowMappingForStaticCallbacks[glfwWindow];
-	window._input.update_mouse_position(glm::ivec2(static_cast<int>(x), static_cast<int>(y)));
+	if (!window._input._mouse.is_movement_locked())
+		return window._input.update_mouse_position(glm::ivec2(static_cast<int>(x), static_cast<int>(y)));
+
+	const glm::ivec2 center = window.get_center();
+	window._input.update_mouse_locked_position(center, glm::ivec2(static_cast<int>(x), static_cast<int>(y)));
+	glfwSetCursorPos(glfwWindow, center.x, center.y);
 }
 
 void Window::on_mouse_button_message_forwarder(GLFWwindow* glfwWindow, int button, int action, int modifiers)

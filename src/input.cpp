@@ -5,7 +5,23 @@
 #include <numeric>
 
 Input::Mouse::Mouse()
+:_isMovementLocked(false)
 {}
+
+void Input::Mouse::lock_movement()
+{
+	_isMovementLocked = true;
+}
+
+void Input::Mouse::unlock_movement()
+{
+	_isMovementLocked = false;
+}
+
+bool Input::Mouse::is_movement_locked() const
+{
+	return _isMovementLocked;
+}
 
 glm::ivec2 Input::Mouse::get_position() const
 {
@@ -26,6 +42,12 @@ void Input::Mouse::update_position(const glm::ivec2& position)
 {
 	_oldPosition = _position;
 	_position = position;
+}
+
+void Input::Mouse::update_locked_position(const glm::ivec2& lockedPosition, const glm::ivec2& movedPosition)
+{
+	_oldPosition = lockedPosition;
+	_position = movedPosition;
 }
 
 void Input::invoke_bound_callback(const PressableCombo& combo)
@@ -75,7 +97,7 @@ void Input::signal_moveable(Moveable m)
 	std::for_each(std::begin(actionableCombos), std::end(actionableCombos), invokeBoundCallback);
 }
 
-const Input::Mouse& Input::mouse() const
+Input::Mouse& Input::mouse()
 {
 	return _mouse;
 }
@@ -108,6 +130,12 @@ void Input::update(Pressable terminal, PressableState state)
 
 	if (oldKeyState == PressableState::UP && keyState == PressableState::DOWN)
 		signal_key_pressed(terminal);
+}
+
+void Input::update_mouse_locked_position(const glm::ivec2& lockedPosition, const glm::ivec2& movedPosition)
+{
+	_mouse.update_locked_position(lockedPosition, movedPosition);
+	signal_moveable(Input::Moveable::MOUSE);
 }
 
 void Input::update_mouse_position(const glm::ivec2& xy)

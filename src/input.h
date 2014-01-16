@@ -218,6 +218,10 @@ public:
 	class Mouse
 	{
 	public: 
+		void lock_movement();
+		void unlock_movement();
+		bool is_movement_locked() const;
+
 		glm::ivec2 get_position() const;
 		glm::ivec2 get_position_delta() const;
 		int get_wheel_delta() const;
@@ -227,13 +231,15 @@ public:
 		Mouse();
 
 		void update_position(const glm::ivec2& position);
+		void update_locked_position(const glm::ivec2& lockedPosition, const glm::ivec2& movedPosition);
 
 		glm::ivec2 _position;
 		glm::ivec2 _oldPosition;
 		int _wheelDelta;
+		bool _isMovementLocked;
 	};
 
-	const Mouse& mouse() const;
+	Mouse& mouse();
 	void on(const PressableCombo& combo, const std::function<void(Input&)>& callback);
 	void on(const MoveableCombo& combo, const std::function<void(Input&)>& callback);
 
@@ -248,6 +254,7 @@ private:
 
 	void prepare_for_updates();
 	void update(Pressable terminal, PressableState state);
+	void update_mouse_locked_position(const glm::ivec2& lockedPosition, const glm::ivec2& movedPosition);
 	void update_mouse_position(const glm::ivec2& xy);
 	void update_mouse_scroll_wheel(int clicks);
 
