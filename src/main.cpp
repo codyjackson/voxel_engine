@@ -14,21 +14,21 @@ int main()
 		window.update_height(768);
 		window.update_title("Voxel Engine");
 
-		window.input().mouse().lock_movement();
-
-		const auto mouseMove = Input::MoveableCombo(Input::Moveable::MOUSE);
-		window.input().on(mouseMove, [](Input& in){
-			auto m = in.mouse().get_position_delta();
-			std::cout << m.x << " " << m.y << std::endl; 
-		});
-
-		const auto scrollMove = Input::MoveableCombo(Input::Moveable::MOUSE_WHEEL);
-		window.input().on(scrollMove, [](Input& in){
-			std::cout << in.mouse().get_wheel_delta() << std::endl;
-		});
-
-		window.input().on(Input::Pressable::ESCAPE, [&window](Input& in){
+		window.input().on(Input::PressableTerminal(Input::Pressable::ESCAPE, Input::PressableEvent::RELEASED), [&window](Input& in){
 			window.close();
+		});
+
+		window.input().on(Input::PressableTerminal(Input::Pressable::MOUSE_BUTTON_1, Input::PressableEvent::PRESSED), [](Input& in){
+			in.mouse().lock_movement();
+		});
+
+		window.input().on(Input::PressableTerminal(Input::Pressable::MOUSE_BUTTON_1, Input::PressableEvent::RELEASED), [](Input& in){
+			in.mouse().unlock_movement();
+		});
+
+		window.input().on(Input::MoveableCombo(Input::Pressable::MOUSE_BUTTON_1, Input::MoveableTerminal::MOUSE), [](Input& in){
+			const auto delta = in.mouse().get_position_delta();
+			std::cout << delta.x << " " << delta.y << std::endl;
 		});
 	};
 

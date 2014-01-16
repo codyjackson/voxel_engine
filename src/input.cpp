@@ -4,6 +4,32 @@
 #include <algorithm>
 #include <numeric>
 
+size_t Input::PressableTerminal::Hasher::operator()(const PressableTerminal& t) const
+{
+	const size_t pressableHash = std::hash<size_t>()(static_cast<size_t>(t.get_pressable()));
+	const size_t eventHash = std::hash<size_t>()(static_cast<size_t>(t.get_event()));
+	return  pressableHash ^ eventHash;
+}
+
+bool Input::PressableTerminal::operator==(const PressableTerminal& rhs) const
+{
+	return (this->_event == rhs._event) && (this->_pressable == rhs._pressable);
+}
+
+Input::PressableTerminal::PressableTerminal(Pressable p, PressableEvent e)
+:_pressable(p), _event(e)
+{}
+
+Input::Pressable Input::PressableTerminal::get_pressable() const
+{
+	return _pressable;
+}
+
+Input::PressableEvent Input::PressableTerminal::get_event() const
+{
+	return _event;
+}
+
 Input::Mouse::Mouse()
 :_isMovementLocked(false)
 {}
@@ -64,14 +90,14 @@ void Input::invoke_bound_callback(const MoveableCombo& combo)
 		iter->second(*this);
 }
 
-void Input::signal_key_pressed(Pressable t)
+void Input::signal_pressable(PressableTerminal t)
 {
 	const auto combosIter = _pressableTerminalToCombos.find(t);
 	if (combosIter == _pressableTerminalToCombos.end())
 		return;
 
 	const auto isActionable = [this](const PressableCombo& c){ 
-		return is_pressable_pressed(c.get_terminal()) && are_modifiers_pressed(c.get_modifiers());
+		return are_modifiers_pressed(c.get_modifiers());
 	};
 
 	const auto invokeBoundCallback = std::bind(static_cast<void(Input::*)(const PressableCombo&)>(&Input::invoke_bound_callback), this, std::placeholders::_1);
@@ -81,7 +107,7 @@ void Input::signal_key_pressed(Pressable t)
 	std::for_each(std::begin(actionableCombos), std::end(actionableCombos), invokeBoundCallback);
 }
 
-void Input::signal_moveable(Moveable m)
+void Input::signal_moveable(MoveableTerminal m)
 {
 	const auto combosIter = _moveableTerminalToCombos.find(m);
 	if (combosIter == _moveableTerminalToCombos.end())
@@ -119,35 +145,36 @@ void Input::prepare_for_updates()
 	_mouse._wheelDelta = 0;
 }
 
-void Input::update(Pressable terminal, PressableState state)
+void Input::update(Pressable pressable, PressableState state)
 {
-	if (_pressableToKeyState.find(terminal) == _pressableToKeyState.end())
-		_pressableToKeyState[terminal] = PressableState::UP;
+	if (_pressableToKeyState.find(pressable) == _pressableToKeyState.end())
+		_pressableToKeyState[pressable] = PressableState::UP;
 
-	PressableState& keyState = _pressableToKeyState[terminal];
-	const PressableState oldKeyState = keyState;
+	PressableState& keyState = _pressableToKeyState[pressable];
+	if (keyState == state)
+		return;
 	keyState = state;
 
-	if (oldKeyState == PressableState::UP && keyState == PressableState::DOWN)
-		signal_key_pressed(terminal);
+	const PressableEvent event = state == PressableState::UP ? PressableEvent::RELEASED : PressableEvent::PRESSED;
+	signal_pressable(PressableTerminal(pressable, event));
 }
 
 void Input::update_mouse_locked_position(const glm::ivec2& lockedPosition, const glm::ivec2& movedPosition)
 {
 	_mouse.update_locked_position(lockedPosition, movedPosition);
-	signal_moveable(Input::Moveable::MOUSE);
+	signal_moveable(Input::MoveableTerminal::MOUSE);
 }
 
 void Input::update_mouse_position(const glm::ivec2& xy)
 {
 	_mouse._position = xy;
-	signal_moveable(Input::Moveable::MOUSE);
+	signal_moveable(Input::MoveableTerminal::MOUSE);
 }
 
 void Input::update_mouse_scroll_wheel(int clicks)
 {
 	_mouse._wheelDelta = clicks;
-	signal_moveable(Input::Moveable::MOUSE_WHEEL);
+	signal_moveable(Input::MoveableTerminal::MOUSE_WHEEL);
 }
 
 bool Input::is_pressable_pressed(Pressable p) const

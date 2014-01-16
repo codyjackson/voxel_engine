@@ -143,15 +143,29 @@ public:
 		NONE
 	};
 
-	enum class PressableEvents
+	enum class PressableEvent
 	{
-		ON_PRESSED,
-		WHILE_PRESSED,
-		ON_RELEASED,
-		WHILE_RELEASED
+		PRESSED,
+		RELEASED
 	};
 
-	enum class Moveable
+	class PressableTerminal
+	{
+	public:
+		struct Hasher{ size_t operator()(const PressableTerminal& t) const; };
+		PressableTerminal(Pressable p, PressableEvent e);
+
+		bool operator==(const PressableTerminal& rhs) const;
+
+		Pressable get_pressable() const;
+		PressableEvent get_event() const;
+
+	private:
+		Pressable _pressable;
+		PressableEvent _event;
+	};
+
+	enum class MoveableTerminal
 	{
 		MOUSE,
 		MOUSE_WHEEL
@@ -167,7 +181,7 @@ public:
 			{
 				const auto hashAccumulateModifier = [](const size_t& l, const Pressable& r) {return l ^ std::hash<size_t>()(static_cast<size_t>(r)); };
 				const size_t modifiersHash = std::accumulate(std::begin(s._modifiers), std::end(s._modifiers), static_cast<size_t>(0), hashAccumulateModifier);
-				const size_t terminalHash = std::hash<size_t>()(static_cast<size_t>(s._terminal));
+				const size_t terminalHash = std::hash<TERMINAL_TYPE>()(s._terminal);
 
 				return modifiersHash ^ terminalHash;
 			}
@@ -212,8 +226,8 @@ public:
 		TERMINAL_TYPE _terminal;
 	};
 
-	typedef Combo<Pressable> PressableCombo;
-	typedef Combo<Moveable> MoveableCombo;
+	typedef Combo<PressableTerminal> PressableCombo;
+	typedef Combo<MoveableTerminal> MoveableCombo;
 
 	class Mouse
 	{
@@ -253,7 +267,7 @@ private:
 	};
 
 	void prepare_for_updates();
-	void update(Pressable terminal, PressableState state);
+	void update(Pressable pressable, PressableState state);
 	void update_mouse_locked_position(const glm::ivec2& lockedPosition, const glm::ivec2& movedPosition);
 	void update_mouse_position(const glm::ivec2& xy);
 	void update_mouse_scroll_wheel(int clicks);
@@ -261,19 +275,33 @@ private:
 	void invoke_bound_callback(const PressableCombo& combo);
 	void invoke_bound_callback(const MoveableCombo& combo);
 
-	void signal_key_pressed(Pressable t);
-	void signal_moveable(Moveable m);
+	void signal_pressable(PressableTerminal t);
+	void signal_moveable(MoveableTerminal m);
 
 	bool is_pressable_pressed(Pressable p) const;
 	bool are_modifiers_pressed(const std::array<Pressable, 3>& modifiers) const;
 
 	Mouse _mouse;
 
-	std::unordered_map<Pressable, std::vector<PressableCombo>> _pressableTerminalToCombos;
-	std::unordered_map<Moveable, std::vector<MoveableCombo>> _moveableTerminalToCombos;
+	std::unordered_map<PressableTerminal, std::vector<PressableCombo>, PressableTerminal::Hasher> _pressableTerminalToCombos;
+	std::unordered_map<MoveableTerminal, std::vector<MoveableCombo>> _moveableTerminalToCombos;
 
 	std::unordered_map<PressableCombo, std::function<void(Input&)>, PressableCombo::Hasher> _pressableComboToCallback;
 	std::unordered_map<MoveableCombo, std::function<void(Input&)>, MoveableCombo::Hasher> _moveableComboToCallback;
 
 	std::unordered_map<Pressable, PressableState> _pressableToKeyState;
 };
+
+namespace std
+{
+	template<>
+	struct hash<Input::PressableTerminal>
+	{
+		size_t operator()(const Input::PressableTerminal& x) const
+		{
+			const size_t pressableHash = std::hash<size_t>()(static_cast<size_t>(x.get_pressable()));
+			const size_t eventHash = std::hash<size_t>()(static_cast<size_t>(x.get_event()));
+			return  pressableHash ^ eventHash;
+		}
+	};
+}
