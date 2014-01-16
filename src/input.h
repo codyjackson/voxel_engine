@@ -234,8 +234,8 @@ public:
 	};
 
 	const Mouse& mouse() const;
-	void on(const PressableCombo& combo, const std::function<void()>& callback);
-	void on(const MoveableCombo& combo, const std::function<void()>& callback);
+	void on(const PressableCombo& combo, const std::function<void(Input&)>& callback);
+	void on(const MoveableCombo& combo, const std::function<void(Input&)>& callback);
 
 private:
 	friend class Window;
@@ -246,16 +246,16 @@ private:
 		DOWN
 	};
 
-	void tick();
+	void prepare_for_updates();
 	void update(Pressable terminal, PressableState state);
 	void update_mouse_position(const glm::ivec2& xy);
 	void update_mouse_scroll_wheel(int clicks);
 
-	void invoke_bound_callback(const PressableCombo& combo) const;
-	void invoke_bound_callback(const MoveableCombo& combo) const;
+	void invoke_bound_callback(const PressableCombo& combo);
+	void invoke_bound_callback(const MoveableCombo& combo);
 
-	void signal_key_pressed(Pressable t) const;
-	void signal_moveable(Moveable m) const;
+	void signal_key_pressed(Pressable t);
+	void signal_moveable(Moveable m);
 
 	bool is_pressable_pressed(Pressable p) const;
 	bool are_modifiers_pressed(const std::array<Pressable, 3>& modifiers) const;
@@ -265,8 +265,8 @@ private:
 	std::unordered_map<Pressable, std::vector<PressableCombo>> _pressableTerminalToCombos;
 	std::unordered_map<Moveable, std::vector<MoveableCombo>> _moveableTerminalToCombos;
 
-	std::unordered_map<PressableCombo, std::function<void()>, PressableCombo::Hasher> _pressableComboToCallback;
-	std::unordered_map<MoveableCombo, std::function<void()>, MoveableCombo::Hasher> _moveableComboToCallback;
+	std::unordered_map<PressableCombo, std::function<void(Input&)>, PressableCombo::Hasher> _pressableComboToCallback;
+	std::unordered_map<MoveableCombo, std::function<void(Input&)>, MoveableCombo::Hasher> _moveableComboToCallback;
 
 	std::unordered_map<Pressable, PressableState> _pressableToKeyState;
 };

@@ -34,7 +34,7 @@ class Window
 
 		void open();
 		const bool is_open() const;
-		void poll_events() const;
+		void tick();
 
 		static std::unordered_map<GLFWwindow*, Window*> _glfwWindowToWindowMappingForStaticCallbacks;
 		Input _input;

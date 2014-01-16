@@ -14,8 +14,16 @@ int main()
 		window.update_height(768);
 		window.update_title("Voxel Engine");
 
-		const auto combo = Input::MoveableCombo(Input::Pressable::LEFT_CONTROL, Input::Moveable::MOUSE_WHEEL);
-		window.input().on(combo, [](){std::cout << "test" << std::endl; });
+		const auto mouseMove = Input::MoveableCombo(Input::Moveable::MOUSE);
+		window.input().on(mouseMove, [](Input& in){
+			auto m = in.mouse().get_position();
+			std::cout << m.x << " " << m.y << std::endl; 
+		});
+
+		const auto scrollMove = Input::MoveableCombo(Input::Moveable::MOUSE_WHEEL);
+		window.input().on(scrollMove, [](Input& in){
+			std::cout << in.mouse().get_wheel_delta() << std::endl;
+		});
 	};
 
 	Orientation orientation;
@@ -32,7 +40,7 @@ int main()
 
 		glMatrixMode(GL_PROJECTION);
 		glLoadIdentity();
-		glMultMatrixf(glm::value_ptr(camera.get_projection_matrix()));
+		//glMultMatrixf(glm::value_ptr(camera.get_projection_matrix()));
 
 		glMatrixMode(GL_MODELVIEW);
 		glLoadIdentity();

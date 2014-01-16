@@ -7,6 +7,6 @@ MainLoop::MainLoop(const std::function<void (Window&)>& onInitialize, const std:
 	while(window.is_open())
 	{
 		onIteration(window);
-		window.poll_events();
+		window.tick();
 	}
 }

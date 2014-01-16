@@ -93,8 +93,9 @@ const bool Window::is_open() const
 	return !glfwWindowShouldClose(_window);
 }
 
-void Window::poll_events() const
+void Window::tick()
 {
+	_input.prepare_for_updates();
 	glfwPollEvents();
 }
 
