@@ -11,63 +11,57 @@
 #include <iostream>
 #include <stdexcept>
 
-template<int SIDE_LENGTH>
+template<int VOXELS_PER_SIDE>
 class Chunk
 {
 public:
-	Chunk(const glm::vec3 topLeftFront)
-		:_topLeftFront(topLeftFront)
+	Chunk(const glm::vec3 topLeftFront, float sideLength)
+		:_topLeftFront(topLeftFront), _scalingFactor(sideLength/static_cast<float>(VOXELS_PER_SIDE))
 	{
-		for(int x = 0; x < SIDE_LENGTH; ++x)
-			for(int y = 0; y < SIDE_LENGTH; ++y)
-				for(int z = 0; z < SIDE_LENGTH; ++z)
-					_voxels[x][y][z] = y == 0 ? Color(255, 0, 0, 255) : Color::INVISIBLE;
+		for(int x = 0; x < VOXELS_PER_SIDE; ++x)
+			for(int y = 0; y < VOXELS_PER_SIDE; ++y)
+				for(int z = 0; z < VOXELS_PER_SIDE; ++z)
+					_voxels[x][y][z] =  Color(255, 0, 0, 255);
 
 		_mesh = generate_mesh();
 	}
 
 	void draw(const glm::mat4& projectionView)
 	{
+		glPushMatrix();
+		glTranslatef(_topLeftFront.x, _topLeftFront.y, _topLeftFront.z);
+		glScalef(_scalingFactor, _scalingFactor, _scalingFactor);
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-			glLineWidth(8);
+			glLineWidth(2);
 			glColor3f(0,0,0);
-			draw_mesh();
-		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+			glBegin(GL_QUADS);
+			_mesh.draw_without_color();
+			glEnd();
+		glPolygonMode(GL_FRONT, GL_FILL);
 
 		glEnable(GL_POLYGON_OFFSET_FILL);
 		glPolygonOffset(1.0, 1.0);
-			glColor3f(1,1,1);
-			draw_mesh();
+			glBegin(GL_QUADS);
+			_mesh.draw_with_color();
+			glEnd();
 		glDisable(GL_POLYGON_OFFSET_FILL);
+		glPopMatrix();
 	}
 
 	void show_voxel(const glm::uvec3& position, const Color& color){}
 	void hide_voxel(const glm::uvec3& position){}
 
 private:
-	void draw_mesh() const
-	{
-		glPushMatrix();
-		glScalef(0.05f, 0.05f, 0.05f);
-
-		glBegin(GL_QUADS);
-		_mesh.draw();
-		glEnd();
-
-		glPopMatrix();
-	}
-
-private:
 	class Voxel
 	{
 	public:
-		Voxel(const Chunk<SIDE_LENGTH>& chunk, int x, int y, int z)
+		Voxel(const Chunk<VOXELS_PER_SIDE>& chunk, int x, int y, int z)
 			: _chunk(chunk), _x(x), _y(y), _z(z)
 		{}
 
-		glm::vec3 get_top_left() const
+		glm::vec3 get_model_top_left_front() const
 		{
-			return glm::vec3(_x, _y, _z) + _chunk._topLeftFront;
+			return glm::vec3(_x, -_y, -_z);
 		}
 
 		Color get_color() const
@@ -89,21 +83,21 @@ private:
 
 		bool is_bottom_occluded() const
 		{
-			if(_y == (SIDE_LENGTH-1))
+			if(_y == (VOXELS_PER_SIDE-1))
 				return false;
 			return Voxel(_chunk, _x, _y+1, _z).is_visible();
 		}
 
 		bool is_front_occluded() const
 		{
-			if(_z == 0)
+			if (_z == 0)
 				return false;
 			return Voxel(_chunk, _x, _y, _z-1).is_visible();
 		}
 
 		bool is_back_occluded() const
 		{
-			if(_z == (SIDE_LENGTH-1))
+			if (_z == (VOXELS_PER_SIDE - 1))
 				return false;
 			return Voxel(_chunk, _x, _y, _z+1).is_visible();
 		}
@@ -117,7 +111,7 @@ private:
 
 		bool is_right_occluded() const
 		{
-			if(_x == (SIDE_LENGTH-1))
+			if(_x == (VOXELS_PER_SIDE-1))
 				return false;
 			return Voxel(_chunk, _x+1, _y, _z).is_visible();
 		}
@@ -129,18 +123,18 @@ private:
 				return m;
 
 			if(!is_front_occluded())
-				m.push_back(Quad::generate_xy_quad(get_color(), get_top_left(), Quad::ClockWise()));
+				m.push_back(Quad::generate_xy_quad(get_color(), get_model_top_left_front(), Quad::CounterClockWise()));
 			if(!is_top_occluded())
-				m.push_back(Quad::generate_xz_quad(get_color(), get_top_left(), Quad::ClockWise()));
+				m.push_back(Quad::generate_xz_quad(get_color(), get_model_top_left_front(), Quad::CounterClockWise()));
 			if(!is_left_occluded())
-				m.push_back(Quad::generate_yz_quad(get_color(), get_top_left(), Quad::ClockWise()));
+				m.push_back(Quad::generate_yz_quad(get_color(), get_model_top_left_front(), Quad::CounterClockWise()));
 
 			if(!is_back_occluded())
-				m.push_back(Quad::generate_xy_quad(get_color(), get_top_left()+Constants::Vec3::forward, Quad::CounterClockWise()));
+				m.push_back(Quad::generate_xy_quad(get_color(), get_model_top_left_front() + Constants::Vec3::forward, Quad::ClockWise()));
 			if(!is_bottom_occluded())
-				m.push_back(Quad::generate_xz_quad(get_color(), get_top_left()+Constants::Vec3::down, Quad::CounterClockWise()));
+				m.push_back(Quad::generate_xz_quad(get_color(), get_model_top_left_front() + Constants::Vec3::down, Quad::ClockWise()));
 			if(!is_right_occluded())
-				m.push_back(Quad::generate_yz_quad(get_color(), get_top_left()+Constants::Vec3::right, Quad::CounterClockWise()));
+				m.push_back(Quad::generate_yz_quad(get_color(), get_model_top_left_front() + Constants::Vec3::right, Quad::ClockWise()));
 
 			return m;
 		}
@@ -161,7 +155,7 @@ private:
 		}
 
 	private:
-		const Chunk<SIDE_LENGTH>& _chunk;
+		const Chunk<VOXELS_PER_SIDE>& _chunk;
 		const int _x;
 		const int _y;
 		const int _z;
@@ -169,9 +163,9 @@ private:
 
 	void for_each(const std::function<void (const Voxel&)>& f) const
 	{
-		for(int x = 0; x < SIDE_LENGTH; ++x)
-			for(int y = 0; y < SIDE_LENGTH; ++y)
-				for(int z = 0; z < SIDE_LENGTH; ++z)
+		for(int x = 0; x < VOXELS_PER_SIDE; ++x)
+			for(int y = 0; y < VOXELS_PER_SIDE; ++y)
+				for(int z = 0; z < VOXELS_PER_SIDE; ++z)
 					f(Voxel(*this, x, y, z));
 	}
 
@@ -192,7 +186,8 @@ private:
 		return mesh;
 	}
 
-	std::array<std::array<std::array<Color, SIDE_LENGTH>, SIDE_LENGTH>, SIDE_LENGTH> _voxels;
+	std::array<std::array<std::array<Color, VOXELS_PER_SIDE>, VOXELS_PER_SIDE>, VOXELS_PER_SIDE> _voxels;
 	glm::vec3 _topLeftFront;
+	float _scalingFactor;
 	Mesh _mesh;
 };
