@@ -2,6 +2,7 @@
 #include "./../constants/vector.h"
 
 Orientation::Orientation()
+:_forward(Constants::Vec4::forward), _right(Constants::Vec4::right), _up(Constants::Vec4::up)
 {}
 
 void Orientation::rotate(const glm::vec3& axis, const float degreesOfRotation)
