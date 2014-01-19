@@ -44,6 +44,7 @@
     </ClInclude>
     <ClInclude Include="src\rendering\camera.h" />
     <ClInclude Include="src\input.h" />
+    <ClInclude Include="src\units.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\rendering\color.cpp">

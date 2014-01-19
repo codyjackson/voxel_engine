@@ -21,6 +21,7 @@
     <ClInclude Include="src\rendering\quad.h" />
     <ClInclude Include="src\rendering\vertex.h" />
     <ClInclude Include="src\spatial\orientation.h" />
+    <ClInclude Include="src\units.h" />
     <ClInclude Include="src\window.h" />
   </ItemGroup>
   <ItemGroup>
