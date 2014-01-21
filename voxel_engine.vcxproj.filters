@@ -45,6 +45,10 @@
     <ClInclude Include="src\rendering\camera.h" />
     <ClInclude Include="src\input.h" />
     <ClInclude Include="src\units.h" />
+    <ClInclude Include="src\world.h" />
+    <ClInclude Include="src\spatial\transform.h" />
+    <ClInclude Include="src\rendering\renderer.h" />
+    <ClInclude Include="src\spatial\intersection.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\rendering\color.cpp">
