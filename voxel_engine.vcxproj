@@ -21,12 +21,13 @@
     <ClInclude Include="src\rendering\quad.h" />
     <ClInclude Include="src\rendering\renderer.h" />
     <ClInclude Include="src\rendering\vertex.h" />
+    <ClInclude Include="src\spatial\axially_aligned\plane.h" />
     <ClInclude Include="src\spatial\intersection.h" />
     <ClInclude Include="src\spatial\orientation.h" />
+    <ClInclude Include="src\spatial\ray.h" />
     <ClInclude Include="src\spatial\transform.h" />
     <ClInclude Include="src\units.h" />
     <ClInclude Include="src\window.h" />
-    <ClInclude Include="src\world.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\constants\vector.cpp" />
@@ -38,6 +39,7 @@
     <ClCompile Include="src\rendering\mesh.cpp" />
     <ClCompile Include="src\rendering\quad.cpp" />
     <ClCompile Include="src\rendering\vertex.cpp" />
+    <ClCompile Include="src\spatial\axially_aligned\plane.cpp" />
     <ClCompile Include="src\spatial\orientation.cpp" />
     <ClCompile Include="src\window.cpp" />
   </ItemGroup>

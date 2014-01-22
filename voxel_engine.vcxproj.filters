@@ -45,10 +45,11 @@
     <ClInclude Include="src\rendering\camera.h" />
     <ClInclude Include="src\input.h" />
     <ClInclude Include="src\units.h" />
-    <ClInclude Include="src\world.h" />
     <ClInclude Include="src\spatial\transform.h" />
     <ClInclude Include="src\rendering\renderer.h" />
     <ClInclude Include="src\spatial\intersection.h" />
+    <ClInclude Include="src\spatial\ray.h" />
+    <ClInclude Include="src\spatial\axially_aligned\plane.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\rendering\color.cpp">
@@ -80,5 +81,6 @@
     </ClCompile>
     <ClCompile Include="src\rendering\camera.cpp" />
     <ClCompile Include="src\input.cpp" />
+    <ClCompile Include="src\spatial\axially_aligned\plane.cpp" />
   </ItemGroup>
 </Project>

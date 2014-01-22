@@ -1,45 +1,39 @@
 #pragma once
 
-template<typename OBJECT_OF_INTEREST_TYPE>
-class Intersection
+#include <boost/optional/optional.hpp>
+
+template<typename INTERSECTED_TYPE>
+class NakedIntersection
 {
 public:
-	Intersection()
-		:_intersected(false)
+	NakedIntersection(float distanceFromOrigin, const INTERSECTED_TYPE& intersected)
+		:_distanceFromOrigin(distanceFromOrigin), _intersected()
 	{}
 
-	Intersection(const glm::vec3& pointOfIntersection, const OBJECT_OF_INTEREST_TYPE& intersectedObject)
-		:_intersected(true), _pointOfIntersection(pointOfIntersection), _intersectedObject(intersectedObject)
+	NakedIntersection()
 	{}
 
-	bool operator bool() const
+	const INTERSECTED_TYPE get_object_of_interest() const
 	{
 		return _intersected;
 	}
 
-	const glm::vec3& get_point_of_intersection() const
+	INTERSECTED_TYPE get_object_of_interest()
 	{
 		return _intersected;
 	}
 
-	glm::vec3& get_point_of_intersection()
+	float get_distance_from_origin() const
 	{
-		return _intersected;
+		return _distanceFromOrigin;
 	}
 
-	const OBJECT_OF_INTEREST_TYPE& get_object_of_interest() const
-	{
-		return _objectOfInterest;
-	}
 
-	OBJECT_OF_INTEREST_TYPE& get_object_of_interest()
-	{
-		return _objectOfInterest;
-	}
 
 private:
-	bool _intersected;
 	float _distanceFromOrigin;
-	glm::vec3 _pointOfIntersection;
-	OBJECT_OF_INTEREST_TYPE& _objectOfInterest;
+	INTERSECTED_TYPE _intersected;
 };
+
+template<typename INTERSECTED_TYPE>
+using Intersection = NakedIntersection<INTERSECTED_TYPE>;
