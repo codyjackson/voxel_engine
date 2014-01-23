@@ -41,6 +41,7 @@
     <ClCompile Include="src\rendering\vertex.cpp" />
     <ClCompile Include="src\spatial\axially_aligned\plane.cpp" />
     <ClCompile Include="src\spatial\orientation.cpp" />
+    <ClCompile Include="src\spatial\transform.cpp" />
     <ClCompile Include="src\window.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
