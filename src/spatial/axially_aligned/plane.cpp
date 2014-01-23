@@ -18,7 +18,7 @@ namespace AxiallyAligned
 	Intersection<Plane> Plane::find_intersection_for_components(float originComponent, float directionComponent) const
 	{
 		if (_constant == originComponent)
-			return Intersection<Plane>(NakedIntersection<Plane>(0.0f, *this));
+			return make_intersection(0.0f, *this);
 
 		if (_constant == directionComponent)
 			return Intersection<Plane>();
