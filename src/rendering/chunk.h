@@ -31,20 +31,23 @@ public:
 		glPushMatrix();
 		glTranslatef(_topLeftFront.x, _topLeftFront.y, _topLeftFront.z);
 		glScalef(_scalingFactor, _scalingFactor, _scalingFactor);
-		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-			glLineWidth(2);
-			glColor3f(0,0,0);
-			glBegin(GL_QUADS);
-			_mesh.draw_without_color();
-			glEnd();
-		glPolygonMode(GL_FRONT, GL_FILL);
+		
 
+		glPolygonMode(GL_FRONT, GL_FILL);
 		glEnable(GL_POLYGON_OFFSET_FILL);
 		glPolygonOffset(1.0, 1.0);
 			glBegin(GL_QUADS);
 			_mesh.draw_with_color();
 			glEnd();
 		glDisable(GL_POLYGON_OFFSET_FILL);
+
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+		glLineWidth(1);
+		glColor3f(0, 0, 0);
+		glBegin(GL_QUADS);
+		_mesh.draw_without_color();
+		glEnd();
+
 		glPopMatrix();
 	}
 

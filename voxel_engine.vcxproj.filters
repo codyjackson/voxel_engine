@@ -83,6 +83,7 @@
     <ClCompile Include="src\rendering\camera.cpp" />
     <ClCompile Include="src\input.cpp" />
     <ClCompile Include="src\spatial\axially_aligned\plane.cpp" />
+    <ClCompile Include="src\spatial\transform.cpp" />
     <ClCompile Include="src\spatial\axially_aligned\voxel.cpp" />
     <ClCompile Include="src\spatial\ray.cpp" />
   </ItemGroup>
