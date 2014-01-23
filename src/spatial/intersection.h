@@ -2,12 +2,28 @@
 
 #include <boost/optional/optional.hpp>
 
+class SimpleIntersection
+{
+public:
+	SimpleIntersection(float distanceFromOrigin)
+		:_distanceFromOrigin(distanceFromOrigin)
+	{}
+
+	float get_distance_from_origin() const
+	{
+		return _distanceFromOrigin;
+	}
+
+private:
+	float _distanceFromOrigin;
+};
+
 template<typename INTERSECTED_TYPE>
-class NakedIntersection
+class NakedIntersection : public SimpleIntersection
 {
 public:
 	NakedIntersection(float distanceFromOrigin, const INTERSECTED_TYPE& intersected)
-		:_distanceFromOrigin(distanceFromOrigin), _intersected()
+		:SimpleIntersection(distanceFromOrigin), _intersected(intersected)
 	{}
 
 	NakedIntersection()
@@ -23,17 +39,10 @@ public:
 		return _intersected;
 	}
 
-	float get_distance_from_origin() const
-	{
-		return _distanceFromOrigin;
-	}
-
-
-
 private:
 	float _distanceFromOrigin;
 	INTERSECTED_TYPE _intersected;
 };
 
 template<typename INTERSECTED_TYPE>
-using Intersection = NakedIntersection<INTERSECTED_TYPE>;
+using Intersection = boost::optional<NakedIntersection<INTERSECTED_TYPE>>;

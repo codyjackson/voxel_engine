@@ -12,14 +12,13 @@ namespace AxiallyAligned
 			return find_intersection_for_components(r.origin().z, r.direction().z);
 		if (_span == Span::XZ)
 			return find_intersection_for_components(r.origin().y, r.direction().y);
-		if (_span == Span::YZ)
-			return find_intersection_for_components(r.origin().x, r.direction().x);
+		return find_intersection_for_components(r.origin().x, r.direction().x);
 	}
 
 	Intersection<Plane> Plane::find_intersection_for_components(float originComponent, float directionComponent) const
 	{
 		if (_constant == originComponent)
-			return Intersection<Plane>(0.0f, *this);
+			return Intersection<Plane>(NakedIntersection<Plane>(0.0f, *this));
 
 		if (_constant == directionComponent)
 			return Intersection<Plane>();
@@ -28,6 +27,6 @@ namespace AxiallyAligned
 			return Intersection<Plane>();
 
 		const float scalar = (_constant - originComponent) / directionComponent;
-		return scalar < 0 ? Intersection<Plane>() : Intersection<Plane>(scalar, *this);
+		return scalar < 0 ? Intersection<Plane>() : Intersection<Plane>(NakedIntersection<Plane>(scalar, *this));
 	}
 }

@@ -50,6 +50,7 @@
     <ClInclude Include="src\spatial\intersection.h" />
     <ClInclude Include="src\spatial\ray.h" />
     <ClInclude Include="src\spatial\axially_aligned\plane.h" />
+    <ClInclude Include="src\spatial\axially_aligned\voxel.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\rendering\color.cpp">
@@ -82,5 +83,7 @@
     <ClCompile Include="src\rendering\camera.cpp" />
     <ClCompile Include="src\input.cpp" />
     <ClCompile Include="src\spatial\axially_aligned\plane.cpp" />
+    <ClCompile Include="src\spatial\axially_aligned\voxel.cpp" />
+    <ClCompile Include="src\spatial\ray.cpp" />
   </ItemGroup>
 </Project>
