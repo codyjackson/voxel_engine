@@ -82,5 +82,6 @@
     <ClCompile Include="src\rendering\camera.cpp" />
     <ClCompile Include="src\input.cpp" />
     <ClCompile Include="src\spatial\axially_aligned\plane.cpp" />
+    <ClCompile Include="src\spatial\transform.cpp" />
   </ItemGroup>
 </Project>
