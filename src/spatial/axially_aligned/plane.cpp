@@ -27,6 +27,6 @@ namespace AxiallyAligned
 			return Intersection<Plane>();
 
 		const float scalar = (_constant - originComponent) / directionComponent;
-		return scalar < 0 ? Intersection<Plane>() : Intersection<Plane>(NakedIntersection<Plane>(scalar, *this));
+		return scalar < 0 ? Intersection<Plane>() : make_intersection<Plane>(scalar, *this);
 	}
 }

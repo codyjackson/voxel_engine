@@ -5,11 +5,11 @@
 class SimpleIntersection
 {
 public:
-	SimpleIntersection(float distanceFromOrigin)
+	inline SimpleIntersection(float distanceFromOrigin)
 		:_distanceFromOrigin(distanceFromOrigin)
 	{}
 
-	float get_distance_from_origin() const
+	inline float get_distance_from_origin() const
 	{
 		return _distanceFromOrigin;
 	}
@@ -46,3 +46,9 @@ private:
 
 template<typename INTERSECTED_TYPE>
 using Intersection = boost::optional<NakedIntersection<INTERSECTED_TYPE>>;
+
+template<typename INTERSECTED_TYPE>
+inline Intersection<INTERSECTED_TYPE> make_intersection(float distanceFromOrigin, const INTERSECTED_TYPE& intersected)
+{
+	return Intersection<INTERSECTED_TYPE>(NakedIntersection<INTERSECTED_TYPE>(distanceFromOrigin, intersected));
+}
