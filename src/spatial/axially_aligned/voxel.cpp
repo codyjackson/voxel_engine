@@ -19,7 +19,7 @@ namespace AxiallyAligned
 		if (const auto intersection = r.direction().z < 0 ? get_front_face_intersection(r) : get_back_face_intersection(r))
 			return make_intersection<Voxel>(intersection->get_distance_from_origin(), *this);
 
-		return Intersection<Voxel>();
+		return make_intersection<Voxel>();
 	}
 	
 
@@ -34,7 +34,7 @@ namespace AxiallyAligned
 		if (is_between(pointOfIntersection.x, left(), right()) && is_between(pointOfIntersection.z, front(), back()))
 			return make_intersection<Plane>(intersection->get_distance_from_origin(), p);
 
-		return Intersection<Plane>();
+		return make_intersection<Plane>();
 	}
 
 	Intersection<Plane> Voxel::get_bottom_face_intersection(const Ray& r) const
@@ -48,7 +48,7 @@ namespace AxiallyAligned
 		if (is_between(pointOfIntersection.x, left(), right()) && is_between(pointOfIntersection.z, front(), back()))
 			return make_intersection<Plane>(intersection->get_distance_from_origin(), p);
 
-		return Intersection<Plane>();
+		return make_intersection<Plane>();
 	}
 
 	Intersection<Plane> Voxel::get_left_face_intersection(const Ray& r) const
@@ -62,7 +62,7 @@ namespace AxiallyAligned
 		if (is_between(pointOfIntersection.y, top(), bottom()) && is_between(pointOfIntersection.z, front(), back()))
 			return make_intersection<Plane>(intersection->get_distance_from_origin(), p);
 
-		return Intersection<Plane>();
+		return make_intersection<Plane>();
 	}
 
 	Intersection<Plane> Voxel::get_right_face_intersection(const Ray& r) const
@@ -76,7 +76,7 @@ namespace AxiallyAligned
 		if (is_between(pointOfIntersection.y, top(), bottom()) && is_between(pointOfIntersection.z, front(), back()))
 			return make_intersection<Plane>(intersection->get_distance_from_origin(), p);
 
-		return Intersection<Plane>();
+		return make_intersection<Plane>();
 	}
 
 	Intersection<Plane> Voxel::get_front_face_intersection(const Ray& r) const
@@ -90,7 +90,7 @@ namespace AxiallyAligned
 		if (is_between(pointOfIntersection.x, left(), right()) && is_between(pointOfIntersection.y, top(), bottom()))
 			return make_intersection<Plane>(intersection->get_distance_from_origin(), p);
 
-		return Intersection<Plane>();
+		return make_intersection<Plane>();
 	}
 
 	Intersection<Plane> Voxel::get_back_face_intersection(const Ray& r) const
@@ -104,6 +104,6 @@ namespace AxiallyAligned
 		if (is_between(pointOfIntersection.x, left(), right()) && is_between(pointOfIntersection.y, top(), bottom()))
 			return make_intersection<Plane>(intersection->get_distance_from_origin(), p);
 
-		return Intersection<Plane>();
+		return make_intersection<Plane>();
 	}
 }

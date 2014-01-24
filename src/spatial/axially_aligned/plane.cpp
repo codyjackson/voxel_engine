@@ -21,12 +21,12 @@ namespace AxiallyAligned
 			return make_intersection(0.0f, *this);
 
 		if (_constant == directionComponent)
-			return Intersection<Plane>();
+			return make_intersection<Plane>();
 
 		if (!(directionComponent || _constant))
 			return Intersection<Plane>();
 
 		const float scalar = (_constant - originComponent) / directionComponent;
-		return scalar < 0 ? Intersection<Plane>() : make_intersection<Plane>(scalar, *this);
+		return scalar < 0 ? make_intersection<Plane>() : make_intersection<Plane>(scalar, *this);
 	}
 }
