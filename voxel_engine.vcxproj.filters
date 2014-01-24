@@ -51,6 +51,7 @@
     <ClInclude Include="src\spatial\ray.h" />
     <ClInclude Include="src\spatial\axially_aligned\plane.h" />
     <ClInclude Include="src\spatial\axially_aligned\voxel.h" />
+    <ClInclude Include="src\utility\functional.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\rendering\color.cpp">

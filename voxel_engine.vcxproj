@@ -28,6 +28,7 @@
     <ClInclude Include="src\spatial\ray.h" />
     <ClInclude Include="src\spatial\transform.h" />
     <ClInclude Include="src\units.h" />
+    <ClInclude Include="src\utility\functional.h" />
     <ClInclude Include="src\window.h" />
   </ItemGroup>
   <ItemGroup>
