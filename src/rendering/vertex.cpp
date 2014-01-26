@@ -1,6 +1,6 @@
 #include "vertex.h"
-#include <Windows.h>
-#include <gl\GL.h>
+
+#include <GLFW/glfw3.h>
 
 Vertex::Vertex(const glm::vec4& p, const Color& c)
 :_position(p), _color(c)

@@ -2,10 +2,10 @@
 
 #include "rendering/camera.h"
 #include "rendering/chunk.h"
+#include "rendering/renderer.h"
 #include "units.h"
 
 #include <glm/glm.hpp>
-#include <glm/gtc/type_ptr.hpp> 
 #include <GLFW/glfw3.h>
 
 int main()
@@ -77,28 +77,18 @@ int main()
 		});
 	};
 
-	Chunk<16> chunk(glm::vec3(meters(4.0f), meters(-4.0f), meters(-6.0f)), meters(5.0f));
+	Chunk<16> chunk(glm::vec3(meters(4.0f), meters(-4.0f), meters(-6.0f)), meters(2.0f/16.0f));
 	
 	auto onIterate = [&](Window& window){
 		camera.position += metersPerSecondForward * camera.orientation.forward();
 		camera.position += metersPerSecondRight * camera.orientation.right();
-		glClearColor(0.0, 0.0, 0.0, 1.0);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		glMatrixMode(GL_PROJECTION);
-		glLoadIdentity();
-		glMultMatrixf(glm::value_ptr(camera.get_projection_matrix()));
-		glMultMatrixf(glm::value_ptr(camera.get_view_matrix()));
-
-		glMatrixMode(GL_MODELVIEW);
-		glLoadIdentity();
-		//glMultMatrixf(glm::value_ptr(camera.get_view_matrix()));
-
-		chunk.draw(glm::mat4());
-
-		window.draw();
+		Renderer::clear_screen();
+		Renderer::render(camera, chunk);
+		Renderer::render_wireframe(camera, chunk);
 	};
-	MainLoop loop(onInitialize, onIterate);
 
+
+	MainLoop loop(onInitialize, onIterate);
     return 0;
 }

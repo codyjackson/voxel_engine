@@ -11,8 +11,8 @@
 
 #include <array>
 #include <algorithm>
-#include <glm\glm.hpp>
-#include <gl\GL.h>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 #include <iostream>
 #include <limits>
 #include <stdexcept>
@@ -22,8 +22,8 @@ class Chunk
 {
 public:
 	static_assert(VOXELS_PER_SIDE && !(VOXELS_PER_SIDE & (VOXELS_PER_SIDE - 1)), "VOXELS_PER_SIDE must be a power of 2.");
-	Chunk(const glm::vec3 topLeftFront, float sideLength)
-		:_topLeftFront(topLeftFront), _scalingFactor(sideLength/static_cast<float>(VOXELS_PER_SIDE))
+	Chunk(const glm::vec3 topLeftFront, float voxelSideLength)
+		: _modelMatrix(glm::scale(glm::mat4(), glm::vec3(voxelSideLength, voxelSideLength, voxelSideLength)))
 	{
 		for(int x = 0; x < VOXELS_PER_SIDE; ++x)
 			for(int y = 0; y < VOXELS_PER_SIDE; ++y)
@@ -33,35 +33,29 @@ public:
 		_mesh = generate_mesh();
 	}
 
-	void draw(const glm::mat4& projectionView)
+	Mesh get_mesh() const
 	{
-		glPushMatrix();
-		glTranslatef(_topLeftFront.x, _topLeftFront.y, _topLeftFront.z);
-		glScalef(_scalingFactor, _scalingFactor, _scalingFactor);
-		
+		return _mesh;
+	}
 
-		glPolygonMode(GL_FRONT, GL_FILL);
-		glEnable(GL_POLYGON_OFFSET_FILL);
-		glPolygonOffset(1.0, 1.0);
-			glBegin(GL_QUADS);
-			_mesh.draw_with_color();
-			glEnd();
-		glDisable(GL_POLYGON_OFFSET_FILL);
-
-		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-		glLineWidth(1);
-		glColor3f(0, 0, 0);
-		glBegin(GL_QUADS);
-		_mesh.draw_without_color();
-		glEnd();
-
-		glPopMatrix();
+	glm::mat4 get_model_matrix() const
+	{
+		return _modelMatrix;
 	}
 
 	void show_voxel(const glm::uvec3& position, const Color& color){}
 	void hide_voxel(const glm::uvec3& position){}
 
 private:
+	Mesh generate_mesh() const
+	{
+		Mesh mesh;
+		reduce<Mesh>(mesh, [](Mesh& m, const Voxel& v){
+			m.concatenate(v.generate_mesh());
+		});
+		return mesh;
+	}
+
 	class Voxel
 	{
 	public:
@@ -126,29 +120,6 @@ private:
 			return Voxel(_chunk, _x+1, _y, _z).is_visible();
 		}
 
-		Mesh generate_mesh() const
-		{
-			Mesh m;
-			if(!is_visible())
-				return m;
-
-			if(!is_front_occluded())
-				m.push_back(Quad::generate_xy_quad(get_color(), get_model_top_left_front(), Quad::CounterClockWise()));
-			if(!is_top_occluded())
-				m.push_back(Quad::generate_xz_quad(get_color(), get_model_top_left_front(), Quad::CounterClockWise()));
-			if(!is_left_occluded())
-				m.push_back(Quad::generate_yz_quad(get_color(), get_model_top_left_front(), Quad::CounterClockWise()));
-
-			if(!is_back_occluded())
-				m.push_back(Quad::generate_xy_quad(get_color(), get_model_top_left_front() + Constants::Vec3::forward, Quad::ClockWise()));
-			if(!is_bottom_occluded())
-				m.push_back(Quad::generate_xz_quad(get_color(), get_model_top_left_front() + Constants::Vec3::down, Quad::ClockWise()));
-			if(!is_right_occluded())
-				m.push_back(Quad::generate_yz_quad(get_color(), get_model_top_left_front() + Constants::Vec3::right, Quad::ClockWise()));
-
-			return m;
-		}
-
 		int x() const
 		{
 			return _x;
@@ -162,6 +133,29 @@ private:
 		int z() const
 		{
 			return _z;
+		}
+
+		Mesh generate_mesh() const
+		{
+			Mesh m;
+			if (!is_visible())
+				return m;
+
+			if (!is_front_occluded())
+				m.push_back(Quad::generate_xy_quad(get_color(), get_model_top_left_front(), Quad::CounterClockWise()));
+			if (!is_top_occluded())
+				m.push_back(Quad::generate_xz_quad(get_color(), get_model_top_left_front(), Quad::CounterClockWise()));
+			if (!is_left_occluded())
+				m.push_back(Quad::generate_yz_quad(get_color(), get_model_top_left_front(), Quad::CounterClockWise()));
+
+			if (!is_back_occluded())
+				m.push_back(Quad::generate_xy_quad(get_color(), get_model_top_left_front() + Constants::Vec3::forward, Quad::ClockWise()));
+			if (!is_bottom_occluded())
+				m.push_back(Quad::generate_xz_quad(get_color(), get_model_top_left_front() + Constants::Vec3::down, Quad::ClockWise()));
+			if (!is_right_occluded())
+				m.push_back(Quad::generate_yz_quad(get_color(), get_model_top_left_front() + Constants::Vec3::right, Quad::ClockWise()));
+
+			return m;
 		}
 
 	private:
@@ -185,15 +179,6 @@ private:
 		for_each([&seed, &f](const Voxel& v){
 			f(seed, v);
 		});
-	}
-
-	Mesh generate_mesh() const
-	{
-		Mesh mesh;
-		reduce<Mesh>(mesh, [](Mesh& m, const Voxel& v){
-			m.concatenate(v.generate_mesh());
-		});
-		return mesh;
 	}
 
 	class Octree
@@ -320,7 +305,6 @@ private:
 	};
 
 	std::array<std::array<std::array<Color, VOXELS_PER_SIDE>, VOXELS_PER_SIDE>, VOXELS_PER_SIDE> _voxels;
-	glm::vec3 _topLeftFront;
-	float _scalingFactor;
+	glm::mat4 _modelMatrix;
 	Mesh _mesh;
 };
