@@ -84,7 +84,9 @@ int main()
 		Renderer::render(camera, chunk);
 
 		if (const auto intersection = chunk.find_nearest_intersection(r))
-			Renderer::render_wireframe(camera, chunk.get_model_matrix(), Color(0x06, 0x54, 0x71, 255), chunk.get_voxel_mesh(intersection->get_object_of_interest()));
+			Renderer::render_wireframe(camera, chunk.get_model_matrix(), Color(0xF2, 0xF2, 0xF2, 255), chunk.get_voxel_mesh(intersection->get_object_of_interest()));
+
+		Renderer::render_wireframe(camera, Color(0x0C, 0x22, 0x33, 255), chunk);
 	};
 
 
