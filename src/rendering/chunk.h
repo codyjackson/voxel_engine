@@ -76,7 +76,12 @@ public:
 	}
 
 	void show_voxel(const glm::uvec3& position, const Color& color){}
-	void hide_voxel(const glm::uvec3& position){}
+	void hide_voxel(const Intersected& indices)
+	{
+		const auto i = indices.get_indices();
+		_voxels[i.x][i.y][i.z] = Color(0, 0, 0, 0);
+		_mesh = generate_mesh();
+	}
 
 private:
 	Mesh generate_mesh() const
@@ -227,6 +232,9 @@ private:
 			{
 				if (is_leaf())
 				{
+					const auto i(get_indices());
+					if (!Voxel(_chunk, i.x, i.y, i.z).is_visible())
+						return make_intersection<Intersected>();
 					const auto intersection = get_bounding_voxel().find_intersection(r);
 					return intersection ? transform_intersection(intersection) : make_intersection<Intersected>();
 				}
@@ -251,10 +259,14 @@ private:
 			}
 
 		private:
+			glm::ivec3 get_indices() const
+			{
+				return glm::ivec3(_topLeftFront.x, -1.0f*_topLeftFront.y, -1.0f*_topLeftFront.z);
+			}
+
 			Intersection<Intersected> transform_intersection(const Intersection<AxiallyAligned::Voxel>& intersection) const
 			{
-				const glm::ivec3 indices(_topLeftFront.x, -1.0f*_topLeftFront.y, -1.0f*_topLeftFront.z);
-				return make_intersection(intersection->get_distance_from_origin(), Intersected(indices));
+				return make_intersection(intersection->get_distance_from_origin(), Intersected(get_indices()));
 			}
 
 			template<typename RETURN_TYPE>

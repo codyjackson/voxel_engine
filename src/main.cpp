@@ -15,6 +15,7 @@ int main()
 
 	float metersPerSecondForward = 0.0f;
 	float metersPerSecondRight = 0.0f;
+	Chunk<16> chunk(glm::vec3(meters(4.0f), meters(-4.0f), meters(-6.0f)), meters(2.0f / 16.0f));
 
 	auto onInitialize = [&](Window& window){
 		window.update_width(1024);
@@ -59,24 +60,20 @@ int main()
 			metersPerSecondRight = 0.0f;
 		});
 
-
-
-		window.input().on(Input::PressableTerminal(Input::Pressable::MOUSE_BUTTON_1, Input::PressableEvent::PRESSED), [](Input& in){
-			in.mouse().lock_movement();
-		});
-
-		window.input().on(Input::PressableTerminal(Input::Pressable::MOUSE_BUTTON_1, Input::PressableEvent::RELEASED), [](Input& in){
-			in.mouse().unlock_movement();
-		});
-
-		window.input().on(Input::MoveableCombo(Input::Pressable::MOUSE_BUTTON_1, Input::MoveableTerminal::MOUSE), [&](Input& in){
+		window.input().on(Input::MoveableCombo(Input::MoveableTerminal::MOUSE), [&](Input& in){
 			const auto delta = in.mouse().get_position_delta();
 			camera.orientation.rotate(Constants::Vec3::up, delta.x*0.15f);
 			camera.orientation.rotate(camera.orientation.right(), delta.y*0.2f);
 		});
-	};
 
-	Chunk<16> chunk(glm::vec3(meters(4.0f), meters(-4.0f), meters(-6.0f)), meters(2.0f/16.0f));
+		window.input().on(Input::PressableTerminal(Input::Pressable::MOUSE_BUTTON_2, Input::PressableEvent::RELEASED), [&](Input& in){
+			Ray r(camera.position, camera.orientation.forward());
+			if (const auto intersection = chunk.find_nearest_intersection(r))
+				chunk.hide_voxel(intersection->get_object_of_interest());
+		});
+
+		window.input().mouse().lock_movement();
+	};
 	
 	auto onIterate = [&](Window& window){
 		camera.position += metersPerSecondForward * camera.orientation.forward();
