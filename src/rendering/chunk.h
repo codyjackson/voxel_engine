@@ -34,16 +34,6 @@ public:
 		_mesh = generate_mesh();
 	}
 
-	Mesh get_mesh() const
-	{
-		return _mesh;
-	}
-
-	glm::mat4 get_model_matrix() const
-	{
-		return _modelMatrix;
-	}
-
 	class Intersected
 	{
 	public:
@@ -61,12 +51,28 @@ public:
 		glm::ivec3 _indices;
 	};
 
-	Intersection<int> find_nearest_intersection(const Ray& r)
+	Intersection<Intersected> find_nearest_intersection(const Ray& r)
 	{
 		const Ray localRay = r.transform_into_new_space(glm::transpose(get_model_matrix()));
 		if (auto intersection = _octree.find_nearest_intersection(localRay))
-			return make_intersection<int>(0, 0);
-		return make_intersection<int>();
+			return intersection;
+		return make_intersection<Intersected>();
+	}
+
+	Mesh get_mesh() const
+	{
+		return _mesh;
+	}
+
+	Mesh get_voxel_mesh(const Intersected& i) const
+	{
+		const auto indices = i.get_indices();
+		return Voxel(*this, indices.x, indices.y, indices.z).generate_mesh();
+	}
+
+	glm::mat4 get_model_matrix() const
+	{
+		return _modelMatrix;
 	}
 
 	void show_voxel(const glm::uvec3& position, const Color& color){}

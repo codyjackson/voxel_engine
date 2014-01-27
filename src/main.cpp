@@ -83,12 +83,12 @@ int main()
 		camera.position += metersPerSecondRight * camera.orientation.right();
 
 		Ray r(camera.position, camera.orientation.forward());
-		if (chunk.find_nearest_intersection(r))
-			std::cout << "HIT YO" << std::endl;
-
 		Renderer::clear_screen();
 		Renderer::render(camera, chunk);
-		Renderer::render_wireframe(camera, chunk);
+		
+
+		if (const auto intersection = chunk.find_nearest_intersection(r))
+			Renderer::render_wireframe(camera, chunk.get_model_matrix(), Color(0, 0, 0, 255), chunk.get_voxel_mesh(intersection->get_object_of_interest()));
 	};
 
 
