@@ -22,7 +22,6 @@ namespace AxiallyAligned
 		return make_intersection<Voxel>();
 	}
 	
-
 	Intersection<Plane> Voxel::get_top_face_intersection(const Ray& r) const
 	{
 		const Plane p(Plane::Span::XZ, top());

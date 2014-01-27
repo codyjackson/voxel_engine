@@ -239,7 +239,8 @@ private:
 					return intersection ? transform_intersection(intersection) : make_intersection<Intersected>();
 				}
 
-				if (!get_bounding_voxel().find_intersection(r))
+				const auto boundingVoxel = get_bounding_voxel();
+				if (!get_bounding_voxel().find_intersection(r) && !boundingVoxel.is_inside(r))
 					return make_intersection<Intersected>();
 
 				const auto findIntersection = [&r](const Node& n) {
