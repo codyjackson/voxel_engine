@@ -29,7 +29,7 @@ public:
 		for(int x = 0; x < VOXELS_PER_SIDE; ++x)
 			for(int y = 0; y < VOXELS_PER_SIDE; ++y)
 				for(int z = 0; z < VOXELS_PER_SIDE; ++z)
-					_voxels[x][y][z] =  Color(255, 0, 0, 255);
+					_voxels[x][y][z] = Color(0x0A, 0x91, 0xAB, 255);
 
 		_mesh = generate_mesh();
 	}
@@ -53,7 +53,7 @@ public:
 
 	Intersection<Intersected> find_nearest_intersection(const Ray& r)
 	{
-		const Ray localRay = r.transform_into_new_space(glm::transpose(get_model_matrix()));
+		const Ray localRay = r.transform_into_new_space(glm::inverse(get_model_matrix()));
 		if (auto intersection = _octree.find_nearest_intersection(localRay))
 			return intersection;
 		return make_intersection<Intersected>();
@@ -253,7 +253,8 @@ private:
 		private:
 			Intersection<Intersected> transform_intersection(const Intersection<AxiallyAligned::Voxel>& intersection) const
 			{
-				return make_intersection(intersection->get_distance_from_origin(), Intersected(_topLeftFront));
+				const glm::ivec3 indices(_topLeftFront.x, -1.0f*_topLeftFront.y, -1.0f*_topLeftFront.z);
+				return make_intersection(intersection->get_distance_from_origin(), Intersected(indices));
 			}
 
 			template<typename RETURN_TYPE>

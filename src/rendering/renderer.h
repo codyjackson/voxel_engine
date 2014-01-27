@@ -37,7 +37,7 @@ public:
 	template<typename T>
 	inline static void render_wireframe(const Camera& camera, const Color& color, const T& objectOfInterest)
 	{
-		render_wireframe(camera, objectOfInterest.get_model_matrix() color, objectOfInterest.get_model_matrix());
+		render_wireframe(camera, objectOfInterest.get_model_matrix(), color, objectOfInterest.get_mesh());
 	}
 
 	static void render_wireframe(const Camera& camera, const glm::mat4& modelMatrix, const Color& color, const Mesh& mesh)
