@@ -16,5 +16,5 @@ glm::mat4 Camera::get_view_matrix() const
 
 glm::mat4 Camera::get_projection_matrix() const
 {
-	return glm::perspective(90.0f, 1024.0f/768.0f, 0.1f, 1000.0f);
+	return glm::perspective(90.0f, 1024.0f/768.0f, 0.00001f, 1000.0f);
 }
