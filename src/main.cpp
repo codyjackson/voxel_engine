@@ -73,7 +73,6 @@ int main()
 			const auto delta = in.mouse().get_position_delta();
 			camera.orientation.rotate(Constants::Vec3::up, delta.x*0.15f);
 			camera.orientation.rotate(camera.orientation.right(), delta.y*0.2f);
-			std::cout << delta.x << " " << delta.y << std::endl;
 		});
 	};
 
@@ -82,6 +81,10 @@ int main()
 	auto onIterate = [&](Window& window){
 		camera.position += metersPerSecondForward * camera.orientation.forward();
 		camera.position += metersPerSecondRight * camera.orientation.right();
+
+		Ray r(camera.position, camera.orientation.forward());
+		if (chunk.find_nearest_intersection(r))
+			std::cout << "HIT YO" << std::endl;
 
 		Renderer::clear_screen();
 		Renderer::render(camera, chunk);

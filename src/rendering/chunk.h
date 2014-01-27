@@ -2,6 +2,7 @@
 
 #include "../constants/vector.h"
 #include "color.h"
+#include "../spatial/intersection.h"
 #include "mesh.h"
 
 #include "../spatial/axially_aligned/voxel.h"
@@ -20,10 +21,10 @@
 template<int VOXELS_PER_SIDE>
 class Chunk
 {
+static_assert(VOXELS_PER_SIDE && !(VOXELS_PER_SIDE & (VOXELS_PER_SIDE - 1)), "VOXELS_PER_SIDE must be a power of 2. This is necessary for the octree implementation.");
 public:
-	static_assert(VOXELS_PER_SIDE && !(VOXELS_PER_SIDE & (VOXELS_PER_SIDE - 1)), "VOXELS_PER_SIDE must be a power of 2.");
 	Chunk(const glm::vec3 topLeftFront, float voxelSideLength)
-		: _modelMatrix(glm::scale(glm::mat4(), glm::vec3(voxelSideLength, voxelSideLength, voxelSideLength)))
+		:_octree(*this), _modelMatrix(glm::scale(glm::mat4(), glm::vec3(voxelSideLength, voxelSideLength, voxelSideLength)))
 	{
 		for(int x = 0; x < VOXELS_PER_SIDE; ++x)
 			for(int y = 0; y < VOXELS_PER_SIDE; ++y)
@@ -41,6 +42,31 @@ public:
 	glm::mat4 get_model_matrix() const
 	{
 		return _modelMatrix;
+	}
+
+	class Intersected
+	{
+	public:
+		Intersected(const glm::ivec3& indices)
+			:_indices(indices)
+		{}
+
+		const glm::ivec3 get_indices() const
+		{
+			return _indices;
+		}
+
+	private:
+
+		glm::ivec3 _indices;
+	};
+
+	Intersection<int> find_nearest_intersection(const Ray& r)
+	{
+		const Ray localRay = r.transform_into_new_space(glm::transpose(get_model_matrix()));
+		if (auto intersection = _octree.find_nearest_intersection(localRay))
+			return make_intersection<int>(0, 0);
+		return make_intersection<int>();
 	}
 
 	void show_voxel(const glm::uvec3& position, const Color& color){}
@@ -187,41 +213,45 @@ private:
 		class Node
 		{
 		public:
-			Node(const Mesh& mesh, int voxelsPerSide, const glm::ivec3& topLeftRront)
-				:_mesh(mesh), _voxelsPerSide(voxelsPerSide), _topLeftFront(topLeftRront), _
+			Node(const Chunk<VOXELS_PER_SIDE>& chunk, int voxelsPerSide, const glm::ivec3& topLeftFront)
+				:_chunk(chunk), _voxelsPerSide(voxelsPerSide), _topLeftFront(topLeftFront)
 			{}
 
-			Intersection<Node> find_nearest_intersection(const Ray& r) const
+			Intersection<Intersected> find_nearest_intersection(const Ray& r) const
 			{
 				if (is_leaf())
 				{
-					const auto intersection = get_bounding_voxel().find_intersection();
-					return intersection ? transform_intersection(intersection) : make_intersection();
+					const auto intersection = get_bounding_voxel().find_intersection(r);
+					return intersection ? transform_intersection(intersection) : make_intersection<Intersected>();
 				}
 
-				if (!(const auto intersection = get_bounding_voxel().find_intersection()))
-					return make_intersection<Node>();
+				if (!get_bounding_voxel().find_intersection(r))
+					return make_intersection<Intersected>();
 
-				const auto findIntersection = std::bind(&Node::find_nearest_intersection, std::placeholders::_1, std::cref(r));
-				const auto intersections = map_children<Intersection<Node>>(findIntersection);
-
-				const auto seed = std::make_pair(std::numeric_limits<float>::infinity, make_intersection<Node>());
-				const auto findNearest = [](const std::pair<float, Intersection<Node>>& x, const Intersection<Node>& n){
-					const float distance = n->get_distance_from_origin();
-					return n && distance < x.first : std::make_pair(distance, n) : x;
+				const auto findIntersection = [&r](const Node& n) {
+					return n.find_nearest_intersection(r); 
 				};
-				const auto nearest = reduce(begin(intersections), end(intersections), seed, findNearest);
+				const auto intersections = map_children<Intersection<Intersected>>(findIntersection);
+
+				const auto findNearest = [](std::pair<float, Intersection<Intersected>> x, const Intersection<Intersected>& n){
+					if (!n)
+						return x;
+					const float distance = n->get_distance_from_origin();
+					return n && distance < x.first ? std::make_pair(distance, n) : x;
+				};
+				const auto seed = std::make_pair(std::numeric_limits<float>::max(), make_intersection<Intersected>());
+				const auto nearest = Functional::reduce(std::begin(intersections), std::end(intersections), seed, findNearest);
 				return nearest.second;
 			}
 
 		private:
-			static Intersection<Node> transform_intersection(const Intersection<AxiallyAligned::Voxel>& intersection)
+			Intersection<Intersected> transform_intersection(const Intersection<AxiallyAligned::Voxel>& intersection) const
 			{
-				return make_intersection(intersection->get_distance_from_origin(), *this);
+				return make_intersection(intersection->get_distance_from_origin(), Intersected(_topLeftFront));
 			}
 
 			template<typename RETURN_TYPE>
-			std::array<RETURN_TYPE, 8> map_children(const std::function<RETURN_TYPE (const Node&)>& f)
+			std::array<RETURN_TYPE, 8> map_children(const std::function<RETURN_TYPE (const Node&)>& f) const
 			{
 				return std::array<RETURN_TYPE, 8>{
 					f(get_top_left_front_child()),
@@ -242,68 +272,75 @@ private:
 
 			AxiallyAligned::Voxel get_bounding_voxel() const
 			{
-				return AxiallyAligned::Voxel(glm::vec3(_topLeftFront), _voxelsPerSide);
+				return AxiallyAligned::Voxel(glm::vec3(_topLeftFront), static_cast<float>(_voxelsPerSide));
 			}
 
 			Node get_top_left_front_child() const
 			{
-				return Node(_mesh, _voxelsPerSide / 2, _topLeftFront);
+				return Node(_chunk, _voxelsPerSide / 2, _topLeftFront);
 			}
 
 			Node get_top_left_back_child() const
 			{
 				const int side = _voxelsPerSide / 2;
-				return Node(_mesh, side, _topLeftFront + glm::ivec3(0, 0, -side));
+				return Node(_chunk, side, _topLeftFront + glm::ivec3(0, 0, -side));
 			}
 
 			Node get_top_right_front_child() const
 			{
 				const int side = _voxelsPerSide / 2;
-				return Node(_mesh, side, _topLeftFront + glm::ivec3(side, 0, 0));
+				return Node(_chunk, side, _topLeftFront + glm::ivec3(side, 0, 0));
 			}
 
 			Node get_top_right_back_child() const
 			{
 				const int side = _voxelsPerSide / 2;
-				return Node(_mesh, side, _topLeftFront + glm::ivec3(side, 0, -side));
+				return Node(_chunk, side, _topLeftFront + glm::ivec3(side, 0, -side));
 			}
 
 			Node get_bottom_left_front_child() const
 			{
 				const int side = _voxelsPerSide / 2;
-				return Node(_mesh, side, _topLeftFront + glm::ivec3(0, -side, 0));
+				return Node(_chunk, side, _topLeftFront + glm::ivec3(0, -side, 0));
 			}
 
 			Node get_bottom_left_back_child() const
 			{
 				const int side = _voxelsPerSide / 2;
-				return Node(_mesh, side, _topLeftFront + glm::ivec3(0, -side, -side));
+				return Node(_chunk, side, _topLeftFront + glm::ivec3(0, -side, -side));
 			}
 
 			Node get_bottom_right_front_child() const
 			{
 				const int side = _voxelsPerSide / 2;
-				return Node(_mesh, side, _topLeftFront + glm::ivec3(side, -side, 0));
+				return Node(_chunk, side, _topLeftFront + glm::ivec3(side, -side, 0));
 			}
 
 			Node get_bottom_right_back_child() const
 			{
 				const int side = _voxelsPerSide / 2;
-				return Node(_mesh, side, _topLeftFront + glm::ivec3(side, -side, -side));
+				return Node(_chunk, side, _topLeftFront + glm::ivec3(side, -side, -side));
 			}
 
-			const Mesh& _mesh;
-			int _voxelsPerSide;
-			glm::ivec3 _topLeftFront;
+			const Chunk<VOXELS_PER_SIDE>& _chunk;
+			const int _voxelsPerSide;
+			const glm::ivec3 _topLeftFront;
 		};
 
-		Octree(const Mesh& mesh);
-		
+		Octree(const Chunk<VOXELS_PER_SIDE>& c)
+			:_root(c, VOXELS_PER_SIDE, glm::ivec3(0.0f, 0.0f, 0.0f))
+		{}
+
+		Intersection<Intersected> find_nearest_intersection(const Ray& r) const
+		{
+			return _root.find_nearest_intersection(r);
+		}
 
 	private:
-		const Mesh& _mesh;
+		const Node _root;
 	};
 
+	Octree _octree;
 	std::array<std::array<std::array<Color, VOXELS_PER_SIDE>, VOXELS_PER_SIDE>, VOXELS_PER_SIDE> _voxels;
 	glm::mat4 _modelMatrix;
 	Mesh _mesh;
