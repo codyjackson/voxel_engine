@@ -11,18 +11,6 @@ namespace AxiallyAligned
 	class Voxel
 	{
 	public:
-<<<<<<< HEAD
-		Voxel(const glm::vec3& topLeftFront, float sideLength);
-
-		bool is_inside(const Ray& r) const
-		{
-			return is_between(r.origin().x, left(), right()) && is_between(r.origin().y, top(), bottom()) && is_between(r.origin().z, front(), back());
-		}
-		
-		bool is_inside(const glm::vec3& p) const;
-		
-		bool does_intersect(const Voxel& a) const;
-=======
 		enum class Face
 		{
 			TOP,
@@ -38,7 +26,6 @@ namespace AxiallyAligned
 		public:
 			Intersected(Face face);
 			Face get_face() const;
->>>>>>> upstream/master
 
 		private:
 			Face _face;
@@ -47,6 +34,9 @@ namespace AxiallyAligned
 		Voxel(const glm::vec3& topLeftFront, float sideLength);
 
 		bool is_inside(const Ray& r) const;
+		bool is_inside(const glm::vec3& p) const;
+		bool does_intersect(const Voxel& a) const;
+
 		Intersection<Intersected> find_intersection(const Ray& r) const;
 
 		glm::vec3 top_right_front() const;
