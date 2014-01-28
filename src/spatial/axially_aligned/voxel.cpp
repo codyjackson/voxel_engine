@@ -9,6 +9,56 @@ namespace AxiallyAligned
 		:_topLeftFront(topLeftFront), _sideLength(sideLength)
 	{}
 
+	glm::vec3 Voxel::top_right_front() const
+	{
+		return glm::vec3 (right(), top(), front());
+	}
+	
+	glm::vec3 Voxel::top_right_back() const
+	{
+		return glm::vec3(right(), top(), back());
+	}
+	
+	glm::vec3 Voxel::top_left_back() const
+	{
+		return glm::vec3(left(), top(), back());
+	}
+	
+	glm::vec3 Voxel::top_left_front() const
+	{
+		return _topLeftFront;
+	}
+	
+	glm::vec3 Voxel::bot_left_front() const
+	{
+		return glm::vec3(left(), bottom(), front());
+	}
+	
+	glm::vec3 Voxel::bot_right_front() const
+	{
+		return glm::vec3(right(), bottom(), front());
+	}
+	
+	glm::vec3 Voxel::bot_left_back() const
+	{
+		return glm::vec3(left(), bottom(), back());
+	}
+	
+	glm::vec3 Voxel::bot_right_back() const
+	{
+		return glm::vec3(right(), bottom(), back());
+	}
+
+	bool Voxel::is_inside(const glm::vec3& p ) const
+	{
+		return Numerical::is_between(p.x, left(), right()) && Numerical::is_between(p.y, top(), bottom()) && Numerical::is_between(p.z, front(), back());
+	}
+
+	bool Voxel::does_intersect(const Voxel& a) const
+	{
+		return is_inside(a.bot_left_back()) || is_inside(a.bot_left_front()) || is_inside(a.bot_right_back()) || is_inside(a.bot_right_front()) || is_inside(a.top_left_back()) || is_inside(a.top_left_front()) || is_inside(a.top_right_back()) || is_inside(a.top_right_front());
+	}
+
 	Intersection<Voxel::Intersected> Voxel::find_intersection(const Ray& r) const
 	{
 		if (const auto intersection = r.direction().x < 0 ? get_right_face_intersection(r) : get_left_face_intersection(r))
@@ -27,7 +77,7 @@ namespace AxiallyAligned
 	{
 		return Numerical::is_between(r.origin().x, left(), right()) && Numerical::is_between(r.origin().y, top(), bottom()) && Numerical::is_between(r.origin().z, front(), back());
 	}
-	
+
 	Intersection<Voxel::Intersected> Voxel::get_top_face_intersection(const Ray& r) const
 	{
 		const Plane p(Plane::Span::XZ, top());

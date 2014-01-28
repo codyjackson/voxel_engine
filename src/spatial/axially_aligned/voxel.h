@@ -34,7 +34,20 @@ namespace AxiallyAligned
 		Voxel(const glm::vec3& topLeftFront, float sideLength);
 
 		bool is_inside(const Ray& r) const;
+		bool is_inside(const glm::vec3& p) const;
+		bool does_intersect(const Voxel& a) const;
+
 		Intersection<Intersected> find_intersection(const Ray& r) const;
+
+		glm::vec3 top_right_front() const;
+		glm::vec3 top_right_back() const;
+		glm::vec3 top_left_back() const;
+		glm::vec3 top_left_front() const;
+		glm::vec3 bot_left_front() const;
+		glm::vec3 bot_right_front() const;
+		glm::vec3 bot_left_back() const;
+		glm::vec3 bot_right_back() const;
+
 
 	private:
 		Intersection<Intersected> get_top_face_intersection(const Ray& r) const;
