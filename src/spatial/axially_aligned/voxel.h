@@ -13,12 +13,26 @@ namespace AxiallyAligned
 	public:
 		Voxel(const glm::vec3& topLeftFront, float sideLength);
 
-		inline bool is_inside(const Ray& r) const
+		bool is_inside(const Ray& r) const
 		{
 			return is_between(r.origin().x, left(), right()) && is_between(r.origin().y, top(), bottom()) && is_between(r.origin().z, front(), back());
 		}
+		
+		bool is_inside(const glm::vec3& p) const;
+		
+		bool does_intersect(const Voxel& a) const;
 
 		Intersection<Voxel> find_intersection(const Ray& r) const;
+
+		glm::vec3 top_right_front() const;
+		glm::vec3 top_right_back() const;
+		glm::vec3 top_left_back() const;
+		glm::vec3 top_left_front() const;
+		glm::vec3 bot_left_front() const;
+		glm::vec3 bot_right_front() const;
+		glm::vec3 bot_left_back() const;
+		glm::vec3 bot_right_back() const;
+
 
 	private:
 		static inline bool is_between(float x, float lower, float upper)
