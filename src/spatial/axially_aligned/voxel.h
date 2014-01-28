@@ -11,6 +11,7 @@ namespace AxiallyAligned
 	class Voxel
 	{
 	public:
+<<<<<<< HEAD
 		Voxel(const glm::vec3& topLeftFront, float sideLength);
 
 		bool is_inside(const Ray& r) const
@@ -21,8 +22,32 @@ namespace AxiallyAligned
 		bool is_inside(const glm::vec3& p) const;
 		
 		bool does_intersect(const Voxel& a) const;
+=======
+		enum class Face
+		{
+			TOP,
+			BOTTOM,
+			FRONT,
+			BACK,
+			LEFT,
+			RIGHT
+		};
 
-		Intersection<Voxel> find_intersection(const Ray& r) const;
+		class Intersected
+		{
+		public:
+			Intersected(Face face);
+			Face get_face() const;
+>>>>>>> upstream/master
+
+		private:
+			Face _face;
+		};
+
+		Voxel(const glm::vec3& topLeftFront, float sideLength);
+
+		bool is_inside(const Ray& r) const;
+		Intersection<Intersected> find_intersection(const Ray& r) const;
 
 		glm::vec3 top_right_front() const;
 		glm::vec3 top_right_back() const;
@@ -35,19 +60,12 @@ namespace AxiallyAligned
 
 
 	private:
-		static inline bool is_between(float x, float lower, float upper)
-		{
-			if (lower > upper)
-				std::swap(lower, upper);
-			return (x >= lower) && (x <= upper);
-		}
-
-		Intersection<Plane> get_top_face_intersection(const Ray& r) const;
-		Intersection<Plane> get_bottom_face_intersection(const Ray& r) const;
-		Intersection<Plane> get_left_face_intersection(const Ray& r) const;
-		Intersection<Plane> get_right_face_intersection(const Ray& r) const;
-		Intersection<Plane> get_front_face_intersection(const Ray& r) const;
-		Intersection<Plane> get_back_face_intersection(const Ray& r) const;
+		Intersection<Intersected> get_top_face_intersection(const Ray& r) const;
+		Intersection<Intersected> get_bottom_face_intersection(const Ray& r) const;
+		Intersection<Intersected> get_left_face_intersection(const Ray& r) const;
+		Intersection<Intersected> get_right_face_intersection(const Ray& r) const;
+		Intersection<Intersected> get_front_face_intersection(const Ray& r) const;
+		Intersection<Intersected> get_back_face_intersection(const Ray& r) const;
 
 		inline float top() const { return _topLeftFront.y; }
 		inline float bottom() const{ return top() - _sideLength; }

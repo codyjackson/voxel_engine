@@ -72,6 +72,12 @@ int main()
 				chunk.hide_voxel(intersection->get_object_of_interest());
 		});
 
+		window.input().on(Input::PressableTerminal(Input::Pressable::MOUSE_BUTTON_1, Input::PressableEvent::RELEASED), [&](Input& in){
+			Ray r(camera.position, camera.orientation.forward());
+			if (const auto intersection = chunk.find_nearest_intersection(r))
+				chunk.show_voxel(intersection->get_object_of_interest(), Color(0, 0, 0, 255));
+		});
+
 		window.input().mouse().lock_movement();
 	};
 	
