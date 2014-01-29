@@ -15,7 +15,6 @@
     <ClInclude Include="src\input.h" />
     <ClInclude Include="src\main_loop.h" />
     <ClInclude Include="src\rendering\camera.h" />
-    <ClInclude Include="src\rendering\chunk.h" />
     <ClInclude Include="src\rendering\color.h" />
     <ClInclude Include="src\rendering\mesh.h" />
     <ClInclude Include="src\rendering\quad.h" />
@@ -23,6 +22,7 @@
     <ClInclude Include="src\rendering\vertex.h" />
     <ClInclude Include="src\spatial\axially_aligned\plane.h" />
     <ClInclude Include="src\spatial\axially_aligned\voxel.h" />
+    <ClInclude Include="src\spatial\chunk.h" />
     <ClInclude Include="src\spatial\intersection.h" />
     <ClInclude Include="src\spatial\orientation.h" />
     <ClInclude Include="src\spatial\ray.h" />

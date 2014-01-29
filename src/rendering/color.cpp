@@ -14,11 +14,6 @@ Color::Color(const unsigned char red, const unsigned char green, const unsigned 
 
 }
 
-Color::~Color()
-{
-
-}
-
 const unsigned char Color::get_red() const
 {
 	return _red;

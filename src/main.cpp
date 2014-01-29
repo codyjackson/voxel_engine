@@ -1,8 +1,8 @@
 #include "main_loop.h"
 
 #include "rendering/camera.h"
-#include "rendering/chunk.h"
 #include "rendering/renderer.h"
+#include "spatial/chunk.h"
 #include "units.h"
 
 #include <glm/glm.hpp>

@@ -15,9 +15,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\rendering\chunk.h">
-      <Filter>src\rendering</Filter>
-    </ClInclude>
     <ClInclude Include="src\rendering\color.h">
       <Filter>src\rendering</Filter>
     </ClInclude>
@@ -53,6 +50,7 @@
     <ClInclude Include="src\spatial\axially_aligned\voxel.h" />
     <ClInclude Include="src\utility\functional.h" />
     <ClInclude Include="src\utility\numerical.h" />
+    <ClInclude Include="src\spatial\chunk.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\rendering\color.cpp">

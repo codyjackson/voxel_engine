@@ -1,15 +1,17 @@
 #pragma once
 
 #include "../constants/vector.h"
-#include "color.h"
-#include "../spatial/intersection.h"
-#include "mesh.h"
+
+#include "../rendering/color.h"
+#include "../rendering/mesh.h"
 
 #include "../spatial/axially_aligned/voxel.h"
+#include "../spatial/intersection.h"
 #include "../spatial/ray.h"
 
 #include "../utility/functional.h"
 #include "../utility/numerical.h"
+
 
 #include <array>
 #include <algorithm>
