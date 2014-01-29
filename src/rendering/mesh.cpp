@@ -15,6 +15,11 @@ void Mesh::concatenate(const Mesh& m)
 	_quads.insert(_quads.end(), m._quads.begin(), m._quads.end());
 }
 
+void Mesh::clear()
+{
+	_quads.clear();
+}
+
 void Mesh::draw_with_color() const
 {
 	if(_quads.size() == 0)

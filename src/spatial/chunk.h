@@ -57,7 +57,7 @@ public:
 				for(int z = 0; z < VOXELS_PER_SIDE; ++z)
 					_voxels[x][y][z] = Color(0x0A, 0x91, 0xAB, 255);
 
-		_mesh = generate_mesh();
+		generate_mesh();
 	}
 
 	Intersection<Intersected> find_nearest_intersection(const Ray& r)
@@ -93,25 +93,24 @@ public:
 
 		const auto ri = relativeVoxel.get_indices();
 		_voxels[ri.x][ri.y][ri.z] = color;
-		_mesh = generate_mesh();
+		generate_mesh();
 	}
 
 	void hide_voxel(const Intersected& indices)
 	{
 		const auto i = indices.get_indices();
 		_voxels[i.x][i.y][i.z] = Color(0, 0, 0, 0);
-		_mesh = generate_mesh();
+		generate_mesh();
 	}
 
 private:
-	Mesh generate_mesh() const
+	void generate_mesh()
 	{
-		Mesh mesh;
-		for_each_voxel([&mesh](const Voxel& v){
+		_mesh.clear();
+		for_each_voxel([this](const Voxel& v){
 			if (v.is_visible())
-				mesh.concatenate(v.generate_mesh());
+				_mesh.concatenate(v.generate_mesh());
 		});
-		return mesh;
 	}
 
 	class Voxel
