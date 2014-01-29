@@ -47,7 +47,7 @@ public:
 		AxiallyAligned::Voxel::Face _face;
 	};
 
-	Chunk(const glm::vec3 topLeftFront, float voxelSideLength)
+	Chunk(const glm::vec3& topLeftFront, float voxelSideLength)
 		:_octree(*this), _modelMatrix(glm::scale(glm::mat4(), glm::vec3(voxelSideLength, voxelSideLength, voxelSideLength)))
 	{
 		for(int x = 0; x < VOXELS_PER_SIDE; ++x)
@@ -105,8 +105,9 @@ private:
 	Mesh generate_mesh() const
 	{
 		Mesh mesh;
-		reduce<Mesh>(mesh, [](Mesh& m, const Voxel& v){
-			m.concatenate(v.generate_mesh());
+		for_each_voxel([&mesh](const Voxel& v){
+			if (v.is_visible())
+				mesh.concatenate(v.generate_mesh());
 		});
 		return mesh;
 	}
@@ -263,20 +264,12 @@ private:
 		const int _z;
 	};
 
-	void for_each(const std::function<void (const Voxel&)>& f) const
+	void for_each_voxel(const std::function<void (const Voxel&)>& f) const
 	{
 		for(int x = 0; x < VOXELS_PER_SIDE; ++x)
 			for(int y = 0; y < VOXELS_PER_SIDE; ++y)
 				for(int z = 0; z < VOXELS_PER_SIDE; ++z)
 					f(Voxel(*this, x, y, z));
-	}
-
-	template<typename REDUCTION_TYPE>
-	void reduce(REDUCTION_TYPE& seed, const std::function<void (REDUCTION_TYPE&, const Voxel&)>& f) const
-	{
-		for_each([&seed, &f](const Voxel& v){
-			f(seed, v);
-		});
 	}
 
 	class Octree
