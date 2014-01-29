@@ -21,6 +21,16 @@
 #include <limits>
 #include <stdexcept>
 
+namespace IndexDirection
+{
+	static const glm::ivec3 UP(0, -1, 0);
+	static const glm::ivec3 DOWN(0, 1, 0);
+	static const glm::ivec3 LEFT(-1, 0, 0);
+	static const glm::ivec3 RIGHT(1, 0, 0);
+	static const glm::ivec3 FORWARD(0, 0, 1);
+	static const glm::ivec3 BACKWARD(0, 0, -1);
+}
+
 template<int VOXELS_PER_SIDE>
 class Chunk
 {
@@ -75,8 +85,7 @@ public:
 
 	Mesh get_voxel_mesh(const Intersected& i) const
 	{
-		const auto indices = i.get_indices();
-		return Voxel(*this, indices.x, indices.y, indices.z).generate_mesh();
+		return Voxel(*this, i.get_indices()).generate_mesh();
 	}
 
 	glm::mat4 get_model_matrix() const
@@ -86,8 +95,7 @@ public:
 
 	void show_voxel(const Intersected& i, const Color& color)
 	{
-		const auto indices = i.get_indices();
-		const Voxel relativeVoxel(Voxel(*this, indices.x, indices.y, indices.z).get_relative_voxel(i.get_face()));
+		const Voxel relativeVoxel(Voxel(*this, i.get_indices()).get_voxel_sharing_face(i.get_face()));
 		if (!relativeVoxel.is_in_chunk())
 			return;
 
@@ -116,23 +124,23 @@ private:
 	class Voxel
 	{
 	public:
-		Voxel(const Chunk<VOXELS_PER_SIDE>& chunk, int x, int y, int z)
-			: _chunk(chunk), _x(x), _y(y), _z(z)
+		Voxel(const Chunk<VOXELS_PER_SIDE>& chunk, const glm::ivec3& indices)
+			: _chunk(chunk), _indices(indices)
 		{}
 
 		glm::ivec3 get_indices() const
 		{
-			return glm::ivec3(_x, _y, _z);
+			return _indices;
 		}
 
 		glm::vec3 get_model_top_left_front() const
 		{
-			return glm::vec3(_x, -_y, -_z);
+			return glm::vec3(_indices.x, -_indices.y, -_indices.z);
 		}
 
 		Color get_color() const
 		{
-			return _chunk._voxels[_x][_y][_z];
+			return _chunk._voxels[_indices.x][_indices.y][_indices.z];
 		}
 
 		bool is_visible() const
@@ -147,107 +155,54 @@ private:
 
 		bool is_in_chunk() const
 		{
-			return is_bounded_by_chunk(_x) && is_bounded_by_chunk(_y) && is_bounded_by_chunk(_z);
+			return is_bounded_by_chunk(_indices.x) && is_bounded_by_chunk(_indices.y) && is_bounded_by_chunk(_indices.z);
 		}
 
-		bool is_top_occluded() const
+		bool is_face_visible(AxiallyAligned::Voxel::Face face) const
 		{
-			const auto v = get_voxel_above();
-			return v.is_in_chunk() && v.is_visible();
+			const auto v = get_voxel_sharing_face(face);
+			return !(v.is_in_chunk() && v.is_visible());
 		}
 
-		bool is_bottom_occluded() const
-		{
-			const auto v = get_voxel_below();
-			return v.is_in_chunk() && v.is_visible();
-		}
-
-		bool is_front_occluded() const
-		{
-			const auto v = get_voxel_in_front();
-			return v.is_in_chunk() && v.is_visible();
-		}
-
-		bool is_back_occluded() const
-		{
-			const auto v = get_voxel_behind();
-			return v.is_in_chunk() && v.is_visible();
-		}
-
-		bool is_left_occluded() const
-		{
-			const auto v = get_voxel_to_left();
-			return v.is_in_chunk() && v.is_visible();
-		}
-
-		bool is_right_occluded() const
-		{
-			const auto v = get_voxel_to_right();
-			return v.is_in_chunk() && v.is_visible();
-		}
-
-		Voxel get_relative_voxel(AxiallyAligned::Voxel::Face face)
+		Voxel get_voxel_sharing_face(AxiallyAligned::Voxel::Face face) const
 		{
 			switch (face)
 			{
 			case AxiallyAligned::Voxel::Face::TOP:
-				return get_voxel_above();
+				return Voxel(_chunk, _indices + IndexDirection::UP);
 			case AxiallyAligned::Voxel::Face::BOTTOM:
-				return get_voxel_below();
+				return Voxel(_chunk, _indices + IndexDirection::DOWN);
 			case AxiallyAligned::Voxel::Face::LEFT:
-				return get_voxel_to_left();
+				return Voxel(_chunk, _indices + IndexDirection::LEFT);
 			case AxiallyAligned::Voxel::Face::RIGHT:
-				return get_voxel_to_right();
+				return Voxel(_chunk, _indices + IndexDirection::RIGHT);
 			case AxiallyAligned::Voxel::Face::FRONT:
-				return get_voxel_in_front();
+				return Voxel(_chunk, _indices + IndexDirection::BACKWARD);
 			default:
-				return get_voxel_behind();
+				return Voxel(_chunk, _indices + IndexDirection::FORWARD);
 			}
-		}
-
-		Voxel get_voxel_above() const
-		{
-			return Voxel(_chunk, _x, _y - 1, _z);
-		}
-
-		Voxel get_voxel_below() const
-		{
-			return Voxel(_chunk, _x, _y + 1, _z);
-		}
-
-		Voxel get_voxel_in_front() const
-		{
-			return Voxel(_chunk, _x, _y, _z - 1);
-		}
-
-		Voxel get_voxel_behind() const
-		{
-			return Voxel(_chunk, _x, _y, _z + 1);
-		}
-
-		Voxel get_voxel_to_right() const
-		{
-			return Voxel(_chunk, _x + 1, _y, _z);
-		}
-
-		Voxel get_voxel_to_left() const
-		{
-			return Voxel(_chunk, _x - 1, _y, _z);
 		}
 
 		Mesh generate_mesh() const
 		{
 			if (!is_visible())
 				return Mesh();
-			const auto v = AxiallyAligned::Voxel(get_model_top_left_front(), 1.0f);
-			return v.generate_mesh(get_color(), !is_front_occluded(), !is_back_occluded(), !is_top_occluded(), !is_bottom_occluded(), !is_left_occluded(), !is_right_occluded());
+
+			const auto aav = AxiallyAligned::Voxel(get_model_top_left_front(), 1.0f);
+
+			const bool front = is_face_visible(AxiallyAligned::Voxel::Face::FRONT);
+			const bool back = is_face_visible(AxiallyAligned::Voxel::Face::BACK);
+			const bool top = is_face_visible(AxiallyAligned::Voxel::Face::TOP);
+			const bool bottom = is_face_visible(AxiallyAligned::Voxel::Face::BOTTOM);
+			const bool left = is_face_visible(AxiallyAligned::Voxel::Face::LEFT);
+			const bool right = is_face_visible(AxiallyAligned::Voxel::Face::RIGHT);
+
+			return aav.generate_mesh(get_color(), front, back, top, bottom, left, right);
 		}
 
 	private:
 		const Chunk<VOXELS_PER_SIDE>& _chunk;
-		const int _x;
-		const int _y;
-		const int _z;
+		const glm::ivec3 _indices;
 	};
 
 	void for_each_voxel(const std::function<void (const Voxel&)>& f) const
@@ -255,7 +210,7 @@ private:
 		for(int x = 0; x < VOXELS_PER_SIDE; ++x)
 			for(int y = 0; y < VOXELS_PER_SIDE; ++y)
 				for(int z = 0; z < VOXELS_PER_SIDE; ++z)
-					f(Voxel(*this, x, y, z));
+					f(Voxel(*this, glm::ivec3(x, y, z)));
 	}
 
 	class Octree
@@ -272,8 +227,7 @@ private:
 			{
 				if (is_leaf())
 				{
-					const auto i(get_indices());
-					if (!Voxel(_chunk, i.x, i.y, i.z).is_visible())
+					if (!Voxel(_chunk, get_indices()).is_visible())
 						return make_intersection<Intersected>();
 					const auto intersection = get_bounding_voxel().find_intersection(r);
 					return intersection ? transform_intersection(intersection) : make_intersection<Intersected>();
