@@ -5,8 +5,8 @@
 
 namespace AxiallyAligned
 {
-	Voxel::Voxel(const glm::vec3& topLeftFront, float sideLength)
-		:_topLeftFront(topLeftFront), _sideLength(sideLength)
+	Voxel::Voxel(const glm::vec3& _topLeftFront, float sideLength)
+		:_topLeftFront(_topLeftFront), _sideLength(sideLength)
 	{}
 
 	Intersection<Voxel::Intersected> Voxel::find_intersection(const Ray& r) const
@@ -26,6 +26,27 @@ namespace AxiallyAligned
 	bool Voxel::is_inside(const Ray& r) const
 	{
 		return Numerical::is_between(r.origin().x, left(), right()) && Numerical::is_between(r.origin().y, top(), bottom()) && Numerical::is_between(r.origin().z, front(), back());
+	}
+
+	Mesh Voxel::generate_mesh(const Color& c, bool isFrontVisible, bool isBackVisible, bool isTopVisible, bool isBottomVisible, bool isLeftVisible, bool isRightVisible) const
+	{
+		Mesh m;
+
+		if (isFrontVisible)
+			m.push_back(Quad::generate_xy_quad(c, _topLeftFront, Quad::CounterClockWise()));
+		if (isTopVisible)
+			m.push_back(Quad::generate_xz_quad(c, _topLeftFront, Quad::CounterClockWise()));
+		if (isLeftVisible)
+			m.push_back(Quad::generate_yz_quad(c, _topLeftFront, Quad::CounterClockWise()));
+
+		if (isBackVisible)
+			m.push_back(Quad::generate_xy_quad(c, _topLeftFront + (Constants::Vec3::forward * _sideLength), Quad::ClockWise()));
+		if (isBottomVisible)
+			m.push_back(Quad::generate_xz_quad(c, _topLeftFront + (Constants::Vec3::down * _sideLength), Quad::ClockWise()));
+		if (isRightVisible)
+			m.push_back(Quad::generate_yz_quad(c, _topLeftFront + (Constants::Vec3::right * _sideLength), Quad::ClockWise()));
+
+		return m;
 	}
 	
 	Intersection<Voxel::Intersected> Voxel::get_top_face_intersection(const Ray& r) const

@@ -1,7 +1,10 @@
 #pragma once
 
+#include "../../rendering/mesh.h"
+
 #include "../intersection.h"
 #include "../ray.h"
+
 #include "plane.h"
 
 #include <glm/glm.hpp>
@@ -11,15 +14,7 @@ namespace AxiallyAligned
 	class Voxel
 	{
 	public:
-		enum class Face
-		{
-			TOP,
-			BOTTOM,
-			FRONT,
-			BACK,
-			LEFT,
-			RIGHT
-		};
+		enum class Face { TOP, BOTTOM, FRONT, BACK, LEFT, RIGHT };
 
 		class Intersected
 		{
@@ -35,6 +30,8 @@ namespace AxiallyAligned
 
 		bool is_inside(const Ray& r) const;
 		Intersection<Intersected> find_intersection(const Ray& r) const;
+
+		Mesh generate_mesh(const Color& c, bool isFrontVisible, bool isBackVisible, bool isTopVisible, bool isBottomVisible, bool isLeftVisible, bool isRightVisible) const;
 
 	private:
 		Intersection<Intersected> get_top_face_intersection(const Ray& r) const;

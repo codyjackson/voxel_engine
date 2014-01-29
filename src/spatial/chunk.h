@@ -238,25 +238,10 @@ private:
 
 		Mesh generate_mesh() const
 		{
-			Mesh m;
 			if (!is_visible())
-				return m;
-
-			if (!is_front_occluded())
-				m.push_back(Quad::generate_xy_quad(get_color(), get_model_top_left_front(), Quad::CounterClockWise()));
-			if (!is_top_occluded())
-				m.push_back(Quad::generate_xz_quad(get_color(), get_model_top_left_front(), Quad::CounterClockWise()));
-			if (!is_left_occluded())
-				m.push_back(Quad::generate_yz_quad(get_color(), get_model_top_left_front(), Quad::CounterClockWise()));
-
-			if (!is_back_occluded())
-				m.push_back(Quad::generate_xy_quad(get_color(), get_model_top_left_front() + Constants::Vec3::forward, Quad::ClockWise()));
-			if (!is_bottom_occluded())
-				m.push_back(Quad::generate_xz_quad(get_color(), get_model_top_left_front() + Constants::Vec3::down, Quad::ClockWise()));
-			if (!is_right_occluded())
-				m.push_back(Quad::generate_yz_quad(get_color(), get_model_top_left_front() + Constants::Vec3::right, Quad::ClockWise()));
-
-			return m;
+				return Mesh();
+			const auto v = AxiallyAligned::Voxel(get_model_top_left_front(), 1.0f);
+			return v.generate_mesh(get_color(), !is_front_occluded(), !is_back_occluded(), !is_top_occluded(), !is_bottom_occluded(), !is_left_occluded(), !is_right_occluded());
 		}
 
 	private:
