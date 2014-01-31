@@ -44,6 +44,7 @@
     <ClCompile Include="src\rendering\vertex.cpp" />
     <ClCompile Include="src\spatial\axially_aligned\plane.cpp" />
     <ClCompile Include="src\spatial\axially_aligned\voxel.cpp" />
+    <ClCompile Include="src\spatial\chunk.cpp" />
     <ClCompile Include="src\spatial\orientation.cpp" />
     <ClCompile Include="src\spatial\transform.cpp" />
     <ClCompile Include="src\spatial\ray.cpp" />

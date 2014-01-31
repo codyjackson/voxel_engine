@@ -86,5 +86,6 @@
     <ClCompile Include="src\spatial\transform.cpp" />
     <ClCompile Include="src\spatial\axially_aligned\voxel.cpp" />
     <ClCompile Include="src\spatial\ray.cpp" />
+    <ClCompile Include="src\spatial\chunk.cpp" />
   </ItemGroup>
 </Project>
