@@ -115,7 +115,7 @@ glm::ivec3 Chunk::Voxel::get_indices() const
 
 glm::vec3 Chunk::Voxel::get_model_left_top_front() const
 {
-	return glm::vec3(_indices);
+	return glm::vec3(_indices + Constants::IVec3::up + Constants::IVec3::backward);
 }
 
 Color Chunk::Voxel::get_color() const
@@ -291,7 +291,8 @@ bool Chunk::Octree::Node::is_leaf() const
 
 AxiallyAligned::Voxel Chunk::Octree::Node::get_bounding_voxel() const
 {
-	return AxiallyAligned::Voxel(glm::vec3(_leftBottomBack + Constants::IVec3::up + Constants::IVec3::backward), static_cast<float>(_voxelsPerSide));
+	const auto translation = _voxelsPerSide * (Constants::IVec3::up + Constants::IVec3::backward);
+	return AxiallyAligned::Voxel(glm::vec3(_leftBottomBack + translation), static_cast<float>(_voxelsPerSide));
 }
 
 Chunk::Octree::Node Chunk::Octree::Node::get_left_bottom_back_child() const
@@ -302,43 +303,50 @@ Chunk::Octree::Node Chunk::Octree::Node::get_left_bottom_back_child() const
 Chunk::Octree::Node Chunk::Octree::Node::get_right_bottom_back_child() const
 {
 	const int side = _voxelsPerSide / 2;
-	return Node(_chunk, side, _leftBottomBack + Constants::IVec3::right);
+	const auto translation = Constants::IVec3::right * side;
+	return Node(_chunk, side, _leftBottomBack + translation);
 }
 
 Chunk::Octree::Node Chunk::Octree::Node::get_right_bottom_front_child() const
 {
 	const int side = _voxelsPerSide / 2;
-	return Node(_chunk, side, _leftBottomBack + Constants::IVec3::right + Constants::IVec3::backward);
+	const auto translation = side * (Constants::IVec3::right + Constants::IVec3::backward);
+	return Node(_chunk, side, _leftBottomBack + translation);
 }
 
 Chunk::Octree::Node Chunk::Octree::Node::get_left_bottom_front_child() const
 {
 	const int side = _voxelsPerSide / 2;
-	return Node(_chunk, side, _leftBottomBack + Constants::IVec3::backward);
+	const auto translation = side * Constants::IVec3::backward;
+	return Node(_chunk, side, _leftBottomBack + translation);
 }
 
 Chunk::Octree::Node Chunk::Octree::Node::get_left_top_back_child() const
 {
 	const int side = _voxelsPerSide / 2;
-	return Node(_chunk, side, _leftBottomBack + Constants::IVec3::up);
+	const auto translation = side * Constants::IVec3::up;
+	return Node(_chunk, side, _leftBottomBack + translation);
 }
 
 Chunk::Octree::Node Chunk::Octree::Node::get_right_top_back_child() const
 {
 	const int side = _voxelsPerSide / 2;
-	return Node(_chunk, side, _leftBottomBack + Constants::IVec3::up + Constants::IVec3::right);
+	const auto translation = side * (Constants::IVec3::up + Constants::IVec3::right);
+	return Node(_chunk, side, _leftBottomBack + translation);
 }
 
 Chunk::Octree::Node Chunk::Octree::Node::get_right_top_front_child() const
 {
 	const int side = _voxelsPerSide / 2;
-	return Node(_chunk, side, _leftBottomBack + Constants::IVec3::up + Constants::IVec3::right +  Constants::IVec3::backward);
+	const auto translation = side * (Constants::IVec3::up + Constants::IVec3::right + Constants::IVec3::backward);
+	return Node(_chunk, side, _leftBottomBack + translation);
 }
 
 Chunk::Octree::Node Chunk::Octree::Node::get_left_top_front_child() const
 {
 	const int side = _voxelsPerSide / 2;
-	return Node(_chunk, side, _leftBottomBack + Constants::IVec3::up + Constants::IVec3::backward);
+	const auto translation = side * (Constants::IVec3::up + Constants::IVec3::backward);
+	return Node(_chunk, side, _leftBottomBack + translation);
 }
 
 Chunk::Octree::Octree(const Chunk& c)
