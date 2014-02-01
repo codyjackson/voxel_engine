@@ -38,7 +38,7 @@ AxiallyAligned::Voxel::Face Chunk::Intersected::get_face() const
 }
 
 
-Chunk::Chunk(const glm::vec3& topLeftFront, float voxelSideLength)
+Chunk::Chunk(const glm::vec3& leftBottomRight, float voxelSideLength)
 	:_octree(*this), _modelMatrix(glm::scale(glm::mat4(), glm::vec3(voxelSideLength, voxelSideLength, voxelSideLength)))
 {
 	for (int x = 0; x < get_num_of_voxels_per_side(); ++x)
@@ -69,8 +69,7 @@ Mesh Chunk::get_mesh() const
 
 Mesh Chunk::get_voxel_mesh(const Intersected& i) const
 {
-	const auto indices = i.get_indices();
-	return Voxel(*this, indices.x, indices.y, indices.z).generate_mesh();
+	return Voxel(*this, i.get_indices()).generate_mesh();
 }
 
 glm::mat4 Chunk::get_model_matrix() const
@@ -80,8 +79,7 @@ glm::mat4 Chunk::get_model_matrix() const
 
 void Chunk::show_voxel(const Intersected& i, const Color& color)
 {
-	const auto indices = i.get_indices();
-	const Voxel relativeVoxel(Voxel(*this, indices.x, indices.y, indices.z).get_relative_voxel(i.get_face()));
+	const Voxel relativeVoxel(Voxel(*this, i.get_indices()).get_voxel_sharing_face(i.get_face()));
 	if (!relativeVoxel.is_in_chunk())
 		return;
 
@@ -106,23 +104,23 @@ void Chunk::generate_mesh()
 	});
 }
 
-Chunk::Voxel::Voxel(const Chunk& chunk, int x, int y, int z)
-	: _chunk(chunk), _x(x), _y(y), _z(z)
+Chunk::Voxel::Voxel(const Chunk& chunk, const glm::ivec3& indices)
+: _chunk(chunk), _indices(indices)
 {}
 
 glm::ivec3 Chunk::Voxel::get_indices() const
 {
-	return glm::ivec3(_x, _y, _z);
+	return _indices;
 }
 
-glm::vec3 Chunk::Voxel::get_model_top_left_front() const
+glm::vec3 Chunk::Voxel::get_model_left_top_front() const
 {
-	return glm::vec3(_x, -_y, -_z);
+	return glm::vec3(_indices);
 }
 
 Color Chunk::Voxel::get_color() const
 {
-	return _chunk._voxels[_x][_y][_z];
+	return _chunk._voxels[_indices.x][_indices.y][_indices.z];
 }
 
 bool Chunk::Voxel::is_visible() const
@@ -137,7 +135,7 @@ bool Chunk::Voxel::is_bounded_by_chunk(int a) const
 
 bool Chunk::Voxel::is_in_chunk() const
 {
-	return is_bounded_by_chunk(_x) && is_bounded_by_chunk(_y) && is_bounded_by_chunk(_z);
+	return is_bounded_by_chunk(_indices.x) && is_bounded_by_chunk(_indices.y) && is_bounded_by_chunk(_indices.z);
 }
 
 bool Chunk::Voxel::is_top_occluded() const
@@ -176,7 +174,7 @@ bool Chunk::Voxel::is_right_occluded() const
 	return v.is_in_chunk() && v.is_visible();
 }
 
-Chunk::Voxel Chunk::Voxel::get_relative_voxel(AxiallyAligned::Voxel::Face face)
+Chunk::Voxel Chunk::Voxel::get_voxel_sharing_face(AxiallyAligned::Voxel::Face face)
 {
 	switch (face)
 	{
@@ -197,39 +195,39 @@ Chunk::Voxel Chunk::Voxel::get_relative_voxel(AxiallyAligned::Voxel::Face face)
 
 Chunk::Voxel Chunk::Voxel::get_voxel_above() const
 {
-	return Voxel(_chunk, _x, _y - 1, _z);
+	return Voxel(_chunk, _indices + Constants::IVec3::up);
 }
 
 Chunk::Voxel Chunk::Voxel::get_voxel_below() const
 {
-	return Voxel(_chunk, _x, _y + 1, _z);
+	return Voxel(_chunk, _indices + Constants::IVec3::down);
 }
 
 Chunk::Voxel Chunk::Voxel::get_voxel_in_front() const
 {
-	return Voxel(_chunk, _x, _y, _z - 1);
+	return Voxel(_chunk, _indices + Constants::IVec3::backward);
 }
 
 Chunk::Voxel Chunk::Voxel::get_voxel_behind() const
 {
-	return Voxel(_chunk, _x, _y, _z + 1);
+	return Voxel(_chunk, _indices + Constants::IVec3::forward);
 }
 
 Chunk::Voxel Chunk::Voxel::get_voxel_to_right() const
 {
-	return Voxel(_chunk, _x + 1, _y, _z);
+	return Voxel(_chunk, _indices + Constants::IVec3::right);
 }
 
 Chunk::Voxel Chunk::Voxel::get_voxel_to_left() const
 {
-	return Voxel(_chunk, _x - 1, _y, _z);
+	return Voxel(_chunk, _indices + Constants::IVec3::left);
 }
 
 Mesh Chunk::Voxel::generate_mesh() const
 {
 	if (!is_visible())
 		return Mesh();
-	const auto v = AxiallyAligned::Voxel(get_model_top_left_front(), 1.0f);
+	const auto v = AxiallyAligned::Voxel(get_model_left_top_front(), 1.0f);
 	return v.generate_mesh(get_color(), !is_front_occluded(), !is_back_occluded(), !is_top_occluded(), !is_bottom_occluded(), !is_left_occluded(), !is_right_occluded());
 }
 
@@ -238,26 +236,25 @@ void Chunk::for_each_voxel(const std::function<void(const Voxel&)>& f) const
 	for (int x = 0; x < get_num_of_voxels_per_side(); ++x)
 		for (int y = 0; y < get_num_of_voxels_per_side(); ++y)
 			for (int z = 0; z < get_num_of_voxels_per_side(); ++z)
-				f(Voxel(*this, x, y, z));
+				f(Voxel(*this, glm::ivec3(x, y, z)));
 }
 
-Chunk::Octree::Node::Node(const Chunk& chunk, int voxelsPerSide, const glm::ivec3& topLeftFront)
-	:_chunk(chunk), _voxelsPerSide(voxelsPerSide), _topLeftFront(topLeftFront)
+Chunk::Octree::Node::Node(const Chunk& chunk, int voxelsPerSide, const glm::ivec3& leftBottomBack)
+:_chunk(chunk), _voxelsPerSide(voxelsPerSide), _leftBottomBack(leftBottomBack)
 {}
 
 Intersection<Chunk::Intersected> Chunk::Octree::Node::find_nearest_intersection(const Ray& r) const
 {
 	if (is_leaf())
 	{
-		const auto i(get_indices());
-		if (!Voxel(_chunk, i.x, i.y, i.z).is_visible())
+		if (!Voxel(_chunk, get_indices()).is_visible())
 			return make_intersection<Intersected>();
 		const auto intersection = get_bounding_voxel().find_intersection(r);
 		return intersection ? transform_intersection(intersection) : make_intersection<Intersected>();
 	}
 
 	const auto boundingVoxel = get_bounding_voxel();
-	if (!get_bounding_voxel().find_intersection(r) && !boundingVoxel.is_inside(r))
+	if (!boundingVoxel.find_intersection(r) && !boundingVoxel.is_inside(r))
 		return make_intersection<Intersected>();
 
 	const auto findIntersection = [&r](const Node& n) {
@@ -279,7 +276,7 @@ Intersection<Chunk::Intersected> Chunk::Octree::Node::find_nearest_intersection(
 
 glm::ivec3 Chunk::Octree::Node::get_indices() const
 {
-	return glm::ivec3(_topLeftFront.x, -1.0f*_topLeftFront.y, -1.0f*_topLeftFront.z);
+	return _leftBottomBack;
 }
 
 Intersection<Chunk::Intersected> Chunk::Octree::Node::transform_intersection(const Intersection<AxiallyAligned::Voxel::Intersected>& intersection) const
@@ -294,54 +291,54 @@ bool Chunk::Octree::Node::is_leaf() const
 
 AxiallyAligned::Voxel Chunk::Octree::Node::get_bounding_voxel() const
 {
-	return AxiallyAligned::Voxel(glm::vec3(_topLeftFront), static_cast<float>(_voxelsPerSide));
+	return AxiallyAligned::Voxel(glm::vec3(_leftBottomBack + Constants::IVec3::up + Constants::IVec3::backward), static_cast<float>(_voxelsPerSide));
 }
 
-Chunk::Octree::Node Chunk::Octree::Node::get_top_left_front_child() const
+Chunk::Octree::Node Chunk::Octree::Node::get_left_bottom_back_child() const
 {
-	return Node(_chunk, _voxelsPerSide / 2, _topLeftFront);
+	return Node(_chunk, _voxelsPerSide / 2, _leftBottomBack);
 }
 
-Chunk::Octree::Node Chunk::Octree::Node::get_top_left_back_child() const
-{
-	const int side = _voxelsPerSide / 2;
-	return Node(_chunk, side, _topLeftFront + glm::ivec3(0, 0, -side));
-}
-
-Chunk::Octree::Node Chunk::Octree::Node::get_top_right_front_child() const
+Chunk::Octree::Node Chunk::Octree::Node::get_right_bottom_back_child() const
 {
 	const int side = _voxelsPerSide / 2;
-	return Node(_chunk, side, _topLeftFront + glm::ivec3(side, 0, 0));
+	return Node(_chunk, side, _leftBottomBack + Constants::IVec3::right);
 }
 
-Chunk::Octree::Node Chunk::Octree::Node::get_top_right_back_child() const
+Chunk::Octree::Node Chunk::Octree::Node::get_right_bottom_front_child() const
 {
 	const int side = _voxelsPerSide / 2;
-	return Node(_chunk, side, _topLeftFront + glm::ivec3(side, 0, -side));
+	return Node(_chunk, side, _leftBottomBack + Constants::IVec3::right + Constants::IVec3::backward);
 }
 
-Chunk::Octree::Node Chunk::Octree::Node::get_bottom_left_front_child() const
+Chunk::Octree::Node Chunk::Octree::Node::get_left_bottom_front_child() const
 {
 	const int side = _voxelsPerSide / 2;
-	return Node(_chunk, side, _topLeftFront + glm::ivec3(0, -side, 0));
+	return Node(_chunk, side, _leftBottomBack + Constants::IVec3::backward);
 }
 
-Chunk::Octree::Node Chunk::Octree::Node::get_bottom_left_back_child() const
+Chunk::Octree::Node Chunk::Octree::Node::get_left_top_back_child() const
 {
 	const int side = _voxelsPerSide / 2;
-	return Node(_chunk, side, _topLeftFront + glm::ivec3(0, -side, -side));
+	return Node(_chunk, side, _leftBottomBack + Constants::IVec3::up);
 }
 
-Chunk::Octree::Node Chunk::Octree::Node::get_bottom_right_front_child() const
+Chunk::Octree::Node Chunk::Octree::Node::get_right_top_back_child() const
 {
 	const int side = _voxelsPerSide / 2;
-	return Node(_chunk, side, _topLeftFront + glm::ivec3(side, -side, 0));
+	return Node(_chunk, side, _leftBottomBack + Constants::IVec3::up + Constants::IVec3::right);
 }
 
-Chunk::Octree::Node Chunk::Octree::Node::get_bottom_right_back_child() const
+Chunk::Octree::Node Chunk::Octree::Node::get_right_top_front_child() const
 {
 	const int side = _voxelsPerSide / 2;
-	return Node(_chunk, side, _topLeftFront + glm::ivec3(side, -side, -side));
+	return Node(_chunk, side, _leftBottomBack + Constants::IVec3::up + Constants::IVec3::right +  Constants::IVec3::backward);
+}
+
+Chunk::Octree::Node Chunk::Octree::Node::get_left_top_front_child() const
+{
+	const int side = _voxelsPerSide / 2;
+	return Node(_chunk, side, _leftBottomBack + Constants::IVec3::up + Constants::IVec3::backward);
 }
 
 Chunk::Octree::Octree(const Chunk& c)

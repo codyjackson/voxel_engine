@@ -9,6 +9,13 @@ namespace Constants
 	const glm::vec3 Vec3::forward = glm::vec3(0, 0, -1);
 	const glm::vec3 Vec3::backward = glm::vec3(0, 0, 1);
 
+	const glm::ivec3 IVec3::up = glm::ivec3(0, 1, 0);
+	const glm::ivec3 IVec3::down = glm::ivec3(0, -1, 0);
+	const glm::ivec3 IVec3::left = glm::ivec3(-1, 0, 0);
+	const glm::ivec3 IVec3::right = glm::ivec3(1, 0, 0);
+	const glm::ivec3 IVec3::forward = glm::ivec3(0, 0, -1);
+	const glm::ivec3 IVec3::backward = glm::ivec3(0, 0, 1);
+
 	const glm::vec4 Vec4::up = glm::vec4(0, 1, 0, 0);
 	const glm::vec4 Vec4::down = glm::vec4(0, -1, 0, 0);
 	const glm::vec4 Vec4::left = glm::vec4(-1, 0, 0, 0);

@@ -36,7 +36,7 @@ public:
 		AxiallyAligned::Voxel::Face _face;
 	};
 
-	Chunk(const glm::vec3& topLeftFront, float voxelSideLength);
+	Chunk(const glm::vec3& leftBottomRight, float voxelSideLength);
 
 	int get_num_of_voxels_per_side() const;
 
@@ -55,11 +55,11 @@ private:
 	class Voxel
 	{
 	public:
-		Voxel(const Chunk& chunk, int x, int y, int z);
+		Voxel(const Chunk& chunk, const glm::ivec3& indices);
 
 		glm::ivec3 get_indices() const;
 
-		glm::vec3 get_model_top_left_front() const;
+		glm::vec3 get_model_left_top_front() const;
 
 		Color get_color() const;
 
@@ -74,7 +74,7 @@ private:
 		bool is_left_occluded() const;
 		bool is_right_occluded() const;
 
-		Voxel get_relative_voxel(AxiallyAligned::Voxel::Face face);
+		Voxel get_voxel_sharing_face(AxiallyAligned::Voxel::Face face);
 
 		Voxel get_voxel_above() const;
 		Voxel get_voxel_below() const;
@@ -87,9 +87,7 @@ private:
 
 	private:
 		const Chunk& _chunk;
-		const int _x;
-		const int _y;
-		const int _z;
+		const glm::ivec3 _indices;
 	};
 
 	void for_each_voxel(const std::function<void(const Voxel&)>& f) const;
@@ -100,7 +98,7 @@ private:
 		class Node
 		{
 		public:
-			Node(const Chunk& chunk, int voxelsPerSide, const glm::ivec3& topLeftFront);
+			Node(const Chunk& chunk, int voxelsPerSide, const glm::ivec3& leftBottomBack);
 
 			Intersection<Intersected> find_nearest_intersection(const Ray& r) const;
 
@@ -113,14 +111,14 @@ private:
 			std::array<RETURN_TYPE, 8> map_children(const std::function<RETURN_TYPE (const Node&)>& f) const
 			{
 				return std::array<RETURN_TYPE, 8>{
-					f(get_top_left_front_child()),
-					f(get_top_left_back_child()),
-					f(get_top_right_front_child()),
-					f(get_top_right_back_child()),
-					f(get_bottom_left_front_child()),
-					f(get_bottom_left_back_child()),
-					f(get_bottom_right_front_child()),
-					f(get_bottom_right_back_child())
+					f(get_left_bottom_back_child()),
+					f(get_right_bottom_back_child()),
+					f(get_right_bottom_front_child()),
+					f(get_left_bottom_front_child()),
+					f(get_left_top_back_child()),
+					f(get_right_top_back_child()),
+					f(get_right_top_front_child()),
+					f(get_left_top_front_child())
 				};
 			}
 
@@ -128,18 +126,19 @@ private:
 
 			AxiallyAligned::Voxel get_bounding_voxel() const;
 
-			Node get_top_left_front_child() const;
-			Node get_top_left_back_child() const;
-			Node get_top_right_front_child() const;
-			Node get_top_right_back_child() const;
-			Node get_bottom_left_front_child() const;
-			Node get_bottom_left_back_child() const;
-			Node get_bottom_right_front_child() const;
-			Node get_bottom_right_back_child() const;
+			Node get_left_bottom_back_child() const;
+			Node get_right_bottom_back_child() const;
+			Node get_right_bottom_front_child() const;
+			Node get_left_bottom_front_child() const;
+
+			Node get_left_top_back_child() const;
+			Node get_right_top_back_child() const;
+			Node get_right_top_front_child() const;
+			Node get_left_top_front_child() const;
 
 			const Chunk& _chunk;
 			const int _voxelsPerSide;
-			const glm::ivec3 _topLeftFront;
+			const glm::ivec3 _leftBottomBack;
 		};
 
 		Octree(const Chunk& c);
