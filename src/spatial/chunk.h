@@ -40,7 +40,7 @@ public:
 
 	int get_num_of_voxels_per_side() const;
 
-	Intersection<Intersected> find_nearest_intersection(const Ray& r);
+	Intersection<Intersected> find_nearest_intersection(const Ray& r) const;
 
 	Mesh get_mesh() const;
 	Mesh get_voxel_mesh(const Intersected& i) const;

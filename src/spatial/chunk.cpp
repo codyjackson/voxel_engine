@@ -54,7 +54,7 @@ int Chunk::get_num_of_voxels_per_side() const
 	return VoxelsPerSide::VALUE;
 }
 
-Intersection<Chunk::Intersected> Chunk::find_nearest_intersection(const Ray& r)
+Intersection<Chunk::Intersected> Chunk::find_nearest_intersection(const Ray& r) const
 {
 	const Ray localRay = r.transform_into_new_space(glm::inverse(get_model_matrix()));
 	if (auto intersection = _octree.find_nearest_intersection(localRay))

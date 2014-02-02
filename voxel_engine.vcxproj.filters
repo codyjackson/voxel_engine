@@ -51,6 +51,7 @@
     <ClInclude Include="src\utility\functional.h" />
     <ClInclude Include="src\utility\numerical.h" />
     <ClInclude Include="src\spatial\chunk.h" />
+    <ClInclude Include="src\spatial\chunk_vault.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\rendering\color.cpp">

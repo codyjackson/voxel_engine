@@ -23,6 +23,7 @@
     <ClInclude Include="src\spatial\axially_aligned\plane.h" />
     <ClInclude Include="src\spatial\axially_aligned\voxel.h" />
     <ClInclude Include="src\spatial\chunk.h" />
+    <ClInclude Include="src\spatial\chunk_vault.h" />
     <ClInclude Include="src\spatial\intersection.h" />
     <ClInclude Include="src\spatial\orientation.h" />
     <ClInclude Include="src\spatial\ray.h" />
