@@ -31,7 +31,7 @@ Intersection<ChunkVault::Intersected> ChunkVault::find_nearest_intersection(cons
 	std::vector<Intersection<Intersected>> intersections;
 	std::transform(_originToChunk.begin(), _originToChunk.end(), std::back_inserter(intersections), getIntersection);
 
-	return Spatial::Utility::get_nearest_intersection(std::begin(intersections), std::end(intersections));
+	return Spatial::Utility::get_nearest_intersection(intersections);
 }
 
 glm::ivec3 ChunkVault::get_indices_of_voxel_sharing_face_with(const glm::ivec3& indices, AxiallyAligned::Voxel::Face face)

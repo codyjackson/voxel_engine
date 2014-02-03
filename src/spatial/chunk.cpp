@@ -262,7 +262,7 @@ Intersection<Chunk::Intersected> Chunk::Octree::Node::find_nearest_intersection(
 		return n.find_nearest_intersection(r);
 	};
 	const auto intersections = map_children<Intersection<Intersected>>(findIntersection);
-	return Spatial::Utility::get_nearest_intersection(std::begin(intersections), std::end(intersections));
+	return Spatial::Utility::get_nearest_intersection(intersections);
 }
 
 

@@ -6,17 +6,17 @@ namespace Spatial
 {
 	namespace Utility
 	{
-		template<typename INTERSECTION_INTERATOR_TYPE>
-		typename std::iterator_traits<INTERSECTION_INTERATOR_TYPE>::value_type get_nearest_intersection(INTERSECTION_INTERATOR_TYPE begin, INTERSECTION_INTERATOR_TYPE end)
+		template<typename T>
+		typename T::value_type get_nearest_intersection(const T& intersections)
 		{
-			const auto findNearest = [](std::pair<float, std::iterator_traits<INTERSECTION_INTERATOR_TYPE>::value_type> x, const std::iterator_traits<INTERSECTION_INTERATOR_TYPE>::value_type& intersection){
+			const auto reduceIfNearer = [](std::pair<float, T::value_type> currentNearest, const T::value_type& intersection){
 				if (!intersection)
-					return x;
+					return currentNearest;
 				const float distance = intersection->get_distance_from_origin();
-				return distance < x.first ? std::make_pair(distance, intersection) : x;
+				return distance < currentNearest.first ? std::make_pair(distance, intersection) : currentNearest;
 			};
-			const auto seed = std::make_pair(std::numeric_limits<float>::max(), make_intersection<std::iterator_traits<INTERSECTION_INTERATOR_TYPE>::value_type::value_type::intersected_type>());
-			const auto nearest = Functional::reduce(begin, end, seed, findNearest);
+			const auto seed = std::make_pair(std::numeric_limits<float>::max(), make_intersection<T::value_type::value_type::intersected_type>());
+			const auto nearest = Functional::reduce(std::begin(intersections), std::end(intersections), seed, reduceIfNearer);
 			return nearest.second;
 		}
 	}
