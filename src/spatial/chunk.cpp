@@ -7,9 +7,10 @@
 #include "../rendering/color.h"
 #include "../rendering/mesh.h"
 
-#include "../spatial/axially_aligned/voxel.h"
-#include "../spatial/intersection.h"
-#include "../spatial/ray.h"
+#include "axially_aligned/voxel.h"
+#include "intersection.h"
+#include "utility.h"
+#include "ray.h"
 
 #include "../utility/functional.h"
 #include "../utility/numerical.h"
@@ -49,7 +50,7 @@ Chunk::Chunk(const glm::vec3& leftBottomRight, float voxelSideLength)
 	generate_mesh();
 }
 
-int Chunk::get_num_of_voxels_per_side() const
+int Chunk::get_num_of_voxels_per_side()
 {
 	return VoxelsPerSide::VALUE;
 }
@@ -261,16 +262,7 @@ Intersection<Chunk::Intersected> Chunk::Octree::Node::find_nearest_intersection(
 		return n.find_nearest_intersection(r);
 	};
 	const auto intersections = map_children<Intersection<Intersected>>(findIntersection);
-
-	const auto findNearest = [](std::pair<float, Intersection<Intersected>> x, const Intersection<Intersected>& n){
-		if (!n)
-			return x;
-		const float distance = n->get_distance_from_origin();
-		return n && distance < x.first ? std::make_pair(distance, n) : x;
-	};
-	const auto seed = std::make_pair(std::numeric_limits<float>::max(), make_intersection<Intersected>());
-	const auto nearest = Functional::reduce(std::begin(intersections), std::end(intersections), seed, findNearest);
-	return nearest.second;
+	return Spatial::Utility::get_nearest_intersection(std::begin(intersections), std::end(intersections));
 }
 
 

@@ -22,6 +22,7 @@ template<typename INTERSECTED_TYPE>
 class NakedIntersection : public SimpleNakedIntersection
 {
 public:
+	typedef INTERSECTED_TYPE intersected_type;
 	NakedIntersection(float distanceFromOrigin, const INTERSECTED_TYPE& intersected)
 		:SimpleNakedIntersection(distanceFromOrigin), _intersected(intersected)
 	{}

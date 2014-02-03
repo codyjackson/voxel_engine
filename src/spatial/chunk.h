@@ -38,7 +38,7 @@ public:
 
 	Chunk(const glm::vec3& leftBottomRight, float voxelSideLength);
 
-	int get_num_of_voxels_per_side() const;
+	static int get_num_of_voxels_per_side();
 
 	Intersection<Intersected> find_nearest_intersection(const Ray& r) const;
 
