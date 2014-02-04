@@ -43,11 +43,11 @@ public:
 	Intersection<Intersected> find_nearest_intersection(const Ray& r) const;
 
 	Mesh get_mesh() const;
-	Mesh get_voxel_mesh(const Intersected& i) const;
+	Mesh get_voxel_mesh(const glm::ivec3& indices) const;
 	glm::mat4 get_model_matrix() const;
 
-	void show_voxel(const Intersected& i, const Color& color);
-	void hide_voxel(const Intersected& indices);
+	void add_voxel(const glm::ivec3& indices, const Color& color);
+	void delete_voxel(const glm::ivec3& indices);
 
 private:
 	void generate_mesh();
@@ -73,8 +73,6 @@ private:
 		bool is_back_occluded() const;
 		bool is_left_occluded() const;
 		bool is_right_occluded() const;
-
-		Voxel get_voxel_sharing_face(AxiallyAligned::Voxel::Face face);
 
 		Voxel get_voxel_above() const;
 		Voxel get_voxel_below() const;

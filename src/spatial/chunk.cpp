@@ -40,13 +40,8 @@ AxiallyAligned::Voxel::Face Chunk::Intersected::get_face() const
 
 
 Chunk::Chunk(const glm::vec3& leftBottomRight, float voxelSideLength)
-	:_octree(*this), _modelMatrix(glm::scale(glm::mat4(), glm::vec3(voxelSideLength, voxelSideLength, voxelSideLength)))
+	:_octree(*this), _modelMatrix(glm::translate(glm::mat4(), leftBottomRight)*glm::scale(glm::mat4(), glm::vec3(voxelSideLength, voxelSideLength, voxelSideLength)))
 {
-	for (int x = 0; x < get_num_of_voxels_per_side(); ++x)
-		for (int y = 0; y < get_num_of_voxels_per_side(); ++y)
-			for (int z = 0; z < get_num_of_voxels_per_side(); ++z)
-				_voxels[x][y][z] = Color(0x0A, 0x91, 0xAB, 255);
-
 	generate_mesh();
 }
 
@@ -68,9 +63,9 @@ Mesh Chunk::get_mesh() const
 	return _mesh;
 }
 
-Mesh Chunk::get_voxel_mesh(const Intersected& i) const
+Mesh Chunk::get_voxel_mesh(const glm::ivec3& indices) const
 {
-	return Voxel(*this, i.get_indices()).generate_mesh();
+	return Voxel(*this, indices).generate_mesh();
 }
 
 glm::mat4 Chunk::get_model_matrix() const
@@ -78,21 +73,15 @@ glm::mat4 Chunk::get_model_matrix() const
 	return _modelMatrix;
 }
 
-void Chunk::show_voxel(const Intersected& i, const Color& color)
+void Chunk::add_voxel(const glm::ivec3& indices, const Color& color)
 {
-	const Voxel relativeVoxel(Voxel(*this, i.get_indices()).get_voxel_sharing_face(i.get_face()));
-	if (!relativeVoxel.is_in_chunk())
-		return;
-
-	const auto ri = relativeVoxel.get_indices();
-	_voxels[ri.x][ri.y][ri.z] = color;
+	_voxels[indices.x][indices.y][indices.z] = color;
 	generate_mesh();
 }
 
-void Chunk::hide_voxel(const Intersected& indices)
+void Chunk::delete_voxel(const glm::ivec3& indices)
 {
-	const auto i = indices.get_indices();
-	_voxels[i.x][i.y][i.z] = Color(0, 0, 0, 0);
+	_voxels[indices.x][indices.y][indices.z] = Color(0, 0, 0, 0);
 	generate_mesh();
 }
 
@@ -173,25 +162,6 @@ bool Chunk::Voxel::is_right_occluded() const
 {
 	const auto v = get_voxel_to_right();
 	return v.is_in_chunk() && v.is_visible();
-}
-
-Chunk::Voxel Chunk::Voxel::get_voxel_sharing_face(AxiallyAligned::Voxel::Face face)
-{
-	switch (face)
-	{
-	case AxiallyAligned::Voxel::Face::TOP:
-		return get_voxel_above();
-	case AxiallyAligned::Voxel::Face::BOTTOM:
-		return get_voxel_below();
-	case AxiallyAligned::Voxel::Face::LEFT:
-		return get_voxel_to_left();
-	case AxiallyAligned::Voxel::Face::RIGHT:
-		return get_voxel_to_right();
-	case AxiallyAligned::Voxel::Face::FRONT:
-		return get_voxel_in_front();
-	default:
-		return get_voxel_behind();
-	}
 }
 
 Chunk::Voxel Chunk::Voxel::get_voxel_above() const

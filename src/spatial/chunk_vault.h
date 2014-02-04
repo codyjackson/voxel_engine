@@ -2,6 +2,8 @@
 
 #include "chunk.h"
 
+#include "../rendering/renderable.h"
+
 #include <unordered_map>
 
 class ChunkVault
@@ -23,14 +25,23 @@ public:
 	ChunkVault(float voxelSideLength, const glm::vec3& originLocationInWorld, const glm::vec3& observersLocation, int chunkLoadRadiusAroundObserver);
 
 	Intersection<Intersected> find_nearest_intersection(const Ray& r) const;
-	glm::ivec3 get_indices_of_voxel_sharing_face_with(const glm::ivec3& indices, AxiallyAligned::Voxel::Face face);
+
+	Mesh get_mesh_of_voxel(const Intersected& intersected) const;
 	Mesh get_mesh_of_voxel(const glm::ivec3& indices) const;
 
-	void add_voxel(const glm::ivec3& indices, const Color& c);
+	std::vector<Renderable> get_renderables() const;
+
+	void add_adjacent_voxel(const Intersected& intersected, const Color& color);
+	void add_adjacent_voxel(const glm::ivec3& indices, AxiallyAligned::Voxel::Face face, const Color& color);
+	void add_voxel(const glm::ivec3& indices, const Color& color);
+
+	void delete_voxel(const Intersected& intersected);
 	void delete_voxel(const glm::ivec3& indices);
+
 	void update_observers_location(const glm::vec3& oberversLocations);
 
 private:
+	glm::ivec3 get_indices_of_adjacent_voxel(const glm::ivec3& indices, AxiallyAligned::Voxel::Face face) const;
 	glm::vec3 convert_world_space_to_vault_space(const glm::vec3& v) const;
 	glm::ivec3 convert_vault_indices_to_chunk_origin(const glm::ivec3& indices) const;
 	glm::ivec3 convert_world_space_to_chunk_origin(const glm::vec3& worldLocation) const;
