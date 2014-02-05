@@ -11,6 +11,8 @@ public:
 
 	void clear();
 
+	size_t size() const;
+
 	void draw_with_color() const;
 	void draw_without_color() const;
 

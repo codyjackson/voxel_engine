@@ -20,6 +20,11 @@ void Mesh::clear()
 	_quads.clear();
 }
 
+size_t Mesh::size() const
+{
+	return _quads.size();
+}
+
 void Mesh::draw_with_color() const
 {
 	if(_quads.size() == 0)
