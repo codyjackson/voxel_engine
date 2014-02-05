@@ -52,13 +52,16 @@ int Chunk::get_num_of_voxels_per_side()
 
 Intersection<Chunk::Intersected> Chunk::find_nearest_intersection(const Ray& r) const
 {
+	if (_mesh.size() == 0)
+		return make_intersection<Intersected>();
+
 	const Ray localRay = r.transform_into_new_space(glm::inverse(get_model_matrix()));
 	if (auto intersection = _octree.find_nearest_intersection(localRay))
 		return intersection;
 	return make_intersection<Intersected>();
 }
 
-Mesh Chunk::get_mesh() const
+const Mesh& Chunk::get_mesh() const
 {
 	return _mesh;
 }
@@ -68,7 +71,7 @@ Mesh Chunk::get_voxel_mesh(const glm::ivec3& indices) const
 	return Voxel(*this, indices).generate_mesh();
 }
 
-glm::mat4 Chunk::get_model_matrix() const
+const glm::mat4& Chunk::get_model_matrix() const
 {
 	return _modelMatrix;
 }

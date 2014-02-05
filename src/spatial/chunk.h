@@ -42,9 +42,9 @@ public:
 
 	Intersection<Intersected> find_nearest_intersection(const Ray& r) const;
 
-	Mesh get_mesh() const;
+	const Mesh& get_mesh() const;
+	const glm::mat4& get_model_matrix() const;
 	Mesh get_voxel_mesh(const glm::ivec3& indices) const;
-	glm::mat4 get_model_matrix() const;
 
 	void add_voxel(const glm::ivec3& indices, const Color& color);
 	void delete_voxel(const glm::ivec3& indices);
