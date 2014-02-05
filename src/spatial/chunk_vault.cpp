@@ -22,7 +22,7 @@ ChunkVault::ChunkVault(float voxelSideLength, const glm::vec3& originLocationInW
 	for (int x = -chunkLoadRadiusAroundObserver; x <= chunkLoadRadiusAroundObserver; ++x)
 		for (int y = -chunkLoadRadiusAroundObserver; y <= chunkLoadRadiusAroundObserver; ++y)
 			for (int z = -chunkLoadRadiusAroundObserver; z <= chunkLoadRadiusAroundObserver; ++z)
-				_originToChunk.insert(std::make_pair(glm::ivec3(x, y, z), std::make_shared<Chunk>(glm::vec3(x, y, z) * voxelSideLength, voxelSideLength)));
+				_originToChunk.insert(std::make_pair(glm::ivec3(x, y, z)*Chunk::get_num_of_voxels_per_side(), std::make_shared<Chunk>(glm::vec3(x, y, z) * static_cast<float>(Chunk::get_num_of_voxels_per_side()) * voxelSideLength, voxelSideLength)));
 	add_voxel(glm::ivec3(0, 0, 0), Color(0xFF, 0xFF, 0xFF, 0xFF));
 }
 
@@ -38,6 +38,17 @@ Intersection<ChunkVault::Intersected> ChunkVault::find_nearest_intersection(cons
 	std::transform(_originToChunk.begin(), _originToChunk.end(), std::back_inserter(intersections), getIntersection);
 
 	return Spatial::Utility::get_nearest_intersection(intersections);
+}
+
+glm::mat4 ChunkVault::get_voxel_model_matrix(const Intersected& intersected) const
+{
+	return get_voxel_model_matrix(intersected.get_indices());
+}
+
+glm::mat4 ChunkVault::get_voxel_model_matrix(const glm::ivec3& indices) const
+{
+	const auto chunkOrigin = convert_vault_indices_to_chunk_origin(indices);
+	return _originToChunk.find(chunkOrigin)->second->get_model_matrix();
 }
 
 Mesh ChunkVault::get_mesh_of_voxel(const Intersected& intersected) const
@@ -124,7 +135,10 @@ glm::vec3 ChunkVault::convert_world_space_to_vault_space(const glm::vec3& v) con
 
 glm::ivec3 ChunkVault::convert_vault_indices_to_chunk_origin(const glm::ivec3& indices) const
 {
-	return indices / Chunk::get_num_of_voxels_per_side();
+	int x = (indices.x >= 0 ? indices.x : indices.x - Chunk::get_num_of_voxels_per_side());
+	int y = (indices.y >= 0 ? indices.y : indices.y - Chunk::get_num_of_voxels_per_side());
+	int z = (indices.z >= 0 ? indices.z : indices.z - Chunk::get_num_of_voxels_per_side());
+	return (glm::ivec3(x, y, z) / Chunk::get_num_of_voxels_per_side()) * Chunk::get_num_of_voxels_per_side();
 }
 
 glm::ivec3 ChunkVault::convert_world_space_to_chunk_origin(const glm::vec3& worldLocation) const

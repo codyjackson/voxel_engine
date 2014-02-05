@@ -92,7 +92,11 @@ int main()
 		chunkVault.render(camera);
 
 		if (const auto intersection = chunkVault.find_nearest_intersection(r))
-			Renderer::render_wireframe(camera, glm::mat4(), Color(0xF2, 0xF2, 0xF2, 255), chunkVault.get_mesh_of_voxel(intersection->get_object_of_interest()));
+		{
+			const auto modelMatrix = chunkVault.get_voxel_model_matrix(intersection->get_object_of_interest());
+			const auto mesh = chunkVault.get_mesh_of_voxel(intersection->get_object_of_interest());
+			Renderer::render_wireframe(camera, modelMatrix, Color(0xF2, 0x00, 0x00, 255), mesh);
+		}
 	};
 
 

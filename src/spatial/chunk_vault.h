@@ -27,6 +27,9 @@ public:
 
 	Intersection<Intersected> find_nearest_intersection(const Ray& r) const;
 
+	glm::mat4 get_voxel_model_matrix(const Intersected& intersected) const;
+	glm::mat4 get_voxel_model_matrix(const glm::ivec3& indices) const;
+
 	Mesh get_mesh_of_voxel(const Intersected& intersected) const;
 	Mesh get_mesh_of_voxel(const glm::ivec3& indices) const;
 
@@ -42,6 +45,7 @@ public:
 	void update_observers_location(const glm::vec3& oberversLocations);
 
 private:
+
 	glm::ivec3 get_indices_of_adjacent_voxel(const glm::ivec3& indices, AxiallyAligned::Voxel::Face face) const;
 	glm::vec3 convert_world_space_to_vault_space(const glm::vec3& v) const;
 	glm::ivec3 convert_vault_indices_to_chunk_origin(const glm::ivec3& indices) const;
