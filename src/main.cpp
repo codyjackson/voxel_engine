@@ -16,7 +16,7 @@ int main()
 	float metersPerSecondForward = 0.0f;
 	float metersPerSecondRight = 0.0f;
 
-	ChunkVault chunkVault(meters(2.0f / 16.0f), glm::vec3(0, 0, 0), glm::vec3(0, 0, 0), 4);
+	ChunkVault chunkVault(meters(2.0f / 16.0f), glm::vec3(0, 0, 0), glm::vec3(0, 0, 0), 2);
 
 	auto onInitialize = [&](Window& window){
 		window.update_width(1024);
@@ -89,12 +89,7 @@ int main()
 		Ray r(camera.position, camera.orientation.forward());
 		Renderer::clear_screen();
 
-		const auto chunkRenderable = chunkVault.get_renderables();
-		const auto render = [&camera](const Renderable& renderable){
-			Renderer::render(camera, renderable);
-			Renderer::render_wireframe(camera, Color(0x0C, 0x22, 0x33, 255), renderable);
-		};
-		std::for_each(std::begin(chunkRenderable), std::end(chunkRenderable), render);
+		chunkVault.render(camera);
 
 		if (const auto intersection = chunkVault.find_nearest_intersection(r))
 			Renderer::render_wireframe(camera, glm::mat4(), Color(0xF2, 0xF2, 0xF2, 255), chunkVault.get_mesh_of_voxel(intersection->get_object_of_interest()));

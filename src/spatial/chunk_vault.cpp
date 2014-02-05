@@ -1,5 +1,6 @@
 #include "chunk_vault.h"
 
+#include "../rendering/renderer.h"
 #include "utility.h"
 
 ChunkVault::Intersected::Intersected(const glm::ivec3& chunkOrigin, const Chunk::Intersected& chunkIntersected)
@@ -21,14 +22,14 @@ ChunkVault::ChunkVault(float voxelSideLength, const glm::vec3& originLocationInW
 	for (int x = -chunkLoadRadiusAroundObserver; x <= chunkLoadRadiusAroundObserver; ++x)
 		for (int y = -chunkLoadRadiusAroundObserver; y <= chunkLoadRadiusAroundObserver; ++y)
 			for (int z = -chunkLoadRadiusAroundObserver; z <= chunkLoadRadiusAroundObserver; ++z)
-				_originToChunk.insert(std::make_pair(glm::ivec3(x, y, z), Chunk(glm::vec3(x, y, z), voxelSideLength)));
+				_originToChunk.insert(std::make_pair(glm::ivec3(x, y, z), std::make_shared<Chunk>(glm::vec3(x, y, z) * voxelSideLength, voxelSideLength)));
 	add_voxel(glm::ivec3(0, 0, 0), Color(0xFF, 0xFF, 0xFF, 0xFF));
 }
 
 Intersection<ChunkVault::Intersected> ChunkVault::find_nearest_intersection(const Ray& r) const
 {
-	const auto getIntersection = [&r](const std::pair<glm::ivec3, Chunk>& originChunkPair) {
-		const auto intersection = originChunkPair.second.find_nearest_intersection(r);
+	const auto getIntersection = [&r](const std::pair<glm::ivec3, std::shared_ptr<Chunk>>& originChunkPair) {
+		const auto intersection = originChunkPair.second->find_nearest_intersection(r);
 		if (!intersection)
 			return make_intersection<Intersected>();
 		return make_intersection(intersection->get_distance_from_origin(), Intersected(originChunkPair.first, intersection->get_object_of_interest()));
@@ -48,17 +49,18 @@ Mesh ChunkVault::get_mesh_of_voxel(const glm::ivec3& indices) const
 {
 	const auto chunkOrigin = convert_vault_indices_to_chunk_origin(indices);
 	const auto chunkIndices = indices - chunkOrigin;
-	return _originToChunk.find(chunkOrigin)->second.get_voxel_mesh(chunkIndices);
+	return _originToChunk.find(chunkOrigin)->second->get_voxel_mesh(chunkIndices);
 }
 
-std::vector<Renderable> ChunkVault::get_renderables() const
+void ChunkVault::render(const Camera& camera) const
 {
-	std::vector<Renderable> renderables;
-	const auto transformToRenderable = [](const std::pair<glm::ivec3, Chunk>& pair){
-		return Renderable(pair.second.get_mesh(), pair.second.get_model_matrix());
+	const auto render = [&camera](const std::pair<glm::ivec3, std::shared_ptr<Chunk>>& pair){
+		if (pair.second->get_mesh().size() <= 0)
+			return;
+		Renderer::render(camera, pair.second->get_model_matrix(), pair.second->get_mesh());
+		Renderer::render_wireframe(camera, pair.second->get_model_matrix(), Color(0x0C, 0x22, 0x33, 255), pair.second->get_mesh());
 	};
-	std::transform(std::begin(_originToChunk), std::end(_originToChunk), std::back_inserter(renderables), transformToRenderable);
-	return renderables;
+	std::for_each(std::begin(_originToChunk), std::end(_originToChunk), render);
 }
 
 void ChunkVault::add_adjacent_voxel(const Intersected& intersected, const Color& color)
@@ -76,7 +78,7 @@ void ChunkVault::add_voxel(const glm::ivec3& indices, const Color& color)
 {
 	const auto chunkOrigin = convert_vault_indices_to_chunk_origin(indices);
 	const auto chunkIndices = indices - chunkOrigin;
-	_originToChunk.find(chunkOrigin)->second.add_voxel(chunkIndices, color);
+	_originToChunk.find(chunkOrigin)->second->add_voxel(chunkIndices, color);
 }
 
 void ChunkVault::delete_voxel(const Intersected& intersected)
@@ -88,7 +90,7 @@ void ChunkVault::delete_voxel(const glm::ivec3& indices)
 {
 	const auto chunkOrigin = convert_vault_indices_to_chunk_origin(indices);
 	const auto chunkIndices = indices - chunkOrigin;
-	_originToChunk.find(chunkOrigin)->second.delete_voxel(chunkIndices);
+	_originToChunk.find(chunkOrigin)->second->delete_voxel(chunkIndices);
 }
 
 void ChunkVault::update_observers_location(const glm::vec3& oberversLocations)

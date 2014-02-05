@@ -2,8 +2,9 @@
 
 #include "chunk.h"
 
-#include "../rendering/renderable.h"
+#include "../rendering/camera.h"
 
+#include <memory>
 #include <unordered_map>
 
 class ChunkVault
@@ -29,7 +30,7 @@ public:
 	Mesh get_mesh_of_voxel(const Intersected& intersected) const;
 	Mesh get_mesh_of_voxel(const glm::ivec3& indices) const;
 
-	std::vector<Renderable> get_renderables() const;
+	void render(const Camera& camera) const;
 
 	void add_adjacent_voxel(const Intersected& intersected, const Color& color);
 	void add_adjacent_voxel(const glm::ivec3& indices, AxiallyAligned::Voxel::Face face, const Color& color);
@@ -52,5 +53,5 @@ private:
 	const glm::vec3 _originLocationInWorld;
 	const glm::vec3 _observersLocation;
 	int _chunkLoadRadius;
-	std::unordered_map<glm::ivec3, Chunk, IndicesHasher> _originToChunk;
+	std::unordered_map<glm::ivec3, std::shared_ptr<Chunk>, IndicesHasher> _originToChunk;
 };
