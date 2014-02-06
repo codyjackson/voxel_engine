@@ -1,3 +1,4 @@
+#include <Windows.h>
 #include "main_loop.h"
 
 #include "rendering/camera.h"
@@ -16,19 +17,20 @@ int main()
 	float metersPerSecondForward = 0.0f;
 	float metersPerSecondRight = 0.0f;
 
-	ChunkVault chunkVault(meters(2.0f / 16.0f), glm::vec3(0, 0, 0), glm::vec3(0, 0, 0), 2);
+	ChunkVault chunkVault(meters(2.0f / 13.0f), glm::vec3(0, 0, 0), glm::vec3(0, 0, 0), 2);
 
 	auto onInitialize = [&](Window& window){
 		window.update_width(1024);
 		window.update_height(768);
 		window.update_title("Voxel Engine");
 
+		window.input().mouse().hide_cursor();
 		window.input().on(Input::PressableTerminal(Input::Pressable::ESCAPE, Input::PressableEvent::RELEASED), [&window](Input& in){
 			window.close();
 		});
 
 		window.input().on(Input::PressableTerminal(Input::Pressable::W, Input::PressableEvent::PRESSED), [&](Input& in){
-			metersPerSecondForward = 0.01f;
+			metersPerSecondForward = meters(3.0f);
 		});
 
 		window.input().on(Input::PressableTerminal(Input::Pressable::W, Input::PressableEvent::RELEASED), [&](Input& in){
@@ -36,7 +38,7 @@ int main()
 		});
 
 		window.input().on(Input::PressableTerminal(Input::Pressable::S, Input::PressableEvent::PRESSED), [&](Input& in){
-			metersPerSecondForward = -0.01f;
+			metersPerSecondForward = -meters(3.0f);
 		});
 
 		window.input().on(Input::PressableTerminal(Input::Pressable::S, Input::PressableEvent::RELEASED), [&](Input& in){
@@ -46,7 +48,7 @@ int main()
 
 
 		window.input().on(Input::PressableTerminal(Input::Pressable::D, Input::PressableEvent::PRESSED), [&](Input& in){
-			metersPerSecondRight = 0.01f;
+			metersPerSecondRight = meters(3.0f);
 		});
 
 		window.input().on(Input::PressableTerminal(Input::Pressable::D, Input::PressableEvent::RELEASED), [&](Input& in){
@@ -54,7 +56,7 @@ int main()
 		});
 
 		window.input().on(Input::PressableTerminal(Input::Pressable::A, Input::PressableEvent::PRESSED), [&](Input& in){
-			metersPerSecondRight = -0.01f;
+			metersPerSecondRight = -meters(3.0f);
 		});
 
 		window.input().on(Input::PressableTerminal(Input::Pressable::A, Input::PressableEvent::RELEASED), [&](Input& in){
@@ -82,9 +84,9 @@ int main()
 		window.input().mouse().lock_movement();
 	};
 	
-	auto onIterate = [&](Window& window){
-		camera.position += metersPerSecondForward * camera.orientation.forward();
-		camera.position += metersPerSecondRight * camera.orientation.right();
+	auto onIterate = [&](Window& window, float timeStepInSeconds){
+		camera.position += timeStepInSeconds * metersPerSecondForward * camera.orientation.forward();
+		camera.position += timeStepInSeconds * metersPerSecondRight * camera.orientation.right();
 
 		Ray r(camera.position, camera.orientation.forward());
 		Renderer::clear_screen();
@@ -100,6 +102,6 @@ int main()
 	};
 
 
-	MainLoop loop(onInitialize, onIterate);
+	MainLoop loop(onInitialize, onIterate, 1.0f/40.0f);
     return 0;
 }

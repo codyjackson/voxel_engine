@@ -1,5 +1,11 @@
 #pragma once
 
+
+#include <Windows.h>
+
+#pragma push_macro("DELETE")
+#undef DELETE
+
 #include <array>
 #include <functional>
 #include <unordered_map>
@@ -232,6 +238,10 @@ public:
 	class Mouse
 	{
 	public: 
+		void hide_cursor();
+		void show_cursor();
+		bool is_mouse_hidden() const;
+
 		void lock_movement();
 		void unlock_movement();
 		bool is_movement_locked() const;
@@ -251,6 +261,7 @@ public:
 		glm::ivec2 _oldPosition;
 		int _wheelDelta;
 		bool _isMovementLocked;
+		bool _isMouseHidden;
 	};
 
 	Mouse& mouse();
@@ -303,3 +314,5 @@ namespace std
 		}
 	};
 }
+
+#pragma pop_macro("DELETE")

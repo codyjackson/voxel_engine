@@ -31,8 +31,23 @@ Input::PressableEvent Input::PressableTerminal::get_event() const
 }
 
 Input::Mouse::Mouse()
-:_isMovementLocked(false)
+:_isMovementLocked(false), _isMouseHidden(false)
 {}
+
+void Input::Mouse::hide_cursor()
+{
+	_isMouseHidden = true;
+}
+
+void Input::Mouse::show_cursor()
+{
+	_isMouseHidden = false;
+}
+
+bool Input::Mouse::is_mouse_hidden() const
+{
+	return _isMouseHidden;
+}
 
 void Input::Mouse::lock_movement()
 {

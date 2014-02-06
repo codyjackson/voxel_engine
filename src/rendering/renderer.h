@@ -1,5 +1,7 @@
 #pragma once
 
+#include <Windows.h>
+
 #include "camera.h"
 #include "mesh.h"
 

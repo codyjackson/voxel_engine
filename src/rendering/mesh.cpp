@@ -1,5 +1,7 @@
 #include "mesh.h"
 
+#include <Windows.h>
+
 #include <GLFW/glfw3.h>
 
 #include <algorithm>

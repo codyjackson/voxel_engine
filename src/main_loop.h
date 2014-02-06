@@ -7,8 +7,8 @@
 class MainLoop
 {
 public:
-	MainLoop(const std::function<void (Window&)>& onInitialize, const std::function<void (Window&)>& onIteration);
+	MainLoop(const std::function<void (Window&)>& onInitialize, const std::function<void (Window&, float timeStep)>& onIteration, float timeStepInSeconds);
 
 private:
-	Window window;
+	long long get_ms_since_epoch() const;
 };

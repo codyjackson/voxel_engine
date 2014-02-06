@@ -100,6 +100,7 @@ const bool Window::is_open() const
 
 void Window::tick()
 {
+	glfwSetInputMode(_window, GLFW_CURSOR, _input._mouse.is_mouse_hidden() ? GLFW_CURSOR_HIDDEN : GLFW_CURSOR_NORMAL);
 	_input.prepare_for_updates();
 	glfwPollEvents();
 }
