@@ -18,12 +18,9 @@ AxiallyAligned::Voxel::Face ChunkVault::Intersected::get_face() const
 }
 
 ChunkVault::ChunkVault(float voxelSideLength, const glm::vec3& originLocationInWorld, const glm::vec3& observersLocation, int chunkLoadRadiusAroundObserver)
+:_voxelSideLength(voxelSideLength)
 {
-	for (int x = -chunkLoadRadiusAroundObserver; x <= chunkLoadRadiusAroundObserver; ++x)
-		for (int y = -chunkLoadRadiusAroundObserver; y <= chunkLoadRadiusAroundObserver; ++y)
-			for (int z = -chunkLoadRadiusAroundObserver; z <= chunkLoadRadiusAroundObserver; ++z)
-				_originToChunk.insert(std::make_pair(glm::ivec3(x, y, z)*Chunk::get_num_of_voxels_per_side(), std::make_shared<Chunk>(glm::vec3(x, y, z) * static_cast<float>(Chunk::get_num_of_voxels_per_side()) * voxelSideLength, voxelSideLength)));
-	add_voxel(glm::ivec3(0, 0, 0), Color(0xFF, 0xFF, 0xFF, 0xFF));
+	add_empty_chunk(glm::ivec3(0, 0, 0))->add_voxel(glm::ivec3(0, 0, 0), Color(0xFF, 0xFF, 0xFF, 0xFF));
 }
 
 Intersection<ChunkVault::Intersected> ChunkVault::find_nearest_intersection(const Ray& r) const
@@ -89,7 +86,10 @@ void ChunkVault::add_voxel(const glm::ivec3& indices, const Color& color)
 {
 	const auto chunkOrigin = convert_vault_indices_to_chunk_origin(indices);
 	const auto chunkIndices = indices - chunkOrigin;
-	_originToChunk.find(chunkOrigin)->second->add_voxel(chunkIndices, color);
+	const auto potentialChunkPair = _originToChunk.find(chunkOrigin); 
+
+	auto chunk = potentialChunkPair == _originToChunk.end() ? add_empty_chunk(chunkOrigin) : potentialChunkPair->second;
+	chunk->add_voxel(chunkIndices, color);
 }
 
 void ChunkVault::delete_voxel(const Intersected& intersected)
@@ -107,6 +107,15 @@ void ChunkVault::delete_voxel(const glm::ivec3& indices)
 void ChunkVault::update_observers_location(const glm::vec3& oberversLocations)
 {
 	assert(!"NOT IMPLEMENTED");
+}
+
+#include <iostream>
+std::shared_ptr<Chunk> ChunkVault::add_empty_chunk(const glm::ivec3& origin)
+{
+	auto chunk = std::make_shared<Chunk>(glm::vec3(origin.x, origin.y, origin.z) * _voxelSideLength, _voxelSideLength);
+	std::cout << origin.x << " " << origin.y << " " << origin.z << std::endl;
+	_originToChunk.insert(std::make_pair(origin, chunk));
+	return chunk;
 }
 
 glm::ivec3 ChunkVault::get_indices_of_adjacent_voxel(const glm::ivec3& indices, AxiallyAligned::Voxel::Face face) const
@@ -135,9 +144,9 @@ glm::vec3 ChunkVault::convert_world_space_to_vault_space(const glm::vec3& v) con
 
 glm::ivec3 ChunkVault::convert_vault_indices_to_chunk_origin(const glm::ivec3& indices) const
 {
-	int x = (indices.x >= 0 ? indices.x : indices.x - Chunk::get_num_of_voxels_per_side());
-	int y = (indices.y >= 0 ? indices.y : indices.y - Chunk::get_num_of_voxels_per_side());
-	int z = (indices.z >= 0 ? indices.z : indices.z - Chunk::get_num_of_voxels_per_side());
+	int x = (indices.x >= 0 ? indices.x : indices.x - Chunk::get_num_of_voxels_per_side() + 1);
+	int y = (indices.y >= 0 ? indices.y : indices.y - Chunk::get_num_of_voxels_per_side() + 1);
+	int z = (indices.z >= 0 ? indices.z : indices.z - Chunk::get_num_of_voxels_per_side() + 1);
 	return (glm::ivec3(x, y, z) / Chunk::get_num_of_voxels_per_side()) * Chunk::get_num_of_voxels_per_side();
 }
 

@@ -45,6 +45,7 @@ public:
 	void update_observers_location(const glm::vec3& oberversLocations);
 
 private:
+	std::shared_ptr<Chunk> add_empty_chunk(const glm::ivec3& origin);
 
 	glm::ivec3 get_indices_of_adjacent_voxel(const glm::ivec3& indices, AxiallyAligned::Voxel::Face face) const;
 	glm::vec3 convert_world_space_to_vault_space(const glm::vec3& v) const;
