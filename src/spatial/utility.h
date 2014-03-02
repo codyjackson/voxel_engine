@@ -10,8 +10,9 @@ namespace Spatial
 		typename T::value_type get_nearest_intersection(const T& intersections)
 		{
 			const auto reduceIfNearer = [](std::pair<float, T::value_type> currentNearest, const T::value_type& intersection){
-				if (!intersection)
+				if (!intersection) {
 					return currentNearest;
+				}
 				const float distance = intersection->get_distance_from_origin();
 				return distance < currentNearest.first ? std::make_pair(distance, intersection) : currentNearest;
 			};

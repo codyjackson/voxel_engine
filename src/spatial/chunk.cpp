@@ -14,6 +14,7 @@
 
 #include "../utility/functional.h"
 #include "../utility/numerical.h"
+#include "../utility/serialization.h"
 
 
 #include <array>
@@ -52,12 +53,14 @@ int Chunk::get_num_of_voxels_per_side()
 
 Intersection<Chunk::Intersected> Chunk::find_nearest_intersection(const Ray& r) const
 {
-	if (_mesh.size() == 0)
+	if (_mesh.size() == 0) {
 		return make_intersection<Intersected>();
+	}
 
 	const Ray localRay = r.transform_into_new_space(glm::inverse(get_model_matrix()));
-	if (auto intersection = _octree.find_nearest_intersection(localRay))
+	if (auto intersection = _octree.find_nearest_intersection(localRay)) {
 		return intersection;
+	}
 	return make_intersection<Intersected>();
 }
 
@@ -92,8 +95,9 @@ void Chunk::generate_mesh()
 {
 	_mesh.clear();
 	for_each_voxel([this](const Voxel& v){
-		if (v.is_visible())
+		if (v.is_visible()) {
 			_mesh.concatenate(v.generate_mesh());
+		}
 	});
 }
 
@@ -199,18 +203,36 @@ Chunk::Voxel Chunk::Voxel::get_voxel_to_left() const
 
 Mesh Chunk::Voxel::generate_mesh() const
 {
-	if (!is_visible())
+	if (!is_visible()) {
 		return Mesh();
+	}
 	const auto v = AxiallyAligned::Voxel(get_model_left_top_front(), 1.0f);
 	return v.generate_mesh(get_color(), !is_front_occluded(), !is_back_occluded(), !is_top_occluded(), !is_bottom_occluded(), !is_left_occluded(), !is_right_occluded());
 }
 
 void Chunk::for_each_voxel(const std::function<void(const Voxel&)>& f) const
 {
-	for (int x = 0; x < get_num_of_voxels_per_side(); ++x)
-		for (int y = 0; y < get_num_of_voxels_per_side(); ++y)
-			for (int z = 0; z < get_num_of_voxels_per_side(); ++z)
+	for (int x = 0; x < get_num_of_voxels_per_side(); ++x) {
+		for (int y = 0; y < get_num_of_voxels_per_side(); ++y) {
+			for (int z = 0; z < get_num_of_voxels_per_side(); ++z) {
 				f(Voxel(*this, glm::ivec3(x, y, z)));
+			}
+		}
+	}		
+}
+
+std::vector<char> Chunk::serialize() const
+{
+	const int numOfColors = VoxelsPerSide::VALUE*VoxelsPerSide::VALUE*VoxelsPerSide::VALUE;
+
+	std::vector<char> data;
+	Serialization::raw_object_serialization(numOfColors, data);
+
+	for_each_voxel([&data](const Chunk::Voxel& voxel) {
+		Serialization::raw_object_serialization(voxel.get_color(), data);
+	});
+
+	return data;
 }
 
 Chunk::Octree::Node::Node(const Chunk& chunk, int voxelsPerSide, const glm::ivec3& leftBottomBack)
@@ -219,17 +241,18 @@ Chunk::Octree::Node::Node(const Chunk& chunk, int voxelsPerSide, const glm::ivec
 
 Intersection<Chunk::Intersected> Chunk::Octree::Node::find_nearest_intersection(const Ray& r) const
 {
-	if (is_leaf())
-	{
-		if (!Voxel(_chunk, get_indices()).is_visible())
+	if (is_leaf()) {
+		if (!Voxel(_chunk, get_indices()).is_visible()) {
 			return make_intersection<Intersected>();
+		}
 		const auto intersection = get_bounding_voxel().find_intersection(r);
 		return intersection ? transform_intersection(intersection) : make_intersection<Intersected>();
 	}
 
 	const auto boundingVoxel = get_bounding_voxel();
-	if (!boundingVoxel.find_intersection(r) && !boundingVoxel.is_inside(r))
+	if (!boundingVoxel.find_intersection(r) && !boundingVoxel.is_inside(r)){
 		return make_intersection<Intersected>();
+	}
 
 	const auto findIntersection = [&r](const Node& n) {
 		return n.find_nearest_intersection(r);

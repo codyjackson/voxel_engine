@@ -17,7 +17,7 @@ int main()
 	float metersPerSecondForward = 0.0f;
 	float metersPerSecondRight = 0.0f;
 
-	ChunkVault chunkVault(meters(2.0f / 13.0f), glm::vec3(0, 0, 0), glm::vec3(0, 0, 0), 2);
+	ChunkVault chunkVault(meters(2.0f / 13.0f), glm::vec3(0, 0, 0));
 
 	auto onInitialize = [&](Window& window){
 		window.update_width(1024);
@@ -71,14 +71,16 @@ int main()
 
 		window.input().on(Input::PressableTerminal(Input::Pressable::MOUSE_BUTTON_2, Input::PressableEvent::RELEASED), [&](Input& in){
 			Ray r(camera.position, camera.orientation.forward());
-			if (const auto intersection = chunkVault.find_nearest_intersection(r))
+			if (const auto intersection = chunkVault.find_nearest_intersection(r)) {
 				chunkVault.delete_voxel(intersection->get_object_of_interest());
+			}
 		});
 
 		window.input().on(Input::PressableTerminal(Input::Pressable::MOUSE_BUTTON_1, Input::PressableEvent::RELEASED), [&](Input& in){
 			Ray r(camera.position, camera.orientation.forward());
-			if (const auto intersection = chunkVault.find_nearest_intersection(r))
+			if (const auto intersection = chunkVault.find_nearest_intersection(r)) {
 				chunkVault.add_adjacent_voxel(intersection->get_object_of_interest(), Color(0x00, 0x85, 0xAD, 255));
+			}
 		});
 
 		window.input().mouse().lock_movement();
@@ -90,8 +92,7 @@ int main()
 
 		Ray r(camera.position, camera.orientation.forward());
 		Renderer::clear_screen();
-		if (const auto intersection = chunkVault.find_nearest_intersection(r))
-		{
+		if (const auto intersection = chunkVault.find_nearest_intersection(r)) {
 			const auto modelMatrix = chunkVault.get_voxel_model_matrix(intersection->get_object_of_interest());
 			const auto mesh = chunkVault.get_mesh_of_voxel(intersection->get_object_of_interest());
 			Renderer::render_wireframe(camera, modelMatrix, Color(0xFF, 0xFF, 0xFF, 255), mesh);

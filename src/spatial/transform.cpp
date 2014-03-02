@@ -46,10 +46,12 @@ const Orientation& Transform::orientation() const
 
 glm::mat4 Transform::get_model_matrix() const
 {
-	if (_parent)
+	if (_parent) {
 		return _parent->get_model_matrix() * glm::translate(_position) * _orientation.get_rotation_matrix();
-	else
+	}
+	else {
 		return glm::translate(_position) * _orientation.get_rotation_matrix();
+	}
 
 }
 
@@ -59,6 +61,4 @@ Transform::Transform()
 
 Transform::Transform(const glm::vec3& position, const Orientation& orientation, std::shared_ptr<Transform> parent)
 : _position(position), _orientation(orientation), _parent(parent)
-{
-
-}
+{}

@@ -162,12 +162,14 @@ void Input::prepare_for_updates()
 
 void Input::update(Pressable pressable, PressableState state)
 {
-	if (_pressableToKeyState.find(pressable) == _pressableToKeyState.end())
+	if (_pressableToKeyState.find(pressable) == _pressableToKeyState.end()) {
 		_pressableToKeyState[pressable] = PressableState::UP;
+	}
 
 	PressableState& keyState = _pressableToKeyState[pressable];
-	if (keyState == state)
+	if (keyState == state) {
 		return;
+	}
 	keyState = state;
 
 	const PressableEvent event = state == PressableState::UP ? PressableEvent::RELEASED : PressableEvent::PRESSED;
@@ -194,12 +196,14 @@ void Input::update_mouse_scroll_wheel(int clicks)
 
 bool Input::is_pressable_pressed(Pressable p) const
 {
-	if (p == Pressable::NONE)
+	if (p == Pressable::NONE) {
 		return true;
+	}
 
 	const auto iter = _pressableToKeyState.find(p);
-	if (iter == _pressableToKeyState.end())
+	if (iter == _pressableToKeyState.end()) {
 		return false;
+	}
 
 	return iter->second == PressableState::DOWN;
 }

@@ -32,6 +32,7 @@
     <ClInclude Include="src\units.h" />
     <ClInclude Include="src\utility\functional.h" />
     <ClInclude Include="src\utility\numerical.h" />
+    <ClInclude Include="src\utility\serialization.h" />
     <ClInclude Include="src\window.h" />
   </ItemGroup>
   <ItemGroup>

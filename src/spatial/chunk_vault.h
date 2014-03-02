@@ -23,7 +23,7 @@ public:
 		AxiallyAligned::Voxel::Face _face;
 	};
 
-	ChunkVault(float voxelSideLength, const glm::vec3& originLocationInWorld, const glm::vec3& observersLocation, int chunkLoadRadiusAroundObserver);
+	ChunkVault(float voxelSideLength, const glm::vec3& originLocationInWorld);
 
 	Intersection<Intersected> find_nearest_intersection(const Ray& r) const;
 
@@ -41,8 +41,6 @@ public:
 
 	void delete_voxel(const Intersected& intersected);
 	void delete_voxel(const glm::ivec3& indices);
-
-	void update_observers_location(const glm::vec3& oberversLocations);
 
 private:
 	std::shared_ptr<Chunk> add_empty_chunk(const glm::ivec3& origin);

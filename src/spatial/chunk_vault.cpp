@@ -17,7 +17,7 @@ AxiallyAligned::Voxel::Face ChunkVault::Intersected::get_face() const
 	return _face;
 }
 
-ChunkVault::ChunkVault(float voxelSideLength, const glm::vec3& originLocationInWorld, const glm::vec3& observersLocation, int chunkLoadRadiusAroundObserver)
+ChunkVault::ChunkVault(float voxelSideLength, const glm::vec3& originLocationInWorld)
 :_voxelSideLength(voxelSideLength)
 {
 	add_empty_chunk(glm::ivec3(0, 0, 0))->add_voxel(glm::ivec3(0, 0, 0), Color(0xFF, 0xFF, 0xFF, 0xFF));
@@ -27,8 +27,9 @@ Intersection<ChunkVault::Intersected> ChunkVault::find_nearest_intersection(cons
 {
 	const auto getIntersection = [&r](const std::pair<glm::ivec3, std::shared_ptr<Chunk>>& originChunkPair) {
 		const auto intersection = originChunkPair.second->find_nearest_intersection(r);
-		if (!intersection)
+		if (!intersection) {
 			return make_intersection<Intersected>();
+		}
 		return make_intersection(intersection->get_distance_from_origin(), Intersected(originChunkPair.first, intersection->get_object_of_interest()));
 	};
 	std::vector<Intersection<Intersected>> intersections;
@@ -63,8 +64,9 @@ Mesh ChunkVault::get_mesh_of_voxel(const glm::ivec3& indices) const
 void ChunkVault::render(const Camera& camera) const
 {
 	const auto render = [&camera](const std::pair<glm::ivec3, std::shared_ptr<Chunk>>& pair){
-		if (pair.second->get_mesh().size() <= 0)
+		if (pair.second->get_mesh().size() <= 0) {
 			return;
+		}
 		Renderer::render(camera, pair.second->get_model_matrix(), pair.second->get_mesh());
 		Renderer::render_wireframe(camera, pair.second->get_model_matrix(), Color(0x0C, 0x22, 0x33, 255), pair.second->get_mesh());
 	};
@@ -102,11 +104,6 @@ void ChunkVault::delete_voxel(const glm::ivec3& indices)
 	const auto chunkOrigin = convert_vault_indices_to_chunk_origin(indices);
 	const auto chunkIndices = indices - chunkOrigin;
 	_originToChunk.find(chunkOrigin)->second->delete_voxel(chunkIndices);
-}
-
-void ChunkVault::update_observers_location(const glm::vec3& oberversLocations)
-{
-	assert(!"NOT IMPLEMENTED");
 }
 
 #include <iostream>

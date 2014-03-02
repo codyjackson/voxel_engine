@@ -89,6 +89,7 @@ private:
 	};
 
 	void for_each_voxel(const std::function<void(const Voxel&)>& f) const;
+	std::vector<char> serialize() const;
 
 	class Octree
 	{

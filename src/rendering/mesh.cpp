@@ -29,8 +29,9 @@ size_t Mesh::size() const
 
 void Mesh::draw_with_color() const
 {
-	if(_quads.size() == 0)
+	if (_quads.size() == 0) {
 		return;
+	}
 
 	glBegin(GL_QUADS);
 	const auto first = _quads.begin();

@@ -2,10 +2,12 @@
 
 Window::Window()
 {
-	if(!glfwInit())
+	if (!glfwInit()) {
 		throw std::runtime_error("Failed to initialize glfw.");
-	if(!(_window = glfwCreateWindow(1024, 768, "", NULL, NULL)))
+	}
+	if (!(_window = glfwCreateWindow(1024, 768, "", NULL, NULL))) {
 		throw std::runtime_error("Failed to create window.");
+	}
 	glfwHideWindow(_window);
 
 	//Remember to clear callbacks in the destructor
@@ -18,8 +20,9 @@ Window::Window()
 
 Window::~Window()
 {
-	if (!_window)
+	if (!_window) {
 		return;
+	}
 
 	glfwSetKeyCallback(_window, nullptr);
 	glfwSetCursorPosCallback(_window, nullptr);
@@ -107,8 +110,9 @@ void Window::tick()
 
 void Window::on_keyboard_message_forwarder(GLFWwindow* glfwWindow, int key, int scancode, int action, int modifiers)
 {
-	if (action == GLFW_REPEAT)
+	if (action == GLFW_REPEAT) {
 		return;
+	}
 
 	Window& window = *Window::_glfwWindowToWindowMappingForStaticCallbacks[glfwWindow];
 	const Input::PressableState state = static_cast<Input::PressableState>(action);
@@ -119,8 +123,9 @@ void Window::on_keyboard_message_forwarder(GLFWwindow* glfwWindow, int key, int 
 void Window::on_mouse_position_message_forwarder(GLFWwindow* glfwWindow, double x, double y)
 {
 	Window& window = *Window::_glfwWindowToWindowMappingForStaticCallbacks[glfwWindow];
-	if (!window._input._mouse.is_movement_locked())
+	if (!window._input._mouse.is_movement_locked()) {
 		return window._input.update_mouse_position(glm::ivec2(static_cast<int>(x), static_cast<int>(y)));
+	}
 
 	const glm::ivec2 center = window.get_center();
 	window._input.update_mouse_locked_position(center, glm::ivec2(static_cast<int>(x), static_cast<int>(y)));
