@@ -54,6 +54,7 @@
     <ClInclude Include="src\spatial\chunk_vault.h" />
     <ClInclude Include="src\spatial\utility.h" />
     <ClInclude Include="src\utility\serialization.h" />
+    <ClInclude Include="src\database.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\rendering\color.cpp">
@@ -91,5 +92,6 @@
     <ClCompile Include="src\spatial\ray.cpp" />
     <ClCompile Include="src\spatial\chunk.cpp" />
     <ClCompile Include="src\spatial\chunk_vault.cpp" />
+    <ClCompile Include="src\database.cpp" />
   </ItemGroup>
 </Project>

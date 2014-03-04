@@ -4,6 +4,8 @@
 
 #include "../rendering/camera.h"
 
+#include "../database.h"
+
 #include <memory>
 #include <unordered_map>
 
@@ -52,6 +54,7 @@ private:
 
 	struct IndicesHasher { size_t operator()(const glm::ivec3& indices) const; };
 
+	Database _temporaryMap;
 	float _voxelSideLength;
 	const glm::vec3 _originLocationInWorld;
 	const glm::vec3 _observersLocation;
