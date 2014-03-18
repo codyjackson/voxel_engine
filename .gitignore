@@ -30,3 +30,4 @@ Obj/
 *.idb
 /Debug/*
 /Release/*
+/lib/*
