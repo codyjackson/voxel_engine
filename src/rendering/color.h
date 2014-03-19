@@ -4,6 +4,7 @@ class Color
 {
 	public:
 		Color();
+		Color(const unsigned char red, const unsigned char green, const unsigned char blue);
 		Color(const unsigned char red, const unsigned char green, const unsigned char blue, const unsigned char alpha);
 		const Color operator=(Color rhs);
 

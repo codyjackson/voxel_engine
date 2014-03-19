@@ -4,15 +4,15 @@ const Color Color::INVISIBLE(0,0,0,0);
 
 Color::Color()
 	: _red(255), _green(0), _blue(0), _alpha(0)
-{
+{}
 
-}
+Color::Color(const unsigned char red, const unsigned char green, const unsigned char blue)
+	:Color(red, green, blue, 255)
+{}
 
 Color::Color(const unsigned char red, const unsigned char green, const unsigned char blue, const unsigned char alpha)
 	:_red(red), _green(green), _blue(blue), _alpha(alpha)
-{
-
-}
+{}
 
 const unsigned char Color::get_red() const
 {
