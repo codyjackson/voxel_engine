@@ -40,6 +40,7 @@ void Window::open()
 	glfwMakeContextCurrent(_window);
 
 	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_TEXTURE_2D);
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 }
 
