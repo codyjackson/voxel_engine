@@ -20,6 +20,7 @@
     <ClInclude Include="src\rendering\mesh.h" />
     <ClInclude Include="src\rendering\quad.h" />
     <ClInclude Include="src\rendering\renderer.h" />
+    <ClInclude Include="src\rendering\ui.h" />
     <ClInclude Include="src\rendering\vertex.h" />
     <ClInclude Include="src\spatial\axially_aligned\plane.h" />
     <ClInclude Include="src\spatial\axially_aligned\voxel.h" />
@@ -46,6 +47,7 @@
     <ClCompile Include="src\rendering\color.cpp" />
     <ClCompile Include="src\rendering\mesh.cpp" />
     <ClCompile Include="src\rendering\quad.cpp" />
+    <ClCompile Include="src\rendering\ui.cpp" />
     <ClCompile Include="src\rendering\vertex.cpp" />
     <ClCompile Include="src\spatial\axially_aligned\plane.cpp" />
     <ClCompile Include="src\spatial\axially_aligned\voxel.cpp" />

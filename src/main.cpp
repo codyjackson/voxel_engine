@@ -4,10 +4,12 @@
 #include "rendering/camera.h"
 #include "rendering/renderer.h"
 #include "spatial/chunk_vault.h"
+#include "rendering/ui.h"
 #include "units.h"
 
 #include <glm/glm.hpp>
 #include <GLFW/glfw3.h>
+#include <memory>
 
 int main()
 {
@@ -19,6 +21,7 @@ int main()
 
 	ChunkVault chunkVault(meters(2.0f / 13.0f), glm::vec3(0, 0, 0));
 
+	std::shared_ptr<UI> ui;
 	auto onInitialize = [&](Window& window){
 		window.update_width(1024);
 		window.update_height(768);
@@ -84,6 +87,7 @@ int main()
 		});
 
 		window.input().mouse().lock_movement();
+		ui = std::make_shared<UI>(200, 200);
 	};
 	
 	auto onIterate = [&](Window& window, float timeStepInSeconds){
@@ -92,6 +96,7 @@ int main()
 
 		Ray r(camera.position, camera.orientation.forward());
 		Renderer::clear_screen();
+		ui->render();
 		if (const auto intersection = chunkVault.find_nearest_intersection(r)) {
 			const auto modelMatrix = chunkVault.get_voxel_model_matrix(intersection->get_object_of_interest());
 			const auto mesh = chunkVault.get_mesh_of_voxel(intersection->get_object_of_interest());

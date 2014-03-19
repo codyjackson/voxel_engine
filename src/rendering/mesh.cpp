@@ -48,10 +48,6 @@ void Mesh::draw_without_color() const
 		return;
 
 	glBegin(GL_QUADS);
-	const auto first = _quads.begin();
-	first->draw_without_color();
-
-	const auto second = first + 1;
-	std::for_each(second, _quads.end(), [](const Quad& q){q.draw_without_color(); });
+		std::for_each(_quads.begin(), _quads.end(), [](const Quad& q){q.draw_without_color(); });
 	glEnd();
 }
