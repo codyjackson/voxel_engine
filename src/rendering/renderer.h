@@ -51,6 +51,7 @@ public:
 		mesh.draw_without_color();
 
 		glDisable(GL_POLYGON_OFFSET_LINE);
+		glPolygonMode(GL_FRONT, GL_FILL);
 	}
 
 private:
