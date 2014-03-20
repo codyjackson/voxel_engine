@@ -6,6 +6,7 @@
 UI::UI(int width, int height)
 :_pixels(width*height, Color(255, 0, 0))
 {
+	
 	glGenTextures(1, &_textureHandle);
 	auto error = glGetError();
 	glBindTexture(GL_TEXTURE_2D, _textureHandle);
@@ -24,6 +25,7 @@ void UI::render() const
 {
 	glBindTexture(GL_TEXTURE_2D, _textureHandle);
 	glLoadIdentity();
+	glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
 	glBegin(GL_QUADS);
 		glTexCoord2f(0.0f, 0.0f); glVertex2f(-1.0f, 0.0f);
 		glTexCoord2f(1.0f, 0.0f); glVertex2f(0.0, 0.0f);

@@ -8,8 +8,8 @@ MainLoop::MainLoop(const std::function<void (Window&)>& onInitialize, const std:
 	const long long timeStepInMs = static_cast<long long>(timeStepInSeconds*1000.0f);
 
 	Window window;
-	onInitialize(window);
 	window.open();
+	onInitialize(window);
 	while(window.is_open()) {
 		const long long begin = get_ms_since_epoch();
 		onIteration(window, timeStepInSeconds);
