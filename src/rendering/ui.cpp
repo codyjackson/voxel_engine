@@ -4,15 +4,16 @@
 #include <GLFW/glfw3.h>
 
 UI::UI(int width, int height)
-:_pixels(width*height, Color(255, 0, 0))
+:_pixels((width*height)+2, Color(255, 0, 0))
 {
 	
 	glGenTextures(1, &_textureHandle);
-	auto error = glGetError();
+	if (auto error = glGetError())
+		throw std::runtime_error("Failed to create texture. Make sure this is called after the gl context has been created.");
 	glBindTexture(GL_TEXTURE_2D, _textureHandle);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, static_cast<void*>(&_pixels));
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, static_cast<void*>(_pixels.data()));
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glBindTexture(GL_TEXTURE_2D, NULL);
 }
 
