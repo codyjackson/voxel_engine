@@ -91,13 +91,13 @@
     <LinkIncremental>true</LinkIncremental>
     <SourcePath>
     </SourcePath>
-    <IncludePath>$(ProjectDir)\include;$(ProjectDir)\lib\include;$(SourcePath);$(IncludePath)</IncludePath>
-    <LibraryPath>$(ProjectDir)\lib\bin;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(ProjectDir)\include;$(ProjectDir)\lib\include;$(AWE_DIR)include;$(SourcePath);$(IncludePath)</IncludePath>
+    <LibraryPath>$(ProjectDir)\lib\bin;$(AWE_DIR)build\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>$(ProjectDir)\include;$(ProjectDir)\lib\include;$(IncludePath)</IncludePath>
-    <LibraryPath>$(ProjectDir)\lib\bin;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(ProjectDir)\include;$(ProjectDir)\lib\include;$(AWE_DIR)include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(ProjectDir)\lib\bin;$(AWE_DIR)build\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -112,10 +112,11 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>sqlite3.lib;glfw3_debug.lib;opengl32.lib;glu32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>sqlite3.lib;awesomium.lib;glfw3_debug.lib;opengl32.lib;glu32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy /y $(ProjectDir)lib\bin\*.dll $(OutDir)</Command>
+      <Command>xcopy /y $(ProjectDir)lib\bin\*.dll $(OutDir)
+xcopy /y $(ProjectDir)lib\bin\*.exe $(OutDir)</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -133,7 +134,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>sqlite3.lib;glfw3.lib;opengl32.lib;glu32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>sqlite3.lib;awesomium.lib;glfw3.lib;opengl32.lib;glu32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>xcopy /y $(ProjectDir)\lib\bin\*.dll $(OutDir)\</Command>
