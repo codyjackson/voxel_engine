@@ -11,7 +11,7 @@
 #include <GLFW/glfw3.h>
 #include <memory>
 
-int main()
+int main(int argc, char* argv[])
 {
 	Orientation orientation;
 	Camera camera(glm::vec3(), orientation);
@@ -96,7 +96,7 @@ int main()
 
 		Ray r(camera.position, camera.orientation.forward());
 		Renderer::clear_screen();
-		ui->render();
+		ui->tick();
 		if (const auto intersection = chunkVault.find_nearest_intersection(r)) {
 			const auto modelMatrix = chunkVault.get_voxel_model_matrix(intersection->get_object_of_interest());
 			const auto mesh = chunkVault.get_mesh_of_voxel(intersection->get_object_of_interest());

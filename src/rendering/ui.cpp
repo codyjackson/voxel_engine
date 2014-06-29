@@ -4,9 +4,11 @@
 #include <GLFW/glfw3.h>
 
 UI::UI(int width, int height)
-:_pixels((width*height)+2, Color(255, 0, 0))
+:
+_width(width),
+_height(height),
+_pixels((width*height)+2, Color(255, 0, 0))
 {
-	
 	glGenTextures(1, &_textureHandle);
 	if (auto error = glGetError())
 		throw std::runtime_error("Failed to create texture. Make sure this is called after the gl context has been created.");
@@ -22,7 +24,7 @@ UI::~UI()
 	glDeleteTextures(1, &_textureHandle);
 }
 
-void UI::render() const
+void UI::tick()
 {
 	glBindTexture(GL_TEXTURE_2D, _textureHandle);
 	glLoadIdentity();
@@ -33,5 +35,12 @@ void UI::render() const
 		glTexCoord2f(1.0f, 1.0f); glVertex2f(0.0f, 1.0f);
 		glTexCoord2f(0.0f, 1.0f); glVertex2f(-1.0f, 1.0f);
 	glEnd();
+	glBindTexture(GL_TEXTURE_2D, NULL);
+}
+
+void UI::render(const void* buffer)
+{
+	glBindTexture(GL_TEXTURE_2D, _textureHandle);
+	glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, _width, _height, GL_BGRA_EXT, GL_UNSIGNED_BYTE, buffer);
 	glBindTexture(GL_TEXTURE_2D, NULL);
 }
