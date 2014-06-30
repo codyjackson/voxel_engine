@@ -2,6 +2,8 @@
 
 #include "color.h"
 
+#include "../browser/browser.h"
+
 #include <vector>
 
 
@@ -22,4 +24,5 @@ private:
 	int _height;
 	std::vector<Color> _pixels;
 	GLuint _textureHandle;
+	Browser _browser;
 };

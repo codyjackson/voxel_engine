@@ -11,6 +11,12 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\browser\browser.h" />
+    <ClInclude Include="src\browser\browser_client.h" />
+    <ClInclude Include="src\browser\render_handler.h" />
+    <ClInclude Include="src\browser\simple_app.h" />
+    <ClInclude Include="src\browser\simple_handler.h" />
+    <ClInclude Include="src\browser\util.h" />
     <ClInclude Include="src\constants\vector.h" />
     <ClInclude Include="src\database.h" />
     <ClInclude Include="src\input.h" />
@@ -38,6 +44,12 @@
     <ClInclude Include="src\window.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\browser\browser.cpp" />
+    <ClCompile Include="src\browser\browser_client.cpp" />
+    <ClCompile Include="src\browser\render_handler.cpp" />
+    <ClCompile Include="src\browser\simple_app.cpp" />
+    <ClCompile Include="src\browser\simple_handler.cpp" />
+    <ClCompile Include="src\browser\simple_handler_win.cpp" />
     <ClCompile Include="src\constants\vector.cpp" />
     <ClCompile Include="src\database.cpp" />
     <ClCompile Include="src\input.cpp" />
@@ -57,6 +69,12 @@
     <ClCompile Include="src\spatial\transform.cpp" />
     <ClCompile Include="src\spatial\ray.cpp" />
     <ClCompile Include="src\window.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceFiles Include="resources\**\*.pak" />
+  </ItemGroup>
+  <ItemGroup>
+    <DllFiles Include="lib\bin\$(configuration)\*.dll" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{278E7F88-EEC1-4890-9995-0F89AFE54C9F}</ProjectGuid>
@@ -91,13 +109,13 @@
     <LinkIncremental>true</LinkIncremental>
     <SourcePath>
     </SourcePath>
-    <IncludePath>$(ProjectDir)\include;$(ProjectDir)\lib\include;$(AWE_DIR)include;$(SourcePath);$(IncludePath)</IncludePath>
-    <LibraryPath>$(ProjectDir)\lib\bin;$(AWE_DIR)build\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(ProjectDir)\include;$(ProjectDir)\lib\include;$(SourcePath);$(IncludePath)</IncludePath>
+    <LibraryPath>$(ProjectDir)\lib\bin\debug;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>$(ProjectDir)\include;$(ProjectDir)\lib\include;$(AWE_DIR)include;$(IncludePath)</IncludePath>
-    <LibraryPath>$(ProjectDir)\lib\bin;$(AWE_DIR)build\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(ProjectDir)\include;$(ProjectDir)\lib\include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(ProjectDir)\lib\bin\release;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -112,12 +130,8 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>sqlite3.lib;awesomium.lib;glfw3_debug.lib;opengl32.lib;glu32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>sqlite3.lib;comctl32.lib;shlwapi.lib;libcef_dll_wrapper.lib;libcef.lib;glfw3_debug.lib;opengl32.lib;glu32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
-    <PostBuildEvent>
-      <Command>xcopy /y $(ProjectDir)lib\bin\*.dll $(OutDir)
-xcopy /y $(ProjectDir)lib\bin\*.exe $(OutDir)</Command>
-    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -134,13 +148,28 @@ xcopy /y $(ProjectDir)lib\bin\*.exe $(OutDir)</Command>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>sqlite3.lib;awesomium.lib;glfw3.lib;opengl32.lib;glu32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>sqlite3.lib;comctl32.lib;shlwapi.lib;libcef_dll_wrapper.lib;libcef.lib;glfw3.lib;opengl32.lib;glu32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
-    <PostBuildEvent>
-      <Command>xcopy /y $(ProjectDir)\lib\bin\*.dll $(OutDir)\</Command>
-    </PostBuildEvent>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <Target Name="AfterBuild">
+      <Copy
+          SourceFiles="@(ResourceFiles)"
+          DestinationFolder="$(OutDir)%(RecursiveDir)"
+          SkipUnchangedFiles="true">
+          <Output
+            TaskParameter="CopiedFiles"
+            ItemName="SuccessfullyCopiedFiles"/>
+      </Copy>
+      <Copy
+          SourceFiles="@(DllFiles)"
+          DestinationFolder="$(OutDir)%(RecursiveDir)"
+          SkipUnchangedFiles="true">
+          <Output
+            TaskParameter="CopiedFiles"
+            ItemName="SuccessfullyCopiedFiles"/>
+      </Copy>
+  </Target>
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
 </Project>

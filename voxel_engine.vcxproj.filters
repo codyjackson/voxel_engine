@@ -56,6 +56,12 @@
     <ClInclude Include="src\utility\serialization.h" />
     <ClInclude Include="src\database.h" />
     <ClInclude Include="src\rendering\ui.h" />
+    <ClInclude Include="src\browser\render_handler.h" />
+    <ClInclude Include="src\browser\browser_client.h" />
+    <ClInclude Include="src\browser\browser.h" />
+    <ClInclude Include="src\browser\simple_app.h" />
+    <ClInclude Include="src\browser\simple_handler.h" />
+    <ClInclude Include="src\browser\util.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\rendering\color.cpp">
@@ -95,5 +101,11 @@
     <ClCompile Include="src\spatial\chunk_vault.cpp" />
     <ClCompile Include="src\database.cpp" />
     <ClCompile Include="src\rendering\ui.cpp" />
+    <ClCompile Include="src\browser\render_handler.cpp" />
+    <ClCompile Include="src\browser\browser_client.cpp" />
+    <ClCompile Include="src\browser\browser.cpp" />
+    <ClCompile Include="src\browser\simple_app.cpp" />
+    <ClCompile Include="src\browser\simple_handler.cpp" />
+    <ClCompile Include="src\browser\simple_handler_win.cpp" />
   </ItemGroup>
 </Project>
