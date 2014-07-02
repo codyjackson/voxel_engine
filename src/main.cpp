@@ -87,7 +87,7 @@ int main(int argc, char* argv[])
 		});
 
 		window.input().mouse().lock_movement();
-		ui = std::make_shared<UI>(200, 200);
+		ui = std::make_shared<UI>(1000, 1000);
 	};
 	
 	auto onIterate = [&](Window& window, float timeStepInSeconds){

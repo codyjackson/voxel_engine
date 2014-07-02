@@ -11,8 +11,9 @@
 #include "cef/cef_browser.h"
 #include "cef/cef_command_line.h"
 
-SimpleApp::SimpleApp() {
-}
+SimpleApp::SimpleApp(const std::function<void(const CefRenderHandler::RectList&, const void*)>& onPaint) 
+:_onPaint(onPaint)
+{}
 
 void SimpleApp::OnContextInitialized() {
   REQUIRE_UI_THREAD();
@@ -20,14 +21,10 @@ void SimpleApp::OnContextInitialized() {
   // Information used when creating the native window.
   CefWindowInfo window_info;
 
-#if defined(OS_WIN)
-  // On Windows we need to specify certain flags that will be passed to
-  // CreateWindowEx().
-  window_info.SetAsPopup(NULL, "cefsimple");
-#endif
+  window_info.SetAsOffScreen(nullptr);
 
   // SimpleHandler implements browser-level callbacks.
-  CefRefPtr<SimpleHandler> handler(new SimpleHandler());
+  CefRefPtr<SimpleHandler> handler(new SimpleHandler(1000, 1000, _onPaint));
 
   // Specify CEF browser settings here.
   CefBrowserSettings browser_settings;
@@ -40,7 +37,7 @@ void SimpleApp::OnContextInitialized() {
       CefCommandLine::GetGlobalCommandLine();
   url = command_line->GetSwitchValue("url");
   if (url.empty())
-    url = "http://www.google.com";
+    url = "http://www.jennamichellephotography.com";
 
   // Create the first browser window.
   CefBrowserHost::CreateBrowser(window_info, handler.get(), url,

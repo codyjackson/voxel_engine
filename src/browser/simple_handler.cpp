@@ -17,10 +17,11 @@ SimpleHandler* g_instance = NULL;
 
 }  // namespace
 
-SimpleHandler::SimpleHandler()
-    : is_closing_(false) {
-  ASSERT(!g_instance);
-  g_instance = this;
+SimpleHandler::SimpleHandler(int width, int height, const std::function<void(const RectList&, const void*)>& onPaint)
+:is_closing_(false), _width(width), _height(height), _onPaint(onPaint)
+{
+	ASSERT(!g_instance);
+	g_instance = this;
 }
 
 SimpleHandler::~SimpleHandler() {
@@ -66,11 +67,6 @@ void SimpleHandler::OnBeforeClose(CefRefPtr<CefBrowser> browser) {
       break;
     }
   }
-
-  if (browser_list_.empty()) {
-    // All browser windows have closed. Quit the application message loop.
-    CefQuitMessageLoop();
-  }
 }
 
 void SimpleHandler::OnLoadError(CefRefPtr<CefBrowser> browser,
@@ -91,6 +87,16 @@ void SimpleHandler::OnLoadError(CefRefPtr<CefBrowser> browser,
         " with error " << std::string(errorText) << " (" << errorCode <<
         ").</h2></body></html>";
   frame->LoadString(ss.str(), failedUrl);
+}
+
+bool SimpleHandler::GetViewRect(CefRefPtr<CefBrowser> browser, CefRect &rect)
+{
+	rect = CefRect(0, 0, _width, _height);
+	return true;
+}
+void SimpleHandler::OnPaint(CefRefPtr<CefBrowser> browser, PaintElementType type, const RectList &dirtyRects, const void *buffer, int width, int height)
+{
+	_onPaint(dirtyRects, buffer);
 }
 
 void SimpleHandler::CloseAllBrowsers(bool force_close) {

@@ -6,11 +6,14 @@
 #define CEF_TESTS_CEFSIMPLE_SIMPLE_APP_H_
 
 #include "cef/cef_app.h"
+#include "cef/cef_render_handler.h"
+#include <functional>
 
 class SimpleApp : public CefApp,
                   public CefBrowserProcessHandler {
  public:
-  SimpleApp();
+	 SimpleApp(const std::function<void(const CefRenderHandler::RectList&, const void*)>& onPaint);
+	 
 
   // CefApp methods:
   virtual CefRefPtr<CefBrowserProcessHandler> GetBrowserProcessHandler()
@@ -22,6 +25,7 @@ class SimpleApp : public CefApp,
  private:
   // Include the default reference counting implementation.
   IMPLEMENT_REFCOUNTING(SimpleApp);
+  std::function<void(const CefRenderHandler::RectList&, const void*)> _onPaint;
 };
 
 #endif  // CEF_TESTS_CEFSIMPLE_SIMPLE_APP_H_

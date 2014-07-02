@@ -7,60 +7,73 @@
 
 #include "cef/cef_client.h"
 
+#include <functional>
 #include <list>
 
 class SimpleHandler : public CefClient,
-                      public CefDisplayHandler,
-                      public CefLifeSpanHandler,
-                      public CefLoadHandler {
- public:
-  SimpleHandler();
-  ~SimpleHandler();
+	public CefDisplayHandler,
+	public CefLifeSpanHandler,
+	public CefLoadHandler,
+	public CefRenderHandler{
+public:
+	SimpleHandler(int width, int height, const std::function<void(const RectList&, const void*)>& onPaint);
+	~SimpleHandler();
 
-  // Provide access to the single global instance of this object.
-  static SimpleHandler* GetInstance();
+	// Provide access to the single global instance of this object.
+	static SimpleHandler* GetInstance();
 
-  // CefClient methods:
-  virtual CefRefPtr<CefDisplayHandler> GetDisplayHandler() OVERRIDE {
-    return this;
-  }
-  virtual CefRefPtr<CefLifeSpanHandler> GetLifeSpanHandler() OVERRIDE {
-    return this;
-  }
-  virtual CefRefPtr<CefLoadHandler> GetLoadHandler() OVERRIDE {
-    return this;
-  }
+	// CefClient methods:
+	virtual CefRefPtr<CefDisplayHandler> GetDisplayHandler() override{
+		return this;
+	}
+	virtual CefRefPtr<CefLifeSpanHandler> GetLifeSpanHandler() override{
+		return this;
+	}
+	virtual CefRefPtr<CefLoadHandler> GetLoadHandler() override{
+		return this;
+	}
+	virtual CefRefPtr<CefRenderHandler> GetRenderHandler() override{
+		return this;
+	}
 
-  // CefDisplayHandler methods:
-  virtual void OnTitleChange(CefRefPtr<CefBrowser> browser,
-                             const CefString& title) OVERRIDE;
+		// CefDisplayHandler methods:
+		virtual void OnTitleChange(CefRefPtr<CefBrowser> browser,
+			const CefString& title) override;
 
-  // CefLifeSpanHandler methods:
-  virtual void OnAfterCreated(CefRefPtr<CefBrowser> browser) OVERRIDE;
-  virtual bool DoClose(CefRefPtr<CefBrowser> browser) OVERRIDE;
-  virtual void OnBeforeClose(CefRefPtr<CefBrowser> browser) OVERRIDE;
+	// CefLifeSpanHandler methods:
+		virtual void OnAfterCreated(CefRefPtr<CefBrowser> browser) override;
+		virtual bool DoClose(CefRefPtr<CefBrowser> browser) override;
+		virtual void OnBeforeClose(CefRefPtr<CefBrowser> browser) override;
 
-  // CefLoadHandler methods:
-  virtual void OnLoadError(CefRefPtr<CefBrowser> browser,
-                           CefRefPtr<CefFrame> frame,
-                           ErrorCode errorCode,
-                           const CefString& errorText,
-                           const CefString& failedUrl) OVERRIDE;
+	// CefLoadHandler methods:
+	virtual void OnLoadError(CefRefPtr<CefBrowser> browser,
+		CefRefPtr<CefFrame> frame,
+		ErrorCode errorCode,
+		const CefString& errorText,
+		const CefString& failedUrl) override;
 
-  // Request that all existing browser windows close.
-  void CloseAllBrowsers(bool force_close);
+	// CefRenderHandler methods:
+	bool GetViewRect(CefRefPtr<CefBrowser> browser, CefRect &rect) override;
+	void OnPaint(CefRefPtr<CefBrowser> browser, PaintElementType type, const RectList &dirtyRects, const void *buffer, int width, int height) override;
 
-  bool IsClosing() const { return is_closing_; }
+	// Request that all existing browser windows close.
+	void CloseAllBrowsers(bool force_close);
 
- private:
-  // List of existing browser windows. Only accessed on the CEF UI thread.
-  typedef std::list<CefRefPtr<CefBrowser> > BrowserList;
-  BrowserList browser_list_;
+	bool IsClosing() const { return is_closing_; }
 
-  bool is_closing_;
+private:
+	// List of existing browser windows. Only accessed on the CEF UI thread.
+	typedef std::list<CefRefPtr<CefBrowser> > BrowserList;
+	BrowserList browser_list_;
 
-  // Include the default reference counting implementation.
-  IMPLEMENT_REFCOUNTING(SimpleHandler);
+	bool is_closing_;
+
+	int _width;
+	int _height;
+	std::function<void(const RectList&, const void*)> _onPaint;
+
+	// Include the default reference counting implementation.
+	IMPLEMENT_REFCOUNTING(SimpleHandler);
 };
 
 #endif  // CEF_TESTS_CEFSIMPLE_SIMPLE_HANDLER_H_
