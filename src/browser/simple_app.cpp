@@ -22,6 +22,7 @@ void SimpleApp::OnContextInitialized() {
   CefWindowInfo window_info;
 
   window_info.SetAsOffScreen(nullptr);
+  window_info.SetTransparentPainting(false);
 
   // SimpleHandler implements browser-level callbacks.
   CefRefPtr<SimpleHandler> handler(new SimpleHandler(1000, 1000, _onPaint));
@@ -37,7 +38,7 @@ void SimpleApp::OnContextInitialized() {
       CefCommandLine::GetGlobalCommandLine();
   url = command_line->GetSwitchValue("url");
   if (url.empty())
-    url = "http://www.jennamichellephotography.com";
+    url = "http://www.google.com";
 
   // Create the first browser window.
   CefBrowserHost::CreateBrowser(window_info, handler.get(), url,

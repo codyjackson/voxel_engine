@@ -96,13 +96,13 @@ int main(int argc, char* argv[])
 
 		Ray r(camera.position, camera.orientation.forward());
 		Renderer::clear_screen();
-		ui->tick();
 		if (const auto intersection = chunkVault.find_nearest_intersection(r)) {
 			const auto modelMatrix = chunkVault.get_voxel_model_matrix(intersection->get_object_of_interest());
 			const auto mesh = chunkVault.get_mesh_of_voxel(intersection->get_object_of_interest());
 			Renderer::render_wireframe(camera, modelMatrix, Color(0xFF, 0xFF, 0xFF, 255), mesh);
 		}
 		chunkVault.render(camera);
+		ui->tick();
 	};
 
 
