@@ -1,7 +1,5 @@
 #pragma once
 
-#include "browser_client.h"
-
 #include <cef/cef_render_handler.h>
 #include <functional>
 #include <string>
@@ -15,6 +13,4 @@ public:
 	void tick();
 
 private:
-	CefRefPtr<CefBrowser> _browser;
-	CefRefPtr<BrowserClient> _browserClient;
 };

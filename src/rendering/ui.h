@@ -18,11 +18,9 @@ public:
 	void tick();
 
 private:
-	void render(const void* buffer);
-
 	int _width;
 	int _height;
-	std::vector<Color> _pixels;
+
 	GLuint _textureHandle;
 	Browser _browser;
 };

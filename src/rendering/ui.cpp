@@ -7,10 +7,9 @@ UI::UI(int width, int height)
 :
 _width(width),
 _height(height),
-_pixels((width*height)+2, Color(255, 0, 0, 50)),
 _browser("http://google.com", [this](const CefRenderHandler::RectList& dirty, const void* buffer){
 	glBindTexture(GL_TEXTURE_2D, _textureHandle);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, _width, _height, 0, GL_BGRA_EXT, GL_UNSIGNED_BYTE, _pixels.data());
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, _width, _height, 0, GL_BGRA_EXT, GL_UNSIGNED_BYTE, buffer);
 	glBindTexture(GL_TEXTURE_2D, NULL);
 })
 {
@@ -44,11 +43,4 @@ void UI::tick()
 	glEnd();
 	glBindTexture(GL_TEXTURE_2D, NULL);
 	glDisable(GL_BLEND);
-}
-
-void UI::render(const void* buffer)
-{
-	glBindTexture(GL_TEXTURE_2D, _textureHandle);
-	glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, _width, _height, GL_BGRA_EXT, GL_UNSIGNED_BYTE, buffer);
-	glBindTexture(GL_TEXTURE_2D, NULL);
 }

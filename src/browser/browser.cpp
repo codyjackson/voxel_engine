@@ -1,21 +1,11 @@
 #include "browser.h"
 
 #include "simple_app.h"
-#include "render_handler.h"
 
 #include <cef/cef_app.h>
 
 #include <exception>
 #include <string>
-
-namespace
-{
-	class BrowserApp : public CefApp
-	{
-	public:
-		IMPLEMENT_REFCOUNTING(BrowserApp);
-	};
-}
 
 Browser::Browser(const std::string& url, const std::function<void(const CefRenderHandler::RectList&, const void*)>& onPaint)
 {

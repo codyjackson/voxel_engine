@@ -1,9 +1,4 @@
-// Copyright (c) 2013 The Chromium Embedded Framework Authors. All rights
-// reserved. Use of this source code is governed by a BSD-style license that
-// can be found in the LICENSE file.
-
-#ifndef CEF_TESTS_CEFSIMPLE_SIMPLE_HANDLER_H_
-#define CEF_TESTS_CEFSIMPLE_SIMPLE_HANDLER_H_
+#pragma once
 
 #include "cef/cef_client.h"
 
@@ -11,7 +6,6 @@
 #include <list>
 
 class SimpleHandler : public CefClient,
-	public CefDisplayHandler,
 	public CefLifeSpanHandler,
 	public CefLoadHandler,
 	public CefRenderHandler{
@@ -23,9 +17,6 @@ public:
 	static SimpleHandler* GetInstance();
 
 	// CefClient methods:
-	virtual CefRefPtr<CefDisplayHandler> GetDisplayHandler() override{
-		return this;
-	}
 	virtual CefRefPtr<CefLifeSpanHandler> GetLifeSpanHandler() override{
 		return this;
 	}
@@ -35,10 +26,6 @@ public:
 	virtual CefRefPtr<CefRenderHandler> GetRenderHandler() override{
 		return this;
 	}
-
-		// CefDisplayHandler methods:
-		virtual void OnTitleChange(CefRefPtr<CefBrowser> browser,
-			const CefString& title) override;
 
 	// CefLifeSpanHandler methods:
 		virtual void OnAfterCreated(CefRefPtr<CefBrowser> browser) override;
@@ -75,5 +62,3 @@ private:
 	// Include the default reference counting implementation.
 	IMPLEMENT_REFCOUNTING(SimpleHandler);
 };
-
-#endif  // CEF_TESTS_CEFSIMPLE_SIMPLE_HANDLER_H_
