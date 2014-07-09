@@ -29,16 +29,16 @@ public:
 	void OnPaint(CefRefPtr<CefBrowser> browser, PaintElementType type, const RectList &dirtyRects, const void *buffer, int width, int height) override;
 
 	// Request that all existing browser windows close.
-	void CloseAllBrowsers(bool force_close);
+	void CloseAllBrowsers(bool forceClose);
 
-	bool IsClosing() const { return is_closing_; }
+	bool IsClosing() const;
 
 private:
 	// List of existing browser windows. Only accessed on the CEF UI thread.
 	typedef std::list<CefRefPtr<CefBrowser> > BrowserList;
-	BrowserList browser_list_;
+	BrowserList _browserList;
 
-	bool is_closing_;
+	bool _isClosing;
 
 	int _width;
 	int _height;
