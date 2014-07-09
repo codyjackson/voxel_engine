@@ -14,8 +14,9 @@ _browser("http://google.com", [this](const CefRenderHandler::RectList& dirty, co
 })
 {
 	glGenTextures(1, &_textureHandle);
-	if (auto error = glGetError())
+	if (auto error = glGetError()) {
 		throw std::runtime_error("Failed to create texture. Make sure this is called after the gl context has been created.");
+	}
 	glBindTexture(GL_TEXTURE_2D, _textureHandle);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);

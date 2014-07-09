@@ -11,82 +11,80 @@
 #include "cef/cef_app.h"
 #include "cef/cef_runnable.h"
 
-namespace {
-
-SimpleHandler* g_instance = NULL;
-
-}  // namespace
-
 SimpleHandler::SimpleHandler(int width, int height, const std::function<void(const RectList&, const void*)>& onPaint)
 :is_closing_(false), _width(width), _height(height), _onPaint(onPaint)
+{}
+
+SimpleHandler::~SimpleHandler() 
+{}
+
+CefRefPtr<CefLifeSpanHandler> SimpleHandler::GetLifeSpanHandler()
 {
-	ASSERT(!g_instance);
-	g_instance = this;
+	return this;
+}
+CefRefPtr<CefLoadHandler> SimpleHandler::GetLoadHandler()
+{
+	return this;
+}
+CefRefPtr<CefRenderHandler> SimpleHandler::GetRenderHandler()
+{
+	return this;
 }
 
-SimpleHandler::~SimpleHandler() {
-  g_instance = NULL;
+void SimpleHandler::OnAfterCreated(CefRefPtr<CefBrowser> browser) 
+{
+	REQUIRE_UI_THREAD();
+
+	// Add to the list of existing browsers.
+	browser_list_.push_back(browser);
 }
 
-// static
-SimpleHandler* SimpleHandler::GetInstance() {
-  return g_instance;
+bool SimpleHandler::DoClose(CefRefPtr<CefBrowser> browser) 
+{
+	REQUIRE_UI_THREAD();
+
+	// Closing the main window requires special handling. See the DoClose()
+	// documentation in the CEF header for a detailed destription of this
+	// process.
+	if (browser_list_.size() == 1) {
+		// Set a flag to indicate that the window close should be allowed.
+		is_closing_ = true;
+	}
+
+	// Allow the close. For windowed browsers this will result in the OS close
+	// event being sent.
+	return false;
 }
 
-void SimpleHandler::OnAfterCreated(CefRefPtr<CefBrowser> browser) {
-  REQUIRE_UI_THREAD();
+void SimpleHandler::OnBeforeClose(CefRefPtr<CefBrowser> browser) 
+{
+	REQUIRE_UI_THREAD();
 
-  // Add to the list of existing browsers.
-  browser_list_.push_back(browser);
+	// Remove from the list of existing browsers.
+	BrowserList::iterator bit = browser_list_.begin();
+	for (; bit != browser_list_.end(); ++bit) {
+		if ((*bit)->IsSame(browser)) {
+			browser_list_.erase(bit);
+			break;
+		}
+	}
 }
 
-bool SimpleHandler::DoClose(CefRefPtr<CefBrowser> browser) {
-  REQUIRE_UI_THREAD();
+void SimpleHandler::OnLoadError(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame, ErrorCode errorCode, const CefString& errorText, const CefString& failedUrl) 
+{
+	REQUIRE_UI_THREAD();
 
-  // Closing the main window requires special handling. See the DoClose()
-  // documentation in the CEF header for a detailed destription of this
-  // process.
-  if (browser_list_.size() == 1) {
-    // Set a flag to indicate that the window close should be allowed.
-    is_closing_ = true;
-  }
+	// Don't display an error for downloaded files.
+	if (errorCode == ERR_ABORTED)
+		return;
 
-  // Allow the close. For windowed browsers this will result in the OS close
-  // event being sent.
-  return false;
-}
-
-void SimpleHandler::OnBeforeClose(CefRefPtr<CefBrowser> browser) {
-  REQUIRE_UI_THREAD();
-
-  // Remove from the list of existing browsers.
-  BrowserList::iterator bit = browser_list_.begin();
-  for (; bit != browser_list_.end(); ++bit) {
-    if ((*bit)->IsSame(browser)) {
-      browser_list_.erase(bit);
-      break;
-    }
-  }
-}
-
-void SimpleHandler::OnLoadError(CefRefPtr<CefBrowser> browser,
-                                CefRefPtr<CefFrame> frame,
-                                ErrorCode errorCode,
-                                const CefString& errorText,
-                                const CefString& failedUrl) {
-  REQUIRE_UI_THREAD();
-
-  // Don't display an error for downloaded files.
-  if (errorCode == ERR_ABORTED)
-    return;
-
-  // Display a load error message.
-  std::stringstream ss;
-  ss << "<html><body bgcolor=\"white\">"
-        "<h2>Failed to load URL " << std::string(failedUrl) <<
-        " with error " << std::string(errorText) << " (" << errorCode <<
-        ").</h2></body></html>";
-  frame->LoadString(ss.str(), failedUrl);
+	// Display a load error message.
+	std::stringstream ss;
+	ss << "<html><body bgcolor=\"white\">"
+		"<h2>Failed to load URL " << std::string(failedUrl) <<
+		" with error " << std::string(errorText) << " (" << errorCode <<
+		").</h2></body></html>";
+	frame->LoadString(ss.str(), failedUrl);
 }
 
 bool SimpleHandler::GetViewRect(CefRefPtr<CefBrowser> browser, CefRect &rect)
@@ -94,24 +92,26 @@ bool SimpleHandler::GetViewRect(CefRefPtr<CefBrowser> browser, CefRect &rect)
 	rect = CefRect(0, 0, _width, _height);
 	return true;
 }
+
 void SimpleHandler::OnPaint(CefRefPtr<CefBrowser> browser, PaintElementType type, const RectList &dirtyRects, const void *buffer, int width, int height)
 {
 	_onPaint(dirtyRects, buffer);
 }
 
-void SimpleHandler::CloseAllBrowsers(bool force_close) {
-  if (!CefCurrentlyOn(TID_UI)) {
-    // Execute on the UI thread.
-    CefPostTask(TID_UI,
-        NewCefRunnableMethod(this, &SimpleHandler::CloseAllBrowsers,
-                             force_close));
-    return;
-  }
+void SimpleHandler::CloseAllBrowsers(bool force_close) 
+{
+	if (!CefCurrentlyOn(TID_UI)) {
+		// Execute on the UI thread.
+		CefPostTask(TID_UI,
+			NewCefRunnableMethod(this, &SimpleHandler::CloseAllBrowsers,
+			force_close));
+		return;
+	}
 
-  if (browser_list_.empty())
-    return;
+	if (browser_list_.empty())
+		return;
 
-  BrowserList::const_iterator it = browser_list_.begin();
-  for (; it != browser_list_.end(); ++it)
-    (*it)->GetHost()->CloseBrowser(force_close);
+	BrowserList::const_iterator it = browser_list_.begin();
+	for (; it != browser_list_.end(); ++it)
+		(*it)->GetHost()->CloseBrowser(force_close);
 }

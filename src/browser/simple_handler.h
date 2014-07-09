@@ -5,39 +5,24 @@
 #include <functional>
 #include <list>
 
-class SimpleHandler : public CefClient,
-	public CefLifeSpanHandler,
-	public CefLoadHandler,
-	public CefRenderHandler{
+class SimpleHandler : public CefClient, public CefLifeSpanHandler, public CefLoadHandler, public CefRenderHandler
+{
 public:
 	SimpleHandler(int width, int height, const std::function<void(const RectList&, const void*)>& onPaint);
 	~SimpleHandler();
 
-	// Provide access to the single global instance of this object.
-	static SimpleHandler* GetInstance();
-
 	// CefClient methods:
-	virtual CefRefPtr<CefLifeSpanHandler> GetLifeSpanHandler() override{
-		return this;
-	}
-	virtual CefRefPtr<CefLoadHandler> GetLoadHandler() override{
-		return this;
-	}
-	virtual CefRefPtr<CefRenderHandler> GetRenderHandler() override{
-		return this;
-	}
+	virtual CefRefPtr<CefLifeSpanHandler> GetLifeSpanHandler() override;
+	virtual CefRefPtr<CefLoadHandler> GetLoadHandler() override;
+	virtual CefRefPtr<CefRenderHandler> GetRenderHandler() override;
 
 	// CefLifeSpanHandler methods:
-		virtual void OnAfterCreated(CefRefPtr<CefBrowser> browser) override;
-		virtual bool DoClose(CefRefPtr<CefBrowser> browser) override;
-		virtual void OnBeforeClose(CefRefPtr<CefBrowser> browser) override;
+	virtual void OnAfterCreated(CefRefPtr<CefBrowser> browser) override;
+	virtual bool DoClose(CefRefPtr<CefBrowser> browser) override;
+	virtual void OnBeforeClose(CefRefPtr<CefBrowser> browser) override;
 
 	// CefLoadHandler methods:
-	virtual void OnLoadError(CefRefPtr<CefBrowser> browser,
-		CefRefPtr<CefFrame> frame,
-		ErrorCode errorCode,
-		const CefString& errorText,
-		const CefString& failedUrl) override;
+	virtual void OnLoadError(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame, ErrorCode errorCode, const CefString& errorText, const CefString& failedUrl) override;
 
 	// CefRenderHandler methods:
 	bool GetViewRect(CefRefPtr<CefBrowser> browser, CefRect &rect) override;
