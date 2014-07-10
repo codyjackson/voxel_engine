@@ -2,6 +2,8 @@
 
 #include "simple_app.h"
 
+#include "../spatial/rect_size.h"
+
 #include <cef/cef_render_handler.h>
 #include <functional>
 #include <string>
@@ -9,7 +11,9 @@
 class Browser
 {
 public:
-	Browser(const std::string& path, const std::function<void(const CefRenderHandler::RectList&, const void*)>& onPaint);
+	typedef std::function<void(const CefRenderHandler::RectList&, const void*)> PaintCallbackFunction;
+
+	Browser(const std::string& path, const RectSize& viewportSize, const PaintCallbackFunction& onPaint);
 	~Browser();
 
 	void tick();

@@ -3,6 +3,7 @@
 #include "cef/cef_app.h"
 #include "cef/cef_client.h"
 #include "cef/cef_render_handler.h"
+#include "../spatial/rect_size.h"
 
 #include <functional>
 #include <list>
@@ -10,7 +11,7 @@
 class SimpleApp : public CefApp, public CefBrowserProcessHandler, public CefClient, public CefLoadHandler, public CefRenderHandler
 {
 public:
-	SimpleApp(const std::string& indexPath, const std::function<void(const CefRenderHandler::RectList&, const void*)>& onPaint);
+	SimpleApp(const std::string& indexPath, const RectSize& viewportSize, const std::function<void(const RectList&, const void*)>& onPaint);
 
 
 	// CefApp methods:
@@ -33,13 +34,14 @@ public:
 	// Request that all existing browser windows close.
 	void CloseAllBrowsers(bool forceClose);
 
+	void UpdateViewportSize(const RectSize& viewportSize);
+
 private:
 	IMPLEMENT_REFCOUNTING(SimpleApp);
 
 	typedef std::list<CefRefPtr<CefBrowser>> BrowserList;
 	BrowserList _browserList;
 
-	int _width;
-	int _height;
 	std::function<void(const RectList&, const void*)> _onPaint;
+	RectSize _viewportSize;
 };

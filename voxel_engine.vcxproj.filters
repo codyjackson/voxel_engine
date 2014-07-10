@@ -59,6 +59,7 @@
     <ClInclude Include="src\browser\browser.h" />
     <ClInclude Include="src\browser\simple_app.h" />
     <ClInclude Include="src\browser\util.h" />
+    <ClInclude Include="src\spatial\rect_size.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\rendering\color.cpp">

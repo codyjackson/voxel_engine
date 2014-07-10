@@ -32,6 +32,7 @@
     <ClInclude Include="src\spatial\intersection.h" />
     <ClInclude Include="src\spatial\orientation.h" />
     <ClInclude Include="src\spatial\ray.h" />
+    <ClInclude Include="src\spatial\rect_size.h" />
     <ClInclude Include="src\spatial\transform.h" />
     <ClInclude Include="src\spatial\utility.h" />
     <ClInclude Include="src\units.h" />

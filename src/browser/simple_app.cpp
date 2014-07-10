@@ -1,15 +1,14 @@
 #include "simple_app.h"
 
 #include "cef/cef_runnable.h"
-#include "simple_handler.h"
 #include "util.h"
 
 #include <algorithm>
 #include <sstream>
 #include <string>
 
-SimpleApp::SimpleApp(const std::string& indexPath, const std::function<void(const CefRenderHandler::RectList&, const void*)>& onPaint)
-:_onPaint(onPaint)
+SimpleApp::SimpleApp(const std::string& indexPath, const RectSize& viewportSize, const std::function<void(const CefRenderHandler::RectList&, const void*)>& onPaint)
+:_onPaint(onPaint), _viewportSize(viewportSize)
 {}
 
 CefRefPtr<CefBrowserProcessHandler> SimpleApp::GetBrowserProcessHandler()
@@ -25,7 +24,6 @@ void SimpleApp::OnContextInitialized() {
   window_info.SetAsOffScreen(nullptr);
   window_info.SetTransparentPainting(true);
 
-  CefRefPtr<SimpleHandler> handler(new SimpleHandler(1000, 1000, _onPaint));
   CefBrowserSettings browser_settings;
 
   std::string url = "C:/Users/sxenog/Desktop/test.html";
@@ -66,7 +64,7 @@ void SimpleApp::OnLoadError(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> f
 
 bool SimpleApp::GetViewRect(CefRefPtr<CefBrowser> browser, CefRect &rect)
 {
-	rect = CefRect(0, 0, 1000, 1000);
+	rect = CefRect(0, 0, _viewportSize.width, _viewportSize.height);
 	return true;
 }
 
