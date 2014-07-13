@@ -23,7 +23,6 @@
     <ClInclude Include="src\rendering\mesh.h" />
     <ClInclude Include="src\rendering\quad.h" />
     <ClInclude Include="src\rendering\renderer.h" />
-    <ClInclude Include="src\rendering\ui.h" />
     <ClInclude Include="src\rendering\vertex.h" />
     <ClInclude Include="src\spatial\axially_aligned\plane.h" />
     <ClInclude Include="src\spatial\axially_aligned\voxel.h" />
@@ -35,6 +34,7 @@
     <ClInclude Include="src\spatial\rect_size.h" />
     <ClInclude Include="src\spatial\transform.h" />
     <ClInclude Include="src\spatial\utility.h" />
+    <ClInclude Include="src\ui.h" />
     <ClInclude Include="src\units.h" />
     <ClInclude Include="src\utility\functional.h" />
     <ClInclude Include="src\utility\numerical.h" />
@@ -53,7 +53,6 @@
     <ClCompile Include="src\rendering\color.cpp" />
     <ClCompile Include="src\rendering\mesh.cpp" />
     <ClCompile Include="src\rendering\quad.cpp" />
-    <ClCompile Include="src\rendering\ui.cpp" />
     <ClCompile Include="src\rendering\vertex.cpp" />
     <ClCompile Include="src\spatial\axially_aligned\plane.cpp" />
     <ClCompile Include="src\spatial\axially_aligned\voxel.cpp" />
@@ -62,6 +61,7 @@
     <ClCompile Include="src\spatial\orientation.cpp" />
     <ClCompile Include="src\spatial\transform.cpp" />
     <ClCompile Include="src\spatial\ray.cpp" />
+    <ClCompile Include="src\ui.cpp" />
     <ClCompile Include="src\window.cpp" />
   </ItemGroup>
   <ItemGroup>

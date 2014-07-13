@@ -4,7 +4,7 @@
 #include "rendering/camera.h"
 #include "rendering/renderer.h"
 #include "spatial/chunk_vault.h"
-#include "rendering/ui.h"
+#include "ui.h"
 #include "units.h"
 
 #include <glm/glm.hpp>

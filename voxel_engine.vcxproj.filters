@@ -55,11 +55,11 @@
     <ClInclude Include="src\spatial\utility.h" />
     <ClInclude Include="src\utility\serialization.h" />
     <ClInclude Include="src\database.h" />
-    <ClInclude Include="src\rendering\ui.h" />
     <ClInclude Include="src\browser\browser.h" />
     <ClInclude Include="src\browser\simple_app.h" />
     <ClInclude Include="src\browser\util.h" />
     <ClInclude Include="src\spatial\rect_size.h" />
+    <ClInclude Include="src\ui.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\rendering\color.cpp">
@@ -98,8 +98,8 @@
     <ClCompile Include="src\spatial\chunk.cpp" />
     <ClCompile Include="src\spatial\chunk_vault.cpp" />
     <ClCompile Include="src\database.cpp" />
-    <ClCompile Include="src\rendering\ui.cpp" />
     <ClCompile Include="src\browser\browser.cpp" />
     <ClCompile Include="src\browser\simple_app.cpp" />
+    <ClCompile Include="src\ui.cpp" />
   </ItemGroup>
 </Project>
