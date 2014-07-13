@@ -8,8 +8,13 @@
 #include <string>
 
 SimpleApp::SimpleApp(const std::string& indexPath, const RectSize& viewportSize, const std::function<void(const CefRenderHandler::RectList&, const void*)>& onPaint)
-:_onPaint(onPaint), _viewportSize(viewportSize)
+:_path(indexPath), _onPaint(onPaint), _viewportSize(viewportSize)
 {}
+
+void SimpleApp::update_viewport_size(const RectSize& viewportSize)
+{
+	_viewportSize = viewportSize;
+}
 
 CefRefPtr<CefBrowserProcessHandler> SimpleApp::GetBrowserProcessHandler()
 {
@@ -19,17 +24,15 @@ CefRefPtr<CefBrowserProcessHandler> SimpleApp::GetBrowserProcessHandler()
 void SimpleApp::OnContextInitialized() {
   REQUIRE_UI_THREAD();
 
-  CefWindowInfo window_info;
+  CefWindowInfo windowInfo;
 
-  window_info.SetAsOffScreen(nullptr);
-  window_info.SetTransparentPainting(true);
+  windowInfo.SetAsOffScreen(nullptr);
+  windowInfo.SetTransparentPainting(true);
 
-  CefBrowserSettings browser_settings;
-
-  std::string url = "C:/Users/sxenog/Desktop/test.html";
+  CefBrowserSettings browserSettings;
 
   // Create the first browser window.
-  CefBrowserHost::CreateBrowser(window_info, this, url, browser_settings, NULL);
+  CefBrowserHost::CreateBrowser(windowInfo, this, _path, browserSettings, NULL);
 }
 
 CefRefPtr<CefLoadHandler> SimpleApp::GetLoadHandler()

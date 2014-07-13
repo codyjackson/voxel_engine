@@ -13,6 +13,7 @@ class SimpleApp : public CefApp, public CefBrowserProcessHandler, public CefClie
 public:
 	SimpleApp(const std::string& indexPath, const RectSize& viewportSize, const std::function<void(const RectList&, const void*)>& onPaint);
 
+	void update_viewport_size(const RectSize& viewportSize);
 
 	// CefApp methods:
 	virtual CefRefPtr<CefBrowserProcessHandler> GetBrowserProcessHandler() override;
@@ -34,14 +35,13 @@ public:
 	// Request that all existing browser windows close.
 	void CloseAllBrowsers(bool forceClose);
 
-	void UpdateViewportSize(const RectSize& viewportSize);
-
 private:
 	IMPLEMENT_REFCOUNTING(SimpleApp);
 
 	typedef std::list<CefRefPtr<CefBrowser>> BrowserList;
 	BrowserList _browserList;
 
+	std::string _path;
 	std::function<void(const RectList&, const void*)> _onPaint;
 	RectSize _viewportSize;
 };

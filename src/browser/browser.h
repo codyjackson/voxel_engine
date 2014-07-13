@@ -16,6 +16,10 @@ public:
 	Browser(const std::string& path, const RectSize& viewportSize, const PaintCallbackFunction& onPaint);
 	~Browser();
 
+	void update_viewport_size(const RectSize& rectSize);
+
+	void execute_javascript(const std::string& javascript);
+
 	void tick();
 
 private:
