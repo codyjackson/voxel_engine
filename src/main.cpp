@@ -21,10 +21,8 @@ int main(int argc, char* argv[])
 
 	ChunkVault chunkVault(meters(2.0f / 13.0f), glm::vec3(0, 0, 0));
 
-	std::shared_ptr<UI> ui;
 	auto onInitialize = [&](Window& window){
-		window.update_width(1024);
-		window.update_height(768);
+		window.update_resolution(RectSize(1024, 768));
 		window.update_title("Voxel Engine");
 
 		window.input().mouse().hide_cursor();
@@ -87,7 +85,6 @@ int main(int argc, char* argv[])
 		});
 
 		window.input().mouse().lock_movement();
-		ui = std::make_shared<UI>(1000, 1000);
 	};
 	
 	auto onIterate = [&](Window& window, float timeStepInSeconds){
@@ -102,7 +99,6 @@ int main(int argc, char* argv[])
 			Renderer::render_wireframe(camera, modelMatrix, Color(0xFF, 0xFF, 0xFF, 255), mesh);
 		}
 		chunkVault.render(camera);
-		ui->tick();
 	};
 
 

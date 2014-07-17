@@ -1,4 +1,5 @@
 #include "main_loop.h"
+#include <algorithm>
 
 MainLoop::MainLoop(const std::function<void (Window&)>& onInitialize, const std::function<void (Window&, float timeStepinMs)>& onIteration, float timeStepInSeconds)
 {
@@ -12,10 +13,13 @@ MainLoop::MainLoop(const std::function<void (Window&)>& onInitialize, const std:
 	onInitialize(window);
 	while(window.is_open()) {
 		const long long begin = get_ms_since_epoch();
+
 		onIteration(window, timeStepInSeconds);
-		window.draw();
+
+		window.render();
 		window.tick();
-		const long long sleep = timeStepInMs - ((get_ms_since_epoch() - begin) / 1000000);
+
+		const long long sleep = std::max(timeStepInMs - ((get_ms_since_epoch() - begin) / 1000000), 0LL);
 		Sleep(static_cast<int>(sleep));
 	}
 }

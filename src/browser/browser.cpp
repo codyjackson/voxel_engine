@@ -7,7 +7,7 @@
 #include <exception>
 #include <string>
 
-Browser::Browser(const std::string& path, const RectSize& viewportSize, const std::function<void(const CefRenderHandler::RectList&, const void*)>& onPaint)
+Browser::Browser(const std::string& path, const RectSize& viewportSize, const std::function<void(const RectSize& fullSize, const CefRenderHandler::RectList&, const void*)>& onPaint)
 :_app(new SimpleApp(path, viewportSize, onPaint))
 {
 	CefMainArgs args(GetModuleHandle(nullptr));
@@ -21,17 +21,22 @@ Browser::Browser(const std::string& path, const RectSize& viewportSize, const st
 		throw std::runtime_error("Failed to execute cef process. Error code: " + std::to_string(exitCode));
 	}
 
-	if (!CefInitialize(args, appSettings, _app, nullptr)) {
+	if (!CefInitialize(args, appSettings, _app.get(), nullptr)) {
 		throw std::runtime_error("Failed to initialize cef.");
 	}
-}
-
-void Browser::tick() 
-{
-	CefDoMessageLoopWork();
 }
 
 Browser::~Browser()
 {
 	CefShutdown();
+}
+
+void Browser::tick()
+{
+	CefDoMessageLoopWork();
+}
+
+void Browser::update_viewport_size(const RectSize& rectSize)
+{
+	_app.get()->update_viewport_size(rectSize);
 }

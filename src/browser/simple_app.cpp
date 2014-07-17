@@ -7,7 +7,7 @@
 #include <sstream>
 #include <string>
 
-SimpleApp::SimpleApp(const std::string& indexPath, const RectSize& viewportSize, const std::function<void(const CefRenderHandler::RectList&, const void*)>& onPaint)
+SimpleApp::SimpleApp(const std::string& indexPath, const RectSize& viewportSize, const std::function<void(const RectSize& fullSize, const CefRenderHandler::RectList&, const void*)>& onPaint)
 :_path(indexPath), _onPaint(onPaint), _viewportSize(viewportSize)
 {}
 
@@ -73,7 +73,7 @@ bool SimpleApp::GetViewRect(CefRefPtr<CefBrowser> browser, CefRect &rect)
 
 void SimpleApp::OnPaint(CefRefPtr<CefBrowser> browser, PaintElementType type, const RectList &dirtyRects, const void *buffer, int width, int height)
 {
-	_onPaint(dirtyRects, buffer);
+	_onPaint(RectSize(width, height), dirtyRects, buffer);
 }
 
 void SimpleApp::CloseAllBrowsers(bool forceClose)

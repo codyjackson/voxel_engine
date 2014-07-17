@@ -11,9 +11,10 @@
 class SimpleApp : public CefApp, public CefBrowserProcessHandler, public CefClient, public CefLoadHandler, public CefRenderHandler
 {
 public:
-	SimpleApp(const std::string& indexPath, const RectSize& viewportSize, const std::function<void(const RectList&, const void*)>& onPaint);
+	SimpleApp(const std::string& indexPath, const RectSize& viewportSize, const std::function<void(const RectSize& fullSize, const RectList&, const void*)>& onPaint);
 
 	void update_viewport_size(const RectSize& viewportSize);
+	const RectSize& get_viewport_size() const;
 
 	// CefApp methods:
 	virtual CefRefPtr<CefBrowserProcessHandler> GetBrowserProcessHandler() override;
@@ -42,6 +43,6 @@ private:
 	BrowserList _browserList;
 
 	std::string _path;
-	std::function<void(const RectList&, const void*)> _onPaint;
+	std::function<void(const RectSize& fullSize, const RectList&, const void*)> _onPaint;
 	RectSize _viewportSize;
 };

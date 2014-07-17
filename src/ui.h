@@ -1,7 +1,9 @@
 #pragma once
 
 #include "browser/browser.h"
+#include "rendering/texture.h"
 
+#include <memory>
 #include <vector>
 
 
@@ -10,15 +12,19 @@ typedef unsigned int GLuint;
 class UI
 {
 public:
-	UI(int width, int height);
+	UI();
+
+	void update_resolution(const RectSize& resolution);
+	const RectSize& get_resolution() const;
+
 	~UI();
 
 	void tick();
+	void render();
 
 private:
-	int _width;
-	int _height;
+	void update_texture(const RectSize& fullSize, const CefRenderHandler::RectList& dirtyRects, const void* buffer);
 
-	GLuint _textureHandle;
+	std::shared_ptr<Texture> _texture;
 	Browser _browser;
 };

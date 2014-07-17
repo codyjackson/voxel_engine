@@ -13,6 +13,9 @@ class Color
 		const unsigned char get_blue() const;
 		const unsigned char get_alpha() const;
 
+		int to_raw() const;
+		int to_bgra_raw() const;
+
 		static const Color INVISIBLE;
 
 	private:

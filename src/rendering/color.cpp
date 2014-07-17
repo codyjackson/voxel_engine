@@ -34,6 +34,16 @@ const unsigned char Color::get_alpha() const
 	return _alpha;
 }
 
+int Color::to_raw() const
+{
+	return (_red << 24) | (_green << 16) | (_blue << 8) | _alpha;
+}
+
+int Color::to_bgra_raw() const
+{
+	return (_blue << 24) | (_green << 16) | (_red << 8) | _alpha;
+}
+
 const Color Color::operator=( Color rhs)
 {
 	this->_red = rhs._red;

@@ -11,7 +11,7 @@
 class Browser
 {
 public:
-	typedef std::function<void(const CefRenderHandler::RectList&, const void*)> PaintCallbackFunction;
+	typedef std::function<void(const RectSize& fullSize, const CefRenderHandler::RectList&, const void*)> PaintCallbackFunction;
 
 	Browser(const std::string& path, const RectSize& viewportSize, const PaintCallbackFunction& onPaint);
 	~Browser();
@@ -20,8 +20,11 @@ public:
 
 	void execute_javascript(const std::string& javascript);
 
+	int get_width() const;
+	int get_height() const;
+
 	void tick();
 
 private:
-	CefRefPtr<CefApp> _app;
+	CefRefPtr<SimpleApp> _app;
 };

@@ -44,8 +44,9 @@ void Window::open()
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 }
 
-void Window::draw()
+void Window::render()
 {
+	_ui.render();
 	glfwSwapBuffers(_window);
 }
 
@@ -61,14 +62,17 @@ void Window::update_title(const std::string& title)
 	glfwSetWindowTitle(_window, title.c_str());
 }
 
-void Window::update_width(const int newWidth)
+void Window::update_resolution(const RectSize& resolution)
 {
-	glfwSetWindowSize(_window, newWidth, get_height());
+	glfwSetWindowSize(_window, resolution.width, resolution.height);
+	_ui.update_resolution(resolution);
 }
 
-void Window::update_height(const int newHeight)
+RectSize Window::get_resolution() const
 {
-	glfwSetWindowSize(_window, get_width(), newHeight);
+	RectSize resolution(0, 0);
+	glfwGetWindowSize(_window, &resolution.width, &resolution.height);
+	return resolution;
 }
 
 const int Window::get_width() const
@@ -107,6 +111,7 @@ void Window::tick()
 	glfwSetInputMode(_window, GLFW_CURSOR, _input._mouse.is_mouse_hidden() ? GLFW_CURSOR_HIDDEN : GLFW_CURSOR_NORMAL);
 	_input.prepare_for_updates();
 	glfwPollEvents();
+	_ui.tick();
 }
 
 void Window::on_keyboard_message_forwarder(GLFWwindow* glfwWindow, int key, int scancode, int action, int modifiers)
