@@ -6,7 +6,7 @@
 #include <algorithm>
 
 UI::UI()
-:_browser("C:/Users/sxenog/Desktop/test.html", RectSize(0, 0), std::bind(&UI::update_texture, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3))
+:_browser("C:/Users/sxenog/Documents/Projects/voxel_engine/Debug/ui/index.html", RectSize(0, 0), std::bind(&UI::update_texture, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3))
 {}
 
 UI::~UI()
@@ -17,10 +17,10 @@ void UI::update_resolution(const RectSize& resolution)
 	_browser.update_viewport_size(resolution);
 }
 
-void UI::tick()
-{
+void UI::tick() 
+{ 
 	_browser.tick();
-}
+}  
 
 void UI::render()
 {
@@ -47,7 +47,7 @@ void UI::render()
 
 void UI::update_texture(const RectSize& fullSize, const CefRenderHandler::RectList& dirtyRects, const void* buffer)
 {
-	if (!_texture) {
+	if (!_texture) { 
 		_texture = std::make_shared<Texture>(fullSize, PixelFormat::BGRA, PixelDataType::UNSIGNED_BYTE, buffer);
 	}
 
@@ -58,4 +58,4 @@ void UI::update_texture(const RectSize& fullSize, const CefRenderHandler::RectLi
 	std::for_each(std::begin(dirtyRects), std::end(dirtyRects), [this, buffer, &fullSize](const CefRect& dirtyRect) {
 		_texture->update_pixel_rect(Offset(dirtyRect.x, dirtyRect.y), RectSize(dirtyRect.width, dirtyRect.height), buffer);
 	});
-}
+} 

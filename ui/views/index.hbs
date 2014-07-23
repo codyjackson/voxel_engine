@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    {{#optimize}}
+      <link rel="stylesheet" href="stylesheets/style.css" />
+    {{/optimize}}
+
+    {{^optimize}}
+      <link rel="stylesheet" href="/stylesheets/style.css" />
+    {{/optimize}}
+  </head>
+  <body ng-cloak>
+      <bullseye>
+        <span class="crosshair">+</span>
+      </bullseye>
+
+      {{#reload}}
+        <script src="/socket.io/socket.io.js"></script>
+        <script src="/javascripts/reload-client.js"></script>
+      {{/reload}}
+
+      {{#optimize}}
+        <script src="javascripts/application-built.js"></script>
+      {{/optimize}}
+
+      {{^optimize}}
+        <script src="/javascripts/vendor/requirejs/require.js" data-main="/javascripts/application.js"></script>
+      {{/optimize}}
+  </body>
+</html>

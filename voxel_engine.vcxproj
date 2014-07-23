@@ -21,14 +21,18 @@
     <ClInclude Include="src\rendering\camera.h" />
     <ClInclude Include="src\rendering\color.h" />
     <ClInclude Include="src\rendering\mesh.h" />
+    <ClInclude Include="src\rendering\pixel_data_type.h" />
+    <ClInclude Include="src\rendering\pixel_format.h" />
     <ClInclude Include="src\rendering\quad.h" />
     <ClInclude Include="src\rendering\renderer.h" />
+    <ClInclude Include="src\rendering\texture.h" />
     <ClInclude Include="src\rendering\vertex.h" />
     <ClInclude Include="src\spatial\axially_aligned\plane.h" />
     <ClInclude Include="src\spatial\axially_aligned\voxel.h" />
     <ClInclude Include="src\spatial\chunk.h" />
     <ClInclude Include="src\spatial\chunk_vault.h" />
     <ClInclude Include="src\spatial\intersection.h" />
+    <ClInclude Include="src\spatial\offset.h" />
     <ClInclude Include="src\spatial\orientation.h" />
     <ClInclude Include="src\spatial\ray.h" />
     <ClInclude Include="src\spatial\rect_size.h" />
@@ -53,6 +57,7 @@
     <ClCompile Include="src\rendering\color.cpp" />
     <ClCompile Include="src\rendering\mesh.cpp" />
     <ClCompile Include="src\rendering\quad.cpp" />
+    <ClCompile Include="src\rendering\texture.cpp" />
     <ClCompile Include="src\rendering\vertex.cpp" />
     <ClCompile Include="src\spatial\axially_aligned\plane.cpp" />
     <ClCompile Include="src\spatial\axially_aligned\voxel.cpp" />
@@ -126,6 +131,15 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>sqlite3.lib;comctl32.lib;shlwapi.lib;libcef_dll_wrapper.lib;libcef.lib;glfw3_debug.lib;opengl32.lib;glu32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PostBuildEvent>
+      <Command>cd ui
+node needs-building debug
+if %errorlevel% == -1 (
+    mimosa build -o -P debug-build
+) else (
+    echo UI Project is up to date
+)</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -144,6 +158,15 @@
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalDependencies>sqlite3.lib;comctl32.lib;shlwapi.lib;libcef_dll_wrapper.lib;libcef.lib;glfw3.lib;opengl32.lib;glu32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PostBuildEvent>
+      <Command>cd ui
+node needs-building release
+if %errorlevel% == -1 (
+    mimosa build -o -P release-build
+) else (
+    echo UI Project is up to date
+)</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <Target Name="AfterBuild">

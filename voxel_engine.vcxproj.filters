@@ -60,6 +60,10 @@
     <ClInclude Include="src\browser\util.h" />
     <ClInclude Include="src\spatial\rect_size.h" />
     <ClInclude Include="src\ui.h" />
+    <ClInclude Include="src\rendering\texture.h" />
+    <ClInclude Include="src\rendering\pixel_format.h" />
+    <ClInclude Include="src\rendering\pixel_data_type.h" />
+    <ClInclude Include="src\spatial\offset.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\rendering\color.cpp">
@@ -101,5 +105,6 @@
     <ClCompile Include="src\browser\browser.cpp" />
     <ClCompile Include="src\browser\simple_app.cpp" />
     <ClCompile Include="src\ui.cpp" />
+    <ClCompile Include="src\rendering\texture.cpp" />
   </ItemGroup>
 </Project>
