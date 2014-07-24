@@ -7,8 +7,8 @@
 #include <exception>
 #include <string>
 
-Browser::Browser(const std::string& path, const RectSize& viewportSize, const std::function<void(const RectSize& fullSize, const CefRenderHandler::RectList&, const void*)>& onPaint)
-:_app(new SimpleApp(path, viewportSize, onPaint))
+Browser::Browser(const boost::filesystem::path& path, const RectSize& viewportSize, const std::function<void(const RectSize& fullSize, const CefRenderHandler::RectList&, const void*)>& onPaint)
+:_app(new SimpleApp(path.string(), viewportSize, onPaint))
 {
 	CefMainArgs args(GetModuleHandle(nullptr));
 	CefSettings appSettings;

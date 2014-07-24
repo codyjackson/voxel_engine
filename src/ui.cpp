@@ -4,9 +4,10 @@
 #include <GLFW/glfw3.h>
 
 #include <algorithm>
+#include <boost/filesystem.hpp>
 
 UI::UI()
-:_browser("C:/Users/sxenog/Documents/Projects/voxel_engine/Debug/ui/index.html", RectSize(0, 0), std::bind(&UI::update_texture, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3))
+:_browser(boost::filesystem::current_path()/boost::filesystem::path("/ui/index.html"), RectSize(0, 0), std::bind(&UI::update_texture, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3))
 {}
 
 UI::~UI()
