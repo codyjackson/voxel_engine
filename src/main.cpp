@@ -66,19 +66,19 @@ int main(int argc, char* argv[])
 
 		window.input().on(Input::MoveableCombo(Input::MoveableTerminal::MOUSE), [&](Input& in){
 			const auto delta = in.mouse().get_position_delta();
-			camera.orientation.rotate(Constants::Vec3::up, delta.x*0.15f);
-			camera.orientation.rotate(camera.orientation.right(), delta.y*0.2f);
+			camera.get_transform()->orientation().rotate(Constants::Vec3::up, delta.x*0.15f);
+			camera.get_transform()->orientation().rotate(camera.get_transform()->orientation().right(), delta.y*0.2f);
 		});
 
 		window.input().on(Input::PressableTerminal(Input::Pressable::MOUSE_BUTTON_2, Input::PressableEvent::RELEASED), [&](Input& in){
-			Ray r(camera.position, camera.orientation.forward());
+			Ray r(camera.get_transform()->position(), camera.get_transform()->orientation().forward());
 			if (const auto intersection = chunkVault.find_nearest_intersection(r)) {
 				chunkVault.delete_voxel(intersection->get_object_of_interest());
 			}
 		});
 
 		window.input().on(Input::PressableTerminal(Input::Pressable::MOUSE_BUTTON_1, Input::PressableEvent::RELEASED), [&](Input& in){
-			Ray r(camera.position, camera.orientation.forward());
+			Ray r(camera.get_transform()->position(), camera.get_transform()->orientation().forward());
 			if (const auto intersection = chunkVault.find_nearest_intersection(r)) {
 				chunkVault.add_adjacent_voxel(intersection->get_object_of_interest(), Color(0x00, 0x85, 0xAD, 255));
 			}
@@ -88,10 +88,10 @@ int main(int argc, char* argv[])
 	};
 	
 	auto onIterate = [&](Window& window, float timeStepInSeconds){
-		camera.position += timeStepInSeconds * metersPerSecondForward * camera.orientation.forward();
-		camera.position += timeStepInSeconds * metersPerSecondRight * camera.orientation.right();
+		camera.get_transform()->position() += timeStepInSeconds * metersPerSecondForward * camera.get_transform()->orientation().forward();
+		camera.get_transform()->position() += timeStepInSeconds * metersPerSecondRight * camera.get_transform()->orientation().right();
 
-		Ray r(camera.position, camera.orientation.forward());
+		Ray r(camera.get_transform()->position(), camera.get_transform()->orientation().forward());
 		Renderer::clear_screen();
 		if (const auto intersection = chunkVault.find_nearest_intersection(r)) {
 			const auto modelMatrix = chunkVault.get_voxel_model_matrix(intersection->get_object_of_interest());

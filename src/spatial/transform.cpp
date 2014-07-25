@@ -1,30 +1,39 @@
 #include "transform.h"
 #include <glm\gtx\transform.hpp>
 
-std::shared_ptr<Transform> Transform::make_transform()
+namespace
 {
-	return std::make_shared<Transform>();
-}
-std::shared_ptr<Transform> Transform::make_transform(const glm::vec3& position, const Orientation& orientation)
-{
-	//I would rather use make shared here but unfortunately it seems that friend the function that creates the
-	//object is not portable.
-	return std::shared_ptr<Transform>(new Transform(position, orientation, std::shared_ptr<Transform>()));
-}
-std::shared_ptr<Transform> Transform::make_transform(const glm::vec3& position, const Orientation& orientation, std::shared_ptr<Transform> parent)
-{
-	//I would rather use make shared here but unfortunately it seems that friend the function that creates the
-	//object is not portable.
-	return std::shared_ptr<Transform>(new Transform(position, orientation, parent));
+	//This class is used in order to give std::make_shared to give std::make_shared 
+	//"access" to the Transform private constructors.
+	class InstantiableTransform : public Transform  
+	{
+	public:
+		template<typename... Args>
+		InstantiableTransform(Args&&... args)
+			:Transform(std::forward<Args>(args)...)
+		{}
+	};
 }
 
-void Transform::kill_parent()
+std::shared_ptr<Transform> Transform::make_transform()
 {
-	_parent.reset();
+	return std::make_shared<InstantiableTransform>();
 }
-void Transform::parent(std::shared_ptr<Transform> parent)
+
+std::shared_ptr<Transform> Transform::make_transform(std::shared_ptr<Transform> rhs)
 {
-	_parent = parent;
+	assert(rhs);
+	return rhs ? std::make_shared<InstantiableTransform>(rhs->_position, rhs->_orientation, rhs->_parent) : std::shared_ptr<Transform>();
+}
+
+std::shared_ptr<Transform> Transform::make_transform(const glm::vec3& position, const Orientation& orientation)
+{
+	return std::make_shared<InstantiableTransform>(position, orientation);
+}
+
+std::shared_ptr<Transform> Transform::make_transform(const glm::vec3& position, const Orientation& orientation, std::shared_ptr<const Transform> parent)
+{
+	return std::make_shared<InstantiableTransform>(position, orientation, parent);
 }
 
 glm::vec3& Transform::position()
@@ -39,6 +48,7 @@ const glm::vec3& Transform::position() const
 {
 	return _position;
 }
+
 const Orientation& Transform::orientation() const
 {
 	return _orientation;
@@ -46,19 +56,38 @@ const Orientation& Transform::orientation() const
 
 glm::mat4 Transform::get_model_matrix() const
 {
-	if (_parent) {
-		return _parent->get_model_matrix() * glm::translate(_position) * _orientation.get_rotation_matrix();
+	auto localMatrix = glm::translate(_position) * _orientation.get_rotation_matrix();
+	if (!_parent) {
+		return localMatrix;
 	}
-	else {
-		return glm::translate(_position) * _orientation.get_rotation_matrix();
-	}
-
+	return _parent->get_model_matrix() * localMatrix;
 }
 
 Transform::Transform()
+{}
+
+Transform::Transform(const glm::vec3& position, const Orientation& orientation)
+: _position(position), _orientation(orientation)
+{}
+
+Transform::Transform(const glm::vec3& position, const Orientation& orientation, std::shared_ptr<const Transform> parent)
+:_position(position), _orientation(orientation), _parent(parent)
+{}
+
+ITransformable::ITransformable()
+: _transform(Transform::make_transform())
+{}
+
+ITransformable::ITransformable(std::shared_ptr<Transform> transform)
+: _transform(transform)
+{}
+
+std::shared_ptr<Transform> ITransformable::get_transform()
 {
+	return _transform;
 }
 
-Transform::Transform(const glm::vec3& position, const Orientation& orientation, std::shared_ptr<Transform> parent)
-: _position(position), _orientation(orientation), _parent(parent)
-{}
+const std::shared_ptr<const Transform> ITransformable::get_transform() const
+{
+	return std::static_pointer_cast<const Transform>(_transform);
+}

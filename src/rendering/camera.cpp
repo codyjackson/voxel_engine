@@ -4,14 +4,12 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 Camera::Camera(const glm::vec3& position, const Orientation& orientation)
-:position(position), orientation(orientation)
+:ITransformable(Transform::make_transform(position, orientation))
 {}
 
 glm::mat4 Camera::get_view_matrix() const
 {
-	const glm::mat4 rotation = orientation.get_rotation_matrix();
-	const glm::mat4 translation = glm::translate(position);
-	return glm::inverse(translation * rotation);
+	return glm::inverse(_transform->get_model_matrix());
 }
 
 glm::mat4 Camera::get_projection_matrix() const

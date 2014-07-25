@@ -64,6 +64,7 @@
     <ClInclude Include="src\rendering\pixel_format.h" />
     <ClInclude Include="src\rendering\pixel_data_type.h" />
     <ClInclude Include="src\spatial\offset.h" />
+    <ClInclude Include="src\player.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\rendering\color.cpp">
@@ -106,5 +107,6 @@
     <ClCompile Include="src\browser\simple_app.cpp" />
     <ClCompile Include="src\ui.cpp" />
     <ClCompile Include="src\rendering\texture.cpp" />
+    <ClCompile Include="src\player.cpp" />
   </ItemGroup>
 </Project>

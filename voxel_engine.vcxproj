@@ -18,6 +18,7 @@
     <ClInclude Include="src\database.h" />
     <ClInclude Include="src\input.h" />
     <ClInclude Include="src\main_loop.h" />
+    <ClInclude Include="src\player.h" />
     <ClInclude Include="src\rendering\camera.h" />
     <ClInclude Include="src\rendering\color.h" />
     <ClInclude Include="src\rendering\mesh.h" />
@@ -53,6 +54,7 @@
     <ClCompile Include="src\input.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\main_loop.cpp" />
+    <ClCompile Include="src\player.cpp" />
     <ClCompile Include="src\rendering\camera.cpp" />
     <ClCompile Include="src\rendering\color.cpp" />
     <ClCompile Include="src\rendering\mesh.cpp" />
