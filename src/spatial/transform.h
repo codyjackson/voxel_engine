@@ -39,6 +39,14 @@ public:
 	ITransformable();
 	ITransformable(std::shared_ptr<Transform> transform);
 
+	void move_forward(float distance);
+	void move_right(float distance);
+	void move_up(float distance);
+
+	void rotate_right(float degrees);
+	void rotate_up(float degrees);
+
+
 	std::shared_ptr<Transform> get_transform();
 	const std::shared_ptr<const Transform> get_transform() const;
 

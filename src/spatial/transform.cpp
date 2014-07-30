@@ -5,7 +5,7 @@ namespace
 {
 	//This class is used in order to give std::make_shared to give std::make_shared 
 	//"access" to the Transform private constructors.
-	class InstantiableTransform : public Transform  
+	class InstantiableTransform : public Transform
 	{
 	public:
 		template<typename... Args>
@@ -64,6 +64,7 @@ glm::mat4 Transform::get_model_matrix() const
 }
 
 Transform::Transform()
+:_orientation()
 {}
 
 Transform::Transform(const glm::vec3& position, const Orientation& orientation)
@@ -71,7 +72,7 @@ Transform::Transform(const glm::vec3& position, const Orientation& orientation)
 {}
 
 Transform::Transform(const glm::vec3& position, const Orientation& orientation, std::shared_ptr<const Transform> parent)
-:_position(position), _orientation(orientation), _parent(parent)
+: _position(position), _orientation(orientation), _parent(parent)
 {}
 
 ITransformable::ITransformable()
@@ -81,6 +82,32 @@ ITransformable::ITransformable()
 ITransformable::ITransformable(std::shared_ptr<Transform> transform)
 : _transform(transform)
 {}
+
+void ITransformable::move_forward(float distance)
+{
+	_transform->position() += _transform->orientation().forward() * distance;
+}
+
+void ITransformable::move_right(float distance)
+{
+	_transform->position() += _transform->orientation().right() * distance;
+}
+
+void ITransformable::move_up(float distance)
+{
+	_transform->position() += _transform->orientation().up() * distance;
+}
+
+void ITransformable::rotate_right(float degrees)
+{
+	_transform->orientation().rotate(_transform->orientation().up(), degrees);
+}
+
+void ITransformable::rotate_up(float degrees)
+{
+	_transform->orientation().rotate(_transform->orientation().right(), degrees);
+}
+
 
 std::shared_ptr<Transform> ITransformable::get_transform()
 {
