@@ -3,8 +3,11 @@
 #include <glm/gtx/transform.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
-Camera::Camera(const glm::vec3& position, const Orientation& orientation)
-:ITransformable(Transform::make_transform(position, orientation))
+Camera::Camera()
+{}
+
+Camera::Camera(std::shared_ptr<Transform> transform)
+:ITransformable(transform)
 {}
 
 glm::mat4 Camera::get_view_matrix() const

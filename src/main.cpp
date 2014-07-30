@@ -1,6 +1,7 @@
 #include <Windows.h>
 #include "main_loop.h"
 
+#include "player.h"
 #include "rendering/camera.h"
 #include "rendering/renderer.h"
 #include "spatial/chunk_vault.h"
@@ -13,11 +14,8 @@
 
 int main(int argc, char* argv[])
 {
-	Orientation orientation;
-	Camera camera(glm::vec3(), orientation);
-
-	float metersPerSecondForward = 0.0f;
-	float metersPerSecondRight = 0.0f;
+	Player player;
+	Camera camera(Transform::make_transform(glm::vec3(), Orientation(), player.get_transform()));
 
 	ChunkVault chunkVault(meters(2.0f / 13.0f), glm::vec3(0, 0, 0));
 
@@ -31,43 +29,43 @@ int main(int argc, char* argv[])
 		});
 
 		window.input().on(Input::PressableTerminal(Input::Pressable::W, Input::PressableEvent::PRESSED), [&](Input& in){
-			metersPerSecondForward = meters(3.0f);
+			player.start_moving_forward();
 		});
 
 		window.input().on(Input::PressableTerminal(Input::Pressable::W, Input::PressableEvent::RELEASED), [&](Input& in){
-			metersPerSecondForward = 0.0f;
+			player.stop_moving_forward_or_backward();
 		});
 
 		window.input().on(Input::PressableTerminal(Input::Pressable::S, Input::PressableEvent::PRESSED), [&](Input& in){
-			metersPerSecondForward = -meters(3.0f);
+			player.start_moving_backward();
 		});
 
 		window.input().on(Input::PressableTerminal(Input::Pressable::S, Input::PressableEvent::RELEASED), [&](Input& in){
-			metersPerSecondForward = 0.0f;
+			player.stop_moving_forward_or_backward();
 		});
 
 
 
 		window.input().on(Input::PressableTerminal(Input::Pressable::D, Input::PressableEvent::PRESSED), [&](Input& in){
-			metersPerSecondRight = meters(3.0f);
+			player.start_moving_right();
 		});
 
 		window.input().on(Input::PressableTerminal(Input::Pressable::D, Input::PressableEvent::RELEASED), [&](Input& in){
-			metersPerSecondRight = 0.0f;
+			player.stop_moving_left_or_right();
 		});
 
 		window.input().on(Input::PressableTerminal(Input::Pressable::A, Input::PressableEvent::PRESSED), [&](Input& in){
-			metersPerSecondRight = -meters(3.0f);
+			player.start_moving_left();
 		});
 
 		window.input().on(Input::PressableTerminal(Input::Pressable::A, Input::PressableEvent::RELEASED), [&](Input& in){
-			metersPerSecondRight = 0.0f;
+			player.stop_moving_left_or_right();
 		});
 
 		window.input().on(Input::MoveableCombo(Input::MoveableTerminal::MOUSE), [&](Input& in){
 			const auto delta = in.mouse().get_position_delta();
-			camera.get_transform()->orientation().rotate(Constants::Vec3::up, delta.x*0.15f);
-			camera.get_transform()->orientation().rotate(camera.get_transform()->orientation().right(), delta.y*0.2f);
+			player.rotate_yaw(delta.x * 0.15f);
+			player.rotate_pitch(delta.y * 0.2f);
 		});
 
 		window.input().on(Input::PressableTerminal(Input::Pressable::MOUSE_BUTTON_2, Input::PressableEvent::RELEASED), [&](Input& in){
@@ -88,8 +86,7 @@ int main(int argc, char* argv[])
 	};
 	
 	auto onIterate = [&](Window& window, float timeStepInSeconds){
-		camera.get_transform()->position() += timeStepInSeconds * metersPerSecondForward * camera.get_transform()->orientation().forward();
-		camera.get_transform()->position() += timeStepInSeconds * metersPerSecondRight * camera.get_transform()->orientation().right();
+		player.tick(timeStepInSeconds);
 
 		Ray r(camera.get_transform()->position(), camera.get_transform()->orientation().forward());
 		Renderer::clear_screen();

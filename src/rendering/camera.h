@@ -7,7 +7,8 @@
 class Camera : public ITransformable
 {
 public:
-	Camera(const glm::vec3& position, const Orientation& orientation);
+	Camera();
+	Camera(std::shared_ptr<Transform> transform);
 	
 	glm::mat4 get_view_matrix() const;
 	glm::mat4 get_projection_matrix() const;
