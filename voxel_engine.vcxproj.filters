@@ -13,6 +13,15 @@
     <Filter Include="src\constants">
       <UniqueIdentifier>{7118bb7f-52d3-48ca-bc03-06abfdf20562}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\browser">
+      <UniqueIdentifier>{c40830c2-c049-49b2-b71a-d5061087c317}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\spatial\axially_aligned">
+      <UniqueIdentifier>{66241663-e669-418e-96f6-1b8154602265}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\utility">
+      <UniqueIdentifier>{dc0de2e7-e950-4d4a-8c2b-bd9604bae6ac}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\rendering\color.h">
@@ -39,32 +48,84 @@
     <ClInclude Include="src\spatial\orientation.h">
       <Filter>src\spatial</Filter>
     </ClInclude>
-    <ClInclude Include="src\rendering\camera.h" />
-    <ClInclude Include="src\input.h" />
-    <ClInclude Include="src\units.h" />
-    <ClInclude Include="src\spatial\transform.h" />
-    <ClInclude Include="src\rendering\renderer.h" />
-    <ClInclude Include="src\spatial\intersection.h" />
-    <ClInclude Include="src\spatial\ray.h" />
-    <ClInclude Include="src\spatial\axially_aligned\plane.h" />
-    <ClInclude Include="src\spatial\axially_aligned\voxel.h" />
-    <ClInclude Include="src\utility\functional.h" />
-    <ClInclude Include="src\utility\numerical.h" />
-    <ClInclude Include="src\spatial\chunk.h" />
-    <ClInclude Include="src\spatial\chunk_vault.h" />
-    <ClInclude Include="src\spatial\utility.h" />
-    <ClInclude Include="src\utility\serialization.h" />
-    <ClInclude Include="src\database.h" />
-    <ClInclude Include="src\browser\browser.h" />
-    <ClInclude Include="src\browser\simple_app.h" />
-    <ClInclude Include="src\browser\util.h" />
-    <ClInclude Include="src\spatial\rect_size.h" />
-    <ClInclude Include="src\ui.h" />
-    <ClInclude Include="src\rendering\texture.h" />
-    <ClInclude Include="src\rendering\pixel_format.h" />
-    <ClInclude Include="src\rendering\pixel_data_type.h" />
-    <ClInclude Include="src\spatial\offset.h" />
-    <ClInclude Include="src\player.h" />
+    <ClInclude Include="src\browser\browser.h">
+      <Filter>src\browser</Filter>
+    </ClInclude>
+    <ClInclude Include="src\browser\simple_app.h">
+      <Filter>src\browser</Filter>
+    </ClInclude>
+    <ClInclude Include="src\browser\util.h">
+      <Filter>src\browser</Filter>
+    </ClInclude>
+    <ClInclude Include="src\rendering\camera.h">
+      <Filter>src\rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="src\spatial\chunk.h">
+      <Filter>src\spatial</Filter>
+    </ClInclude>
+    <ClInclude Include="src\spatial\chunk_vault.h">
+      <Filter>src\spatial</Filter>
+    </ClInclude>
+    <ClInclude Include="src\utility\functional.h">
+      <Filter>src\utility</Filter>
+    </ClInclude>
+    <ClInclude Include="src\utility\numerical.h">
+      <Filter>src\utility</Filter>
+    </ClInclude>
+    <ClInclude Include="src\utility\serialization.h">
+      <Filter>src\utility</Filter>
+    </ClInclude>
+    <ClInclude Include="src\rendering\texture.h">
+      <Filter>src\rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="src\spatial\offset.h">
+      <Filter>src\spatial</Filter>
+    </ClInclude>
+    <ClInclude Include="src\rendering\pixel_format.h">
+      <Filter>src\rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="src\rendering\pixel_data_type.h">
+      <Filter>src\rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="src\spatial\axially_aligned\plane.h">
+      <Filter>src\spatial\axially_aligned</Filter>
+    </ClInclude>
+    <ClInclude Include="src\spatial\axially_aligned\voxel.h">
+      <Filter>src\spatial\axially_aligned</Filter>
+    </ClInclude>
+    <ClInclude Include="src\spatial\transform.h">
+      <Filter>src\spatial</Filter>
+    </ClInclude>
+    <ClInclude Include="src\spatial\rect_size.h">
+      <Filter>src\spatial</Filter>
+    </ClInclude>
+    <ClInclude Include="src\spatial\ray.h">
+      <Filter>src\spatial</Filter>
+    </ClInclude>
+    <ClInclude Include="src\rendering\renderer.h">
+      <Filter>src\rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ui.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\database.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\spatial\intersection.h">
+      <Filter>src\spatial</Filter>
+    </ClInclude>
+    <ClInclude Include="src\input.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\player.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\units.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\spatial\utility.h">
+      <Filter>src\spatial</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\rendering\color.cpp">
@@ -94,19 +155,47 @@
     <ClCompile Include="src\spatial\orientation.cpp">
       <Filter>src\spatial</Filter>
     </ClCompile>
-    <ClCompile Include="src\rendering\camera.cpp" />
-    <ClCompile Include="src\input.cpp" />
-    <ClCompile Include="src\spatial\axially_aligned\plane.cpp" />
-    <ClCompile Include="src\spatial\transform.cpp" />
-    <ClCompile Include="src\spatial\axially_aligned\voxel.cpp" />
-    <ClCompile Include="src\spatial\ray.cpp" />
-    <ClCompile Include="src\spatial\chunk.cpp" />
-    <ClCompile Include="src\spatial\chunk_vault.cpp" />
-    <ClCompile Include="src\database.cpp" />
-    <ClCompile Include="src\browser\browser.cpp" />
-    <ClCompile Include="src\browser\simple_app.cpp" />
-    <ClCompile Include="src\ui.cpp" />
-    <ClCompile Include="src\rendering\texture.cpp" />
-    <ClCompile Include="src\player.cpp" />
+    <ClCompile Include="src\browser\browser.cpp">
+      <Filter>src\browser</Filter>
+    </ClCompile>
+    <ClCompile Include="src\browser\simple_app.cpp">
+      <Filter>src\browser</Filter>
+    </ClCompile>
+    <ClCompile Include="src\rendering\camera.cpp">
+      <Filter>src\rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="src\spatial\chunk.cpp">
+      <Filter>src\spatial</Filter>
+    </ClCompile>
+    <ClCompile Include="src\spatial\chunk_vault.cpp">
+      <Filter>src\spatial</Filter>
+    </ClCompile>
+    <ClCompile Include="src\rendering\texture.cpp">
+      <Filter>src\rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="src\spatial\axially_aligned\plane.cpp">
+      <Filter>src\spatial\axially_aligned</Filter>
+    </ClCompile>
+    <ClCompile Include="src\spatial\axially_aligned\voxel.cpp">
+      <Filter>src\spatial\axially_aligned</Filter>
+    </ClCompile>
+    <ClCompile Include="src\spatial\transform.cpp">
+      <Filter>src\spatial</Filter>
+    </ClCompile>
+    <ClCompile Include="src\spatial\ray.cpp">
+      <Filter>src\spatial</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ui.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\player.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\database.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\input.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
