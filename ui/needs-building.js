@@ -1,4 +1,3 @@
-var execSync = require('execSync').run;
 var fs = require('fs');
 var walk = require('walk');
 

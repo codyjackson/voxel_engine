@@ -9,5 +9,7 @@
   },
   "devDependencies": {
     "mimosa-less": "*"
+  },
+  "repository": {
   }
 }
