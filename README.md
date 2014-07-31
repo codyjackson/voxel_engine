@@ -37,6 +37,6 @@ I decided to keep the lib directory separate from the repo since it contains bin
 ###Dependencies
 1. [node.js](http://nodejs.org/)
 2. [mimosa.js](http://mimosa.io/)  
-    ```sh
+    ```
     npm install -g mimosa
     ```
