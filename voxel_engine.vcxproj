@@ -134,7 +134,13 @@
       <AdditionalDependencies>sqlite3.lib;comctl32.lib;shlwapi.lib;libcef_dll_wrapper.lib;libcef.lib;glfw3_debug.lib;opengl32.lib;glu32.lib;libboost_filesystem-vc120-sgd-1_55.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>cd ui
+      <Command>echo UI Build Step
+cd ui
+
+echo Installing UI dependencies
+CMD /C npm install
+
+echo Building
 node needs-building debug
 if %errorlevel% == -1 (
     mimosa build -o -P debug-build
@@ -161,7 +167,13 @@ if %errorlevel% == -1 (
       <AdditionalDependencies>sqlite3.lib;comctl32.lib;shlwapi.lib;libcef_dll_wrapper.lib;libcef.lib;glfw3.lib;opengl32.lib;glu32.lib;boost_filesystem.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>cd ui
+      <Command>echo UI Build Step
+cd ui
+
+echo Installing UI dependencies
+CMD /C npm install
+
+echo Building
 node needs-building release
 if %errorlevel% == -1 (
     mimosa build -o -P release-build
