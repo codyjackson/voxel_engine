@@ -64,8 +64,13 @@ function flatten(a) {
 }
 
 function needsBuilding(target) {
+    var compiledDir = getCompiledDir(profilePaths[target]);
+    if(!fs.existsSync(compiledDir)) {
+        return true;
+    }
+
     var sourceTimestamps = flatten(sources.map(getAllModificationTimestampsRecursively));
-    var buildTimestamps = flatten(getAllModificationTimestampsRecursively(getCompiledDir(profilePaths[target])));
+    var buildTimestamps = flatten(getAllModificationTimestampsRecursively(compiledDir));
 
     var command = 'mimosa build -o -P ' + target + '-build';
     if(sourceTimestamps.length == 0 || buildTimestamps.length == 0) {
