@@ -5,11 +5,11 @@
   "dependencies": {
     "consolidate": "0.10.0",
     "handlebars": "1.2.1",
-    "express": "3.4.7"
+    "express": "3.4.7",
+    "walk": "^2.3.3"
   },
   "devDependencies": {
     "mimosa-less": "*"
   },
-  "repository": {
-  }
+  "repository": {}
 }
