@@ -36,21 +36,41 @@ std::shared_ptr<Transform> Transform::make_transform(const glm::vec3& position, 
 	return std::make_shared<InstantiableTransform>(position, orientation, parent);
 }
 
-glm::vec3& Transform::position()
-{
-	return _position;
-}
-Orientation& Transform::orientation()
-{
-	return _orientation;
-}
-const glm::vec3& Transform::position() const
+glm::vec3& Transform::relative_position()
 {
 	return _position;
 }
 
-const Orientation& Transform::orientation() const
+const glm::vec3& Transform::relative_position() const
 {
+	return _position;
+}
+
+glm::vec3 Transform::position() const
+{
+	if (_parent) {
+		return _parent->position() + _position;
+	}
+
+	return _position;
+}
+
+Orientation& Transform::relative_orientation()
+{
+	return _orientation;
+}
+
+const Orientation& Transform::relative_orientation() const
+{
+	return _orientation;
+}
+
+Orientation Transform::orientation() const
+{
+	if (_parent) {
+		return _parent->orientation() * _orientation;
+	}
+
 	return _orientation;
 }
 
@@ -85,27 +105,27 @@ ITransformable::ITransformable(std::shared_ptr<Transform> transform)
 
 void ITransformable::move_forward(float distance)
 {
-	_transform->position() += _transform->orientation().forward() * distance;
+	_transform->relative_position() += _transform->orientation().forward() * distance;
 }
 
 void ITransformable::move_right(float distance)
 {
-	_transform->position() += _transform->orientation().right() * distance;
+	_transform->relative_position() += _transform->orientation().right() * distance;
 }
 
 void ITransformable::move_up(float distance)
 {
-	_transform->position() += _transform->orientation().up() * distance;
+	_transform->relative_position() += _transform->orientation().up() * distance;
 }
 
 void ITransformable::rotate_right(float degrees)
 {
-	_transform->orientation().rotate(_transform->orientation().up(), degrees);
+	_transform->relative_orientation().rotate(_transform->relative_orientation().up(), degrees);
 }
 
 void ITransformable::rotate_up(float degrees)
 {
-	_transform->orientation().rotate(_transform->orientation().right(), degrees);
+	_transform->relative_orientation().rotate(_transform->relative_orientation().right(), degrees);
 }
 
 

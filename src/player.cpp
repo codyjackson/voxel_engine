@@ -44,7 +44,7 @@ void Player::stop_moving_left_or_right()
 
 void Player::rotate_yaw(float degrees)
 {
-	get_transform()->orientation().rotate(Constants::Vec3::up, degrees);
+	get_transform()->relative_orientation().rotate(Constants::Vec3::up, degrees);
 }
 
 void Player::rotate_pitch(float degrees)

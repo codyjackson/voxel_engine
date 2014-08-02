@@ -13,11 +13,14 @@ public:
 	static std::shared_ptr<Transform> make_transform(const glm::vec3& position, const Orientation& orientation);
 	static std::shared_ptr<Transform> make_transform(const glm::vec3& position, const Orientation& orientation, std::shared_ptr<const Transform> parent);
 
-	glm::vec3& position();
-	const glm::vec3& position() const;
+	glm::vec3& relative_position();
+	const glm::vec3& relative_position() const;
+	glm::vec3 position() const;
 
-	Orientation& orientation();
-	const Orientation& orientation() const;
+	
+	Orientation& relative_orientation();
+	const Orientation& relative_orientation() const;
+	Orientation orientation() const;
 
 	glm::mat4 get_model_matrix() const;
 

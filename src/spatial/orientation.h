@@ -7,8 +7,10 @@ class Orientation
 {
 public:
 	Orientation();
+	Orientation(const glm::quat& quaternion);
 
 	void rotate(const glm::vec3& axis, const float degreesOfRotation);
+	Orientation operator*(const Orientation& rhs) const;
 
 	glm::mat4 get_rotation_matrix() const;
 
@@ -20,6 +22,8 @@ public:
 	glm::vec3 left() const;
 
 private:
+	void update_direction_vectors();
+
 	glm::quat _quaternion;
 	glm::vec4 _forward;
 	glm::vec4 _up;
