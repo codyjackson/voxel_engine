@@ -112,11 +112,16 @@
     </SourcePath>
     <IncludePath>$(ProjectDir)\include;$(ProjectDir)\lib\include;$(SourcePath);$(IncludePath)</IncludePath>
     <LibraryPath>$(ProjectDir)\lib\bin\debug;$(LibraryPath)</LibraryPath>
+    <CustomBuildAfterTargets>Build</CustomBuildAfterTargets>
+    <CustomBuildBeforeTargets>
+    </CustomBuildBeforeTargets>
+    <PostBuildEventUseInBuild>true</PostBuildEventUseInBuild>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
     <IncludePath>$(ProjectDir)\include;$(ProjectDir)\lib\include;$(IncludePath)</IncludePath>
     <LibraryPath>$(ProjectDir)\lib\bin\release;$(LibraryPath)</LibraryPath>
+    <CustomBuildAfterTargets>Build</CustomBuildAfterTargets>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -134,20 +139,22 @@
       <AdditionalDependencies>sqlite3.lib;comctl32.lib;shlwapi.lib;libcef_dll_wrapper.lib;libcef.lib;glfw3_debug.lib;opengl32.lib;glu32.lib;libboost_filesystem-vc120-sgd-1_55.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
+      <Command>
+      </Command>
+    </PostBuildEvent>
+    <CustomBuildStep>
       <Command>echo UI Build Step
 cd ui
 
 echo Installing UI dependencies
 CMD /C npm install
 
-echo Building
 node needs-building debug
 if %errorlevel% == -1 (
     mimosa build -o -P debug-build
-) else (
-    echo UI Project is up to date
 )</Command>
-    </PostBuildEvent>
+      <Outputs>non_existant_always_runs.txt</Outputs>
+    </CustomBuildStep>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -167,20 +174,22 @@ if %errorlevel% == -1 (
       <AdditionalDependencies>sqlite3.lib;comctl32.lib;shlwapi.lib;libcef_dll_wrapper.lib;libcef.lib;glfw3.lib;opengl32.lib;glu32.lib;boost_filesystem.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
+      <Command>
+      </Command>
+    </PostBuildEvent>
+    <CustomBuildStep>
+      <Outputs>non_existant_always_runs.txt</Outputs>
       <Command>echo UI Build Step
 cd ui
 
 echo Installing UI dependencies
 CMD /C npm install
 
-echo Building
 node needs-building release
 if %errorlevel% == -1 (
     mimosa build -o -P release-build
-) else (
-    echo UI Project is up to date
 )</Command>
-    </PostBuildEvent>
+    </CustomBuildStep>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <Target Name="AfterBuild">
