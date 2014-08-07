@@ -69,16 +69,21 @@ function needsBuilding(target) {
         return true;
     }
 
-    var sourceTimestamps = flatten(sources.map(getAllModificationTimestampsRecursively));
-    var buildTimestamps = flatten(getAllModificationTimestampsRecursively(compiledDir));
+
+    function getTimeStamp(time) {
+        return time.getTime();
+    }
+    var sourceTimestamps = flatten(sources.map(getAllModificationTimestampsRecursively)).map(getTimeStamp);
+    var buildTimestamps = flatten(getAllModificationTimestampsRecursively(compiledDir)).map(getTimeStamp);
 
     var command = 'mimosa build -o -P ' + target + '-build';
     if(sourceTimestamps.length == 0 || buildTimestamps.length == 0) {
         return true;
     }
 
-    var mostRecentSourceTimestamp = getMostRecentUpdateTimestamp(sourceTimestamps).getTime();
-    var mostRecentBuildTimestamp = getMostRecentUpdateTimestamp(buildTimestamps).getTime();
+    var mostRecentSourceTimestamp = getMostRecentUpdateTimestamp(sourceTimestamps);
+    var mostRecentBuildTimestamp = getMostRecentUpdateTimestamp(buildTimestamps);
+
     if (mostRecentSourceTimestamp > mostRecentBuildTimestamp) {
         return true;
     }
@@ -86,4 +91,10 @@ function needsBuilding(target) {
     return false;
 }
 
-process.exit(needsBuilding(process.argv[2]) ? -1 : 0);
+if(needsBuilding(process.argv[2])) {
+    console.log('UI Needs Building.');
+    process.exit(-1);
+} else {
+    console.log('UI Is Already Built.');
+    process.exit(0);
+}
