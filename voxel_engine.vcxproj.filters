@@ -51,9 +51,6 @@
     <ClInclude Include="src\browser\browser.h">
       <Filter>src\browser</Filter>
     </ClInclude>
-    <ClInclude Include="src\browser\simple_app.h">
-      <Filter>src\browser</Filter>
-    </ClInclude>
     <ClInclude Include="src\browser\util.h">
       <Filter>src\browser</Filter>
     </ClInclude>
@@ -126,6 +123,8 @@
     <ClInclude Include="src\spatial\utility.h">
       <Filter>src\spatial</Filter>
     </ClInclude>
+    <ClInclude Include="src\browser\jsvalue.h" />
+    <ClInclude Include="src\browser\application_handlers.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\rendering\color.cpp">
@@ -156,9 +155,6 @@
       <Filter>src\spatial</Filter>
     </ClCompile>
     <ClCompile Include="src\browser\browser.cpp">
-      <Filter>src\browser</Filter>
-    </ClCompile>
-    <ClCompile Include="src\browser\simple_app.cpp">
       <Filter>src\browser</Filter>
     </ClCompile>
     <ClCompile Include="src\rendering\camera.cpp">
@@ -197,5 +193,7 @@
     <ClCompile Include="src\input.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="src\browser\jsvalue.cpp" />
+    <ClCompile Include="src\browser\application_handlers.cpp" />
   </ItemGroup>
 </Project>

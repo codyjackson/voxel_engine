@@ -3,6 +3,7 @@
 #include "browser/browser.h"
 #include "rendering/texture.h"
 
+#include <functional>
 #include <memory>
 #include <vector>
 
@@ -16,6 +17,9 @@ public:
 
 	void update_resolution(const RectSize& resolution);
 	const RectSize& get_resolution() const;
+
+
+	void register_api(const JSValue& api);
 
 	~UI();
 

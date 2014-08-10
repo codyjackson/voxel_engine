@@ -11,8 +11,9 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\browser\application_handlers.h" />
     <ClInclude Include="src\browser\browser.h" />
-    <ClInclude Include="src\browser\simple_app.h" />
+    <ClInclude Include="src\browser\jsvalue.h" />
     <ClInclude Include="src\browser\util.h" />
     <ClInclude Include="src\constants\vector.h" />
     <ClInclude Include="src\database.h" />
@@ -47,8 +48,9 @@
     <ClInclude Include="src\window.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\browser\application_handlers.cpp" />
     <ClCompile Include="src\browser\browser.cpp" />
-    <ClCompile Include="src\browser\simple_app.cpp" />
+    <ClCompile Include="src\browser\jsvalue.cpp" />
     <ClCompile Include="src\constants\vector.cpp" />
     <ClCompile Include="src\database.cpp" />
     <ClCompile Include="src\input.cpp" />

@@ -1,20 +1,34 @@
 #pragma once
 
-#include "cef/cef_app.h"
-#include "cef/cef_client.h"
-#include "cef/cef_render_handler.h"
+#include "jsvalue.h"
+
 #include "../spatial/rect_size.h"
+
+#include <cef/cef_app.h>
+#include <cef/cef_client.h>
+#include <cef/cef_render_handler.h>
 
 #include <functional>
 #include <list>
 
-class SimpleApp : public CefApp, public CefBrowserProcessHandler, public CefClient, public CefLoadHandler, public CefRenderHandler
+class ApplicationHandlers : public CefApp, public CefBrowserProcessHandler, public CefClient, public CefLoadHandler, public CefRenderHandler, public CefRenderProcessHandler
 {
 public:
-	SimpleApp(const std::string& indexPath, const RectSize& viewportSize, const std::function<void(const RectSize& fullSize, const RectList&, const void*)>& onPaint);
+	ApplicationHandlers(const std::string& indexPath, const RectSize& viewportSize, const std::function<void(const RectSize& fullSize, const RectList&, const void*)>& onPaint);
+
+	void execute_javascript(const std::string& js);
 
 	void update_viewport_size(const RectSize& viewportSize);
 	const RectSize& get_viewport_size() const;
+
+	bool is_context_created() const;
+
+	void register_api(const JSValue& api);
+
+
+	// CefRenderProcessHandler
+	virtual CefRefPtr<CefRenderProcessHandler> GetRenderProcessHandler() override;
+	virtual void OnContextCreated(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame, CefRefPtr<CefV8Context> context) override;
 
 	// CefApp methods:
 	virtual CefRefPtr<CefBrowserProcessHandler> GetBrowserProcessHandler() override;
@@ -37,12 +51,17 @@ public:
 	void CloseAllBrowsers(bool forceClose);
 
 private:
-	IMPLEMENT_REFCOUNTING(SimpleApp);
+	IMPLEMENT_REFCOUNTING(ApplicationHandlers);
+
+	void register_api_impl(JSValue api);
 
 	typedef std::list<CefRefPtr<CefBrowser>> BrowserList;
 	BrowserList _browserList;
 
+	std::shared_ptr<JSValue> _api;
 	std::string _path;
 	std::function<void(const RectSize& fullSize, const RectList&, const void*)> _onPaint;
 	RectSize _viewportSize;
+	CefRefPtr<CefV8Context> _rootContext;
+	CefRefPtr<CefFrame> _frame;
 };

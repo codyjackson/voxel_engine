@@ -23,6 +23,10 @@ int main(int argc, char* argv[])
 		window.update_resolution(RectSize(1024, 768));
 		window.update_title("Voxel Engine");
 
+		JSValue root;
+		root["api"] = player.create_js_object();
+		window.ui().register_api(root);
+
 		window.input().mouse().hide_cursor();
 		window.input().on(Input::PressableTerminal(Input::Pressable::ESCAPE, Input::PressableEvent::RELEASED), [&window](Input& in){
 			window.close();

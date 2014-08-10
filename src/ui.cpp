@@ -18,6 +18,11 @@ void UI::update_resolution(const RectSize& resolution)
 	_browser.update_viewport_size(resolution);
 }
 
+void UI::register_api(const JSValue& api)
+{
+	_browser.register_api(api);
+}
+
 void UI::tick() 
 { 
 	_browser.tick();

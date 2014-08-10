@@ -1,8 +1,9 @@
 #pragma once
 
 #include "spatial/transform.h"
+#include "browser/browser.h"
 
-class Player : public ITransformable
+class Player : public ITransformable, public Browser::IJSObjectifiable
 {
 public:
 	Player();
@@ -19,6 +20,8 @@ public:
 	void rotate_pitch(float degrees);
 
 	void tick(float timeStepSeconds);
+
+	JSValue create_js_object() override;
 
 private:
 	float _forwardVelocity;

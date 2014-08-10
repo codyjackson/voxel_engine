@@ -101,6 +101,11 @@ Input& Window::input()
 	return _input;
 }
 
+UI& Window::ui()
+{
+	return _ui;
+}
+
 const bool Window::is_open() const 
 {
 	return !glfwWindowShouldClose(_window);

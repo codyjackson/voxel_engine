@@ -1,6 +1,7 @@
 #include "player.h"
 
-#include "constants\vector.h"
+#include "browser/jsvalue.h"
+#include "constants/vector.h"
 #include "units.h"
 
 
@@ -56,4 +57,17 @@ void Player::tick(float timeStepInSeconds)
 {
 	move_forward(_forwardVelocity * timeStepInSeconds);
 	move_right(_rightVelocity * timeStepInSeconds);
+}
+
+JSValue Player::create_js_object()
+{
+	JSValue root;
+	root["startMovingForward"] = JSValue::wrap_void_function(std::bind(&Player::start_moving_forward, this));
+	root["startMovingBackward"] = JSValue::wrap_void_function(std::bind(&Player::start_moving_backward, this));
+	root["stopMovingForwardOrBackward"] = JSValue::wrap_void_function(std::bind(&Player::stop_moving_forward_or_backward, this));
+	root["startMovingLeft"] = JSValue::wrap_void_function(std::bind(&Player::start_moving_left, this));
+	root["startMovingRight"] = JSValue::wrap_void_function(std::bind(&Player::start_moving_right, this));
+	root["stopMovingLeftOrRight"] = JSValue::wrap_void_function(std::bind(&Player::stop_moving_left_or_right, this));
+
+	return root;
 }
