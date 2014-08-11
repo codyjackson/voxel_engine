@@ -1,6 +1,6 @@
 #pragma once
 
-#include "browser/application_handlers.h"
+#include "browser/browser.h"
 #include "rendering/texture.h"
 
 #include <functional>

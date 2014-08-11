@@ -1,4 +1,4 @@
-#include "application_handlers.h"
+#include "browser.h"
 
 #include "cef/cef_runnable.h"
 #include "util.h"

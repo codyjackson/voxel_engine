@@ -121,7 +121,7 @@
       <Filter>src\spatial</Filter>
     </ClInclude>
     <ClInclude Include="src\browser\jsvalue.h" />
-    <ClInclude Include="src\browser\application_handlers.h" />
+    <ClInclude Include="src\browser\browser.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\rendering\color.cpp">
@@ -188,6 +188,6 @@
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="src\browser\jsvalue.cpp" />
-    <ClCompile Include="src\browser\application_handlers.cpp" />
+    <ClCompile Include="src\browser\browser.cpp" />
   </ItemGroup>
 </Project>
