@@ -1,6 +1,6 @@
 #pragma once
 
-#include "browser/browser.h"
+#include "browser/application_handlers.h"
 #include "rendering/texture.h"
 
 #include <functional>
@@ -30,5 +30,5 @@ private:
 	void update_texture(const RectSize& fullSize, const CefRenderHandler::RectList& dirtyRects, const void* buffer);
 
 	std::shared_ptr<Texture> _texture;
-	Browser _browser;
+	CefRefPtr<Browser> _browser;
 };

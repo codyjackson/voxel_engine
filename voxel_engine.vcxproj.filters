@@ -48,9 +48,6 @@
     <ClInclude Include="src\spatial\orientation.h">
       <Filter>src\spatial</Filter>
     </ClInclude>
-    <ClInclude Include="src\browser\browser.h">
-      <Filter>src\browser</Filter>
-    </ClInclude>
     <ClInclude Include="src\browser\util.h">
       <Filter>src\browser</Filter>
     </ClInclude>
@@ -153,9 +150,6 @@
     </ClCompile>
     <ClCompile Include="src\spatial\orientation.cpp">
       <Filter>src\spatial</Filter>
-    </ClCompile>
-    <ClCompile Include="src\browser\browser.cpp">
-      <Filter>src\browser</Filter>
     </ClCompile>
     <ClCompile Include="src\rendering\camera.cpp">
       <Filter>src\rendering</Filter>

@@ -7,7 +7,7 @@
 #include <boost/filesystem.hpp>
 
 UI::UI()
-:_browser(boost::filesystem::current_path()/boost::filesystem::path("/ui/index.html"), RectSize(0, 0), std::bind(&UI::update_texture, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3))
+:_browser(Browser::make(boost::filesystem::current_path()/boost::filesystem::path("/ui/index.html"), RectSize(0, 0), std::bind(&UI::update_texture, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)))
 {}
 
 UI::~UI()
@@ -15,17 +15,17 @@ UI::~UI()
 
 void UI::update_resolution(const RectSize& resolution)
 {
-	_browser.update_viewport_size(resolution);
+	_browser->update_viewport_size(resolution);
 }
 
 void UI::register_api(const JSValue& api)
 {
-	_browser.register_api(api);
+	_browser->register_api(api);
 }
 
 void UI::tick() 
 { 
-	_browser.tick();
+	_browser->tick();
 }  
 
 void UI::render()

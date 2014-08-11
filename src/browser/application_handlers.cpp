@@ -78,40 +78,71 @@ namespace
 	}
 }
 
-ApplicationHandlers::ApplicationHandlers(const std::string& indexPath, const RectSize& viewportSize, const std::function<void(const RectSize& fullSize, const CefRenderHandler::RectList&, const void*)>& onPaint)
+CefRefPtr<Browser> Browser::make(const boost::filesystem::path& path, const RectSize& viewportSize, const PaintCallbackFunction& onPaint)
+{
+	CefMainArgs args(GetModuleHandle(nullptr));
+	CefSettings appSettings;
+	appSettings.single_process = true;
+	appSettings.no_sandbox = true;
+	CefString(&appSettings.cache_path) = "ui_cache";
+
+	CefRefPtr<Browser> browser = new Browser(path.string(), viewportSize, onPaint);
+	int exitCode = CefExecuteProcess(args, browser.get(), nullptr);
+	if (exitCode >= 0) {
+		throw std::runtime_error("Failed to execute cef process. Error code: " + std::to_string(exitCode));
+	}
+
+	if (!CefInitialize(args, appSettings, browser.get(), nullptr)) {
+		throw std::runtime_error("Failed to initialize cef.");
+	}
+
+	return browser;
+}
+
+Browser::~Browser()
+{
+	CefShutdown();
+}
+
+Browser::Browser(const std::string& indexPath, const RectSize& viewportSize, const std::function<void(const RectSize& fullSize, const CefRenderHandler::RectList&, const void*)>& onPaint)
 :_path(indexPath), _onPaint(onPaint), _viewportSize(viewportSize)
 {}
 
-void ApplicationHandlers::execute_javascript(const std::string& js)
+void Browser::execute_javascript(const std::string& js)
 {
 	_frame->ExecuteJavaScript(js, _frame->GetURL(), 0);
 }
 
-void ApplicationHandlers::update_viewport_size(const RectSize& viewportSize)
+void Browser::update_viewport_size(const RectSize& viewportSize)
 {
 	_viewportSize = viewportSize;
 }
 
-bool ApplicationHandlers::is_context_created() const
+bool Browser::is_context_created() const
 {
 	return _rootContext.get() != nullptr;
 }
 
-void ApplicationHandlers::register_api(const JSValue& api)
+void Browser::register_api(const JSValue& api)
 {
 	if (!is_context_created()) {
 		_api = std::make_shared<JSValue>(api);
 		return;
 	}
-	CefPostTask(TID_RENDERER, new Task(std::bind(&ApplicationHandlers::register_api_impl, this, api)));
+	CefPostTask(TID_RENDERER, new Task(std::bind(&Browser::register_api_impl, this, api)));
 }
 
-CefRefPtr<CefRenderProcessHandler> ApplicationHandlers::GetRenderProcessHandler()
+void Browser::tick()
+{
+	CefDoMessageLoopWork();
+}
+
+CefRefPtr<CefRenderProcessHandler> Browser::GetRenderProcessHandler()
 {
 	return this;
 }
 
-void ApplicationHandlers::OnContextCreated(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame, CefRefPtr<CefV8Context> context)
+void Browser::OnContextCreated(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame, CefRefPtr<CefV8Context> context)
 {
 	_rootContext = context;
 	_frame = frame;
@@ -121,12 +152,12 @@ void ApplicationHandlers::OnContextCreated(CefRefPtr<CefBrowser> browser, CefRef
 	}
 }
 
-CefRefPtr<CefBrowserProcessHandler> ApplicationHandlers::GetBrowserProcessHandler()
+CefRefPtr<CefBrowserProcessHandler> Browser::GetBrowserProcessHandler()
 {
 	return this;
 }
 
-void ApplicationHandlers::OnContextInitialized() {
+void Browser::OnContextInitialized() {
   REQUIRE_UI_THREAD();
 
   CefWindowInfo windowInfo;
@@ -140,17 +171,17 @@ void ApplicationHandlers::OnContextInitialized() {
   CefBrowserHost::CreateBrowser(windowInfo, this, _path, browserSettings, NULL);
 }
 
-CefRefPtr<CefLoadHandler> ApplicationHandlers::GetLoadHandler()
+CefRefPtr<CefLoadHandler> Browser::GetLoadHandler()
 {
 	return this;
 }
 
-CefRefPtr<CefRenderHandler> ApplicationHandlers::GetRenderHandler()
+CefRefPtr<CefRenderHandler> Browser::GetRenderHandler()
 {
 	return this;
 }
 
-void ApplicationHandlers::OnLoadError(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame, ErrorCode errorCode, const CefString& errorText, const CefString& failedUrl)
+void Browser::OnLoadError(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame, ErrorCode errorCode, const CefString& errorText, const CefString& failedUrl)
 {
 	REQUIRE_UI_THREAD();
 
@@ -170,21 +201,21 @@ void ApplicationHandlers::OnLoadError(CefRefPtr<CefBrowser> browser, CefRefPtr<C
 	frame->LoadString(ss.str(), failedUrl);
 }
 
-bool ApplicationHandlers::GetViewRect(CefRefPtr<CefBrowser> browser, CefRect &rect)
+bool Browser::GetViewRect(CefRefPtr<CefBrowser> browser, CefRect &rect)
 {
 	rect = CefRect(0, 0, _viewportSize.width, _viewportSize.height);
 	return true;
 }
 
-void ApplicationHandlers::OnPaint(CefRefPtr<CefBrowser> browser, PaintElementType type, const RectList &dirtyRects, const void *buffer, int width, int height)
+void Browser::OnPaint(CefRefPtr<CefBrowser> browser, PaintElementType type, const RectList &dirtyRects, const void *buffer, int width, int height)
 {
 	_onPaint(RectSize(width, height), dirtyRects, buffer);
 }
 
-void ApplicationHandlers::CloseAllBrowsers(bool forceClose)
+void Browser::CloseAllBrowsers(bool forceClose)
 {
 	if (!CefCurrentlyOn(TID_UI)) {
-		CefPostTask(TID_UI, NewCefRunnableMethod(this, &ApplicationHandlers::CloseAllBrowsers, forceClose));
+		CefPostTask(TID_UI, NewCefRunnableMethod(this, &Browser::CloseAllBrowsers, forceClose));
 		return;
 	}
 
@@ -197,7 +228,7 @@ void ApplicationHandlers::CloseAllBrowsers(bool forceClose)
 	});
 }
 
-void ApplicationHandlers::register_api_impl(JSValue api)
+void Browser::register_api_impl(JSValue api)
 {
 	_rootContext->Enter();
 	::register_api(api, "", _rootContext->GetGlobal());
