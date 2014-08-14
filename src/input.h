@@ -268,14 +268,14 @@ public:
 	void on(const PressableCombo& combo, const std::function<void(Input&)>& callback);
 	void on(const MoveableCombo& combo, const std::function<void(Input&)>& callback);
 
-private:
-	friend class Window;
-
 	enum class PressableState
 	{
 		UP,
 		DOWN
 	};
+
+private:
+	friend class Window;
 
 	void prepare_for_updates();
 	void update(Pressable pressable, PressableState state);

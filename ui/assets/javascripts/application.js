@@ -19,4 +19,18 @@ require(['angular', 'directives/bullseye'], function(angular){
     angular.element(document).ready(function(){
         angular.bootstrap(document, ['ui']);
     });
+
+    window.onkeydown = function(ev){
+        switch(ev.which) {
+            case 87:
+                api.startMovingForward();
+        }
+    };
+
+    window.onkeyup = function(ev){
+        switch(ev.which) {
+            case 87:
+                api.stopMovingForwardOrBackward();
+        }
+    };
 });

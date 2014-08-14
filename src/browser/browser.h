@@ -4,82 +4,56 @@
 
 #include "../spatial/rect_size.h"
 
-#include <boost/filesystem.hpp>
+#include "../input.h"
 
-#include <cef/cef_app.h>
+#include <boost/noncopyable.hpp>
 #include <cef/cef_client.h>
-#include <cef/cef_render_handler.h>
+#include <cef/cef_render_process_handler.h>
 
-#include <functional>
-#include <list>
-
-class Browser : public CefApp, public CefBrowserProcessHandler, public CefClient, public CefLoadHandler, public CefRenderHandler, public CefRenderProcessHandler
+namespace Browser
 {
-public:
-	class IJSObjectifiable;
+	class Browser : boost::noncopyable
+	{
+	public:
+		typedef std::function<void(const RectSize& fullSize, const CefRenderHandler::RectList& dirtyRects, const void* dataBuffer)> PaintCallbackFunction;
+		Browser(const PaintCallbackFunction& onPaint);
+		~Browser();
 
-	typedef std::function<void(const RectSize& fullSize, const CefRenderHandler::RectList&, const void*)> PaintCallbackFunction;
-	static CefRefPtr<Browser> make(const boost::filesystem::path& path, const RectSize& viewportSize, const PaintCallbackFunction& onPaint);
-	~Browser();
+		void load_url(const std::string& url);
+		void register_api(const JSValue& api);
+		void update_viewport_size(const RectSize& viewportSize);
 
-	void execute_javascript(const std::string& js);
+		void forward_key_event(Input::Pressable key, Input::PressableState state, int modifiers);
+		void forward_mouse_button_event(Input::Pressable button, Input::PressableState state, int modifiers);
+		void forward_mouse_move_event(double x, double y);
+		void forward_mouse_wheel_event(double xoffset, double yoffset);
 
-	void update_viewport_size(const RectSize& viewportSize);
-	const RectSize& get_viewport_size() const;
-	int get_width() const;
-	int get_height() const;
+	private:
+		class Handler;
+		CefRefPtr<Handler> _handler;
+		CefRefPtr<CefBrowser> _browser;
+		PaintCallbackFunction _onPaint;
+		CefRect _viewportRect;
+		CefMouseEvent _mouseEvent;
+	};
 
-	bool is_context_created() const;
+	class Browser::Handler : public CefClient, public CefRenderProcessHandler, public CefRenderHandler, boost::noncopyable
+	{
+	public:
+		Handler(Browser& browser);
 
-	void register_api(const JSValue& api);
+		//CefClient methods:
+		CefRefPtr<CefRenderHandler> GetRenderHandler() override;
 
-	void tick();
+		//CefRenderProcessHandler methods:
+		virtual void OnContextCreated(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame, CefRefPtr<CefV8Context> context) override;
 
-private:
-	void register_api_impl(JSValue api);
+		//CefRenderHandler methods:
+		bool GetViewRect(CefRefPtr<CefBrowser> browser, CefRect &rect) override;
+		void OnPaint(CefRefPtr<CefBrowser> browser, PaintElementType type, const RectList &dirtyRects, const void *buffer, int width, int height) override;
 
-	typedef std::list<CefRefPtr<CefBrowser>> BrowserList;
-	BrowserList _browserList;
-
-	std::shared_ptr<JSValue> _api;
-	std::string _path;
-	std::function<void(const RectSize& fullSize, const RectList&, const void*)> _onPaint;
-	RectSize _viewportSize;
-	CefRefPtr<CefV8Context> _rootContext;
-	CefRefPtr<CefFrame> _frame;
-
-public:
-	// CefRenderProcessHandler
-	virtual CefRefPtr<CefRenderProcessHandler> GetRenderProcessHandler() override;
-	virtual void OnContextCreated(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame, CefRefPtr<CefV8Context> context) override;
-
-	// CefApp methods:
-	virtual CefRefPtr<CefBrowserProcessHandler> GetBrowserProcessHandler() override;
-
-	// CefBrowserProcessHandler methods:
-	virtual void OnContextInitialized() override;
-
-	// CefClient methods:
-	CefRefPtr<CefLoadHandler> GetLoadHandler() override;
-	CefRefPtr<CefRenderHandler> GetRenderHandler() override;
-
-	// CefLoadHandler methods:
-	void OnLoadError(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame, ErrorCode errorCode, const CefString& errorText, const CefString& failedUrl) override;
-
-	// CefRenderHandler methods:
-	bool GetViewRect(CefRefPtr<CefBrowser> browser, CefRect &rect) override;
-	void OnPaint(CefRefPtr<CefBrowser> browser, PaintElementType type, const RectList &dirtyRects, const void *buffer, int width, int height) override;
-
-	// Request that all existing browser windows close.
-	void CloseAllBrowsers(bool forceClose);
-
-private:
-	IMPLEMENT_REFCOUNTING(Browser);
-	Browser(const std::string& indexPath, const RectSize& viewportSize, const std::function<void(const RectSize& fullSize, const RectList&, const void*)>& onPaint);
-};
-
-class Browser::IJSObjectifiable
-{
-public:
-	virtual JSValue create_js_object() = 0;
-};
+	private:
+		Browser& _browser;
+		IMPLEMENT_REFCOUNTING(Handler);
+	};
+}

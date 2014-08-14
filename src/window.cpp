@@ -129,12 +129,14 @@ void Window::on_keyboard_message_forwarder(GLFWwindow* glfwWindow, int key, int 
 	const Input::PressableState state = static_cast<Input::PressableState>(action);
 	const Input::Pressable terminal = static_cast<Input::Pressable>(key);
 	window._input.update(terminal, state);
+	window._ui.forward_key_event(terminal, state, modifiers);
 }
 
 void Window::on_mouse_position_message_forwarder(GLFWwindow* glfwWindow, double x, double y)
 {
 	Window& window = *Window::_glfwWindowToWindowMappingForStaticCallbacks[glfwWindow];
 	if (!window._input._mouse.is_movement_locked()) {
+		window._ui.forward_mouse_move_event(x, y);
 		return window._input.update_mouse_position(glm::ivec2(static_cast<int>(x), static_cast<int>(y)));
 	}
 
@@ -149,12 +151,14 @@ void Window::on_mouse_button_message_forwarder(GLFWwindow* glfwWindow, int butto
 	const Input::PressableState state = static_cast<Input::PressableState>(action);
 	const Input::Pressable terminal = static_cast<Input::Pressable>(button + static_cast<int>(Input::Pressable::MOUSE_BUTTON_1));
 	window._input.update(terminal, state);
+	window._ui.forward_mouse_button_event(terminal, state, modifiers);
 }
 
 void Window::on_mouse_scroll_wheel_message_forwarder(GLFWwindow* glfwWindow, double xoffset, double yoffset)
 {
 	Window& window = *Window::_glfwWindowToWindowMappingForStaticCallbacks[glfwWindow];
 	window._input.update_mouse_scroll_wheel(static_cast<int>(yoffset));
+	window._ui.forward_mouse_wheel_event(xoffset, yoffset);
 }
 
 std::unordered_map<GLFWwindow*, Window*> Window::_glfwWindowToWindowMappingForStaticCallbacks = std::unordered_map<GLFWwindow*, Window*>();

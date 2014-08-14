@@ -1,5 +1,8 @@
 #include "ui.h"
 
+#include "browser/process_handler.h"
+#include "constants/runtime_file_paths.h"
+
 #include <Windows.h>
 #include <GLFW/glfw3.h>
 
@@ -7,8 +10,11 @@
 #include <boost/filesystem.hpp>
 
 UI::UI()
-:_browser(Browser::make(boost::filesystem::current_path()/boost::filesystem::path("/ui/index.html"), RectSize(0, 0), std::bind(&UI::update_texture, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)))
-{}
+:_browser(Browser::ProcessHandler::create_browser(std::bind(&UI::update_texture, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)))
+{
+	//_browser->load_url(Constants::RuntimeFilePaths::ui_index.string());
+	_browser->load_url("www.google.com");
+}
 
 UI::~UI()
 {}
@@ -25,8 +31,28 @@ void UI::register_api(const JSValue& api)
 
 void UI::tick() 
 { 
-	_browser->tick();
+	Browser::ProcessHandler::tick();
 }  
+
+void UI::forward_key_event(Input::Pressable key, Input::PressableState state, int modifiers)
+{
+	_browser->forward_key_event(key, state, modifiers);
+}
+
+void UI::forward_mouse_button_event(Input::Pressable button, Input::PressableState state, int modifiers)
+{
+	_browser->forward_mouse_button_event(button, state, modifiers);
+}
+
+void UI::forward_mouse_move_event(double x, double y)
+{
+	_browser->forward_mouse_move_event(x, y);
+}
+
+void UI::forward_mouse_wheel_event(double xoffset, double yoffset)
+{
+	_browser->forward_mouse_wheel_event(xoffset, yoffset);
+}
 
 void UI::render()
 {

@@ -1,6 +1,7 @@
 #include <Windows.h>
 #include "main_loop.h"
 
+#include "browser/process_handler.h"
 #include "player.h"
 #include "rendering/camera.h"
 #include "rendering/renderer.h"
@@ -27,66 +28,66 @@ int main(int argc, char* argv[])
 		root["api"] = player.create_js_object();
 		window.ui().register_api(root);
 
-		window.input().mouse().hide_cursor();
-		window.input().on(Input::PressableTerminal(Input::Pressable::ESCAPE, Input::PressableEvent::RELEASED), [&window](Input& in){
-			window.close();
-		});
+		//window.input().mouse().hide_cursor();
+		//window.input().on(Input::PressableTerminal(Input::Pressable::ESCAPE, Input::PressableEvent::RELEASED), [&window](Input& in){
+		//	window.close();
+		//});
 
-		window.input().on(Input::PressableTerminal(Input::Pressable::W, Input::PressableEvent::PRESSED), [&](Input& in){
-			player.start_moving_forward();
-		});
+		//window.input().on(Input::PressableTerminal(Input::Pressable::W, Input::PressableEvent::PRESSED), [&](Input& in){
+		//	player.start_moving_forward();
+		//});
 
-		window.input().on(Input::PressableTerminal(Input::Pressable::W, Input::PressableEvent::RELEASED), [&](Input& in){
-			player.stop_moving_forward_or_backward();
-		});
+		//window.input().on(Input::PressableTerminal(Input::Pressable::W, Input::PressableEvent::RELEASED), [&](Input& in){
+		//	player.stop_moving_forward_or_backward();
+		//});
 
-		window.input().on(Input::PressableTerminal(Input::Pressable::S, Input::PressableEvent::PRESSED), [&](Input& in){
-			player.start_moving_backward();
-		});
+		//window.input().on(Input::PressableTerminal(Input::Pressable::S, Input::PressableEvent::PRESSED), [&](Input& in){
+		//	player.start_moving_backward();
+		//});
 
-		window.input().on(Input::PressableTerminal(Input::Pressable::S, Input::PressableEvent::RELEASED), [&](Input& in){
-			player.stop_moving_forward_or_backward();
-		});
+		//window.input().on(Input::PressableTerminal(Input::Pressable::S, Input::PressableEvent::RELEASED), [&](Input& in){
+		//	player.stop_moving_forward_or_backward();
+		//});
 
 
 
-		window.input().on(Input::PressableTerminal(Input::Pressable::D, Input::PressableEvent::PRESSED), [&](Input& in){
-			player.start_moving_right();
-		});
+		//window.input().on(Input::PressableTerminal(Input::Pressable::D, Input::PressableEvent::PRESSED), [&](Input& in){
+		//	player.start_moving_right();
+		//});
 
-		window.input().on(Input::PressableTerminal(Input::Pressable::D, Input::PressableEvent::RELEASED), [&](Input& in){
-			player.stop_moving_left_or_right();
-		});
+		//window.input().on(Input::PressableTerminal(Input::Pressable::D, Input::PressableEvent::RELEASED), [&](Input& in){
+		//	player.stop_moving_left_or_right();
+		//});
 
-		window.input().on(Input::PressableTerminal(Input::Pressable::A, Input::PressableEvent::PRESSED), [&](Input& in){
-			player.start_moving_left();
-		});
+		//window.input().on(Input::PressableTerminal(Input::Pressable::A, Input::PressableEvent::PRESSED), [&](Input& in){
+		//	player.start_moving_left();
+		//});
 
-		window.input().on(Input::PressableTerminal(Input::Pressable::A, Input::PressableEvent::RELEASED), [&](Input& in){
-			player.stop_moving_left_or_right();
-		});
+		//window.input().on(Input::PressableTerminal(Input::Pressable::A, Input::PressableEvent::RELEASED), [&](Input& in){
+		//	player.stop_moving_left_or_right();
+		//});
 
-		window.input().on(Input::MoveableCombo(Input::MoveableTerminal::MOUSE), [&](Input& in){
-			const auto delta = in.mouse().get_position_delta();
-			player.rotate_yaw(delta.x * 0.15f);
-			player.rotate_pitch(delta.y * 0.2f);
-		});
+		//window.input().on(Input::MoveableCombo(Input::MoveableTerminal::MOUSE), [&](Input& in){
+		//	const auto delta = in.mouse().get_position_delta();
+		//	player.rotate_yaw(delta.x * 0.15f);
+		//	player.rotate_pitch(delta.y * 0.2f);
+		//});
 
-		window.input().on(Input::PressableTerminal(Input::Pressable::MOUSE_BUTTON_2, Input::PressableEvent::RELEASED), [&](Input& in){
-			Ray r(camera.get_transform()->position(), camera.get_transform()->orientation().forward());
-			if (const auto intersection = chunkVault.find_nearest_intersection(r)) {
-				chunkVault.delete_voxel(intersection->get_object_of_interest());
-			}
-		});
+		//window.input().on(Input::PressableTerminal(Input::Pressable::MOUSE_BUTTON_2, Input::PressableEvent::RELEASED), [&](Input& in){
+		//	Ray r(camera.get_transform()->position(), camera.get_transform()->orientation().forward());
+		//	if (const auto intersection = chunkVault.find_nearest_intersection(r)) {
+		//		chunkVault.delete_voxel(intersection->get_object_of_interest());
+		//	}
+		//});
 
-		window.input().on(Input::PressableTerminal(Input::Pressable::MOUSE_BUTTON_1, Input::PressableEvent::RELEASED), [&](Input& in){
-			Ray r(camera.get_transform()->position(), camera.get_transform()->orientation().forward());
-			if (const auto intersection = chunkVault.find_nearest_intersection(r)) {
-				chunkVault.add_adjacent_voxel(intersection->get_object_of_interest(), Color(0x00, 0x85, 0xAD, 255));
-			}
-		});
+		//window.input().on(Input::PressableTerminal(Input::Pressable::MOUSE_BUTTON_1, Input::PressableEvent::RELEASED), [&](Input& in){
+		//	Ray r(camera.get_transform()->position(), camera.get_transform()->orientation().forward());
+		//	if (const auto intersection = chunkVault.find_nearest_intersection(r)) {
+		//		chunkVault.add_adjacent_voxel(intersection->get_object_of_interest(), Color(0x00, 0x85, 0xAD, 255));
+		//	}
+		//});
 
-		window.input().mouse().lock_movement();
+		//window.input().mouse().lock_movement();
 	};
 	
 	auto onIterate = [&](Window& window, float timeStepInSeconds){
@@ -102,7 +103,7 @@ int main(int argc, char* argv[])
 		chunkVault.render(camera);
 	};
 
-
+	auto processHandlerScope = Browser::ProcessHandler::make();
 	MainLoop loop(onInitialize, onIterate, 1.0f/40.0f);
     return 0;
 }

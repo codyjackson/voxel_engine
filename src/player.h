@@ -1,9 +1,9 @@
 #pragma once
 
 #include "spatial/transform.h"
-#include "browser/browser.h"
+#include "browser/application.h"
 
-class Player : public ITransformable, public Browser::IJSObjectifiable
+class Player : public ITransformable, public Browser::Application::IJSObjectifiable
 {
 public:
 	Player();
