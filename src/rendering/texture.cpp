@@ -93,6 +93,7 @@ void Texture::resize(const RectSize& size, const void* pixels)
 void Texture::update_pixel_rect(Offset offset, RectSize size, const void* pixels)
 {
 	Binder binder(_handle);
+	glPixelStorei(GL_UNPACK_SKIP_PIXELS, offset.x);
 	glPixelStorei(GL_UNPACK_SKIP_ROWS, offset.y);
 	glTexSubImage2D(GL_TEXTURE_2D, 0, offset.x, offset.y, size.width, size.height, static_cast<GLenum>(_pixelFormat), static_cast<GLenum>(_pixelDataType), pixels);
 }
