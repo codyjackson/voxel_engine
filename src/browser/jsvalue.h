@@ -12,6 +12,8 @@
 struct JSNullRaw
 {};
 
+typedef std::function<CefRefPtr<CefV8Value>(CefRefPtr<CefV8Value> object, const CefV8ValueList& arguments)> JSRawFunction;
+
 class JSValue : public boost::variant<std::string, double, std::unordered_map<std::string, JSValue>, std::vector<JSValue>, bool, JSNullRaw, std::function<CefRefPtr<CefV8Value>(CefRefPtr<CefV8Value> object, const CefV8ValueList& arguments)>>
 {
 public:
@@ -68,4 +70,8 @@ public:
 	JSValue& operator[](size_t n);
 	JSValue& operator[](const std::string& key);
 	JSValue& operator[](const char* key);
+
+	const JSValue& operator[](size_t n) const;
+	const JSValue& operator[](const std::string& key) const;
+	const JSValue& operator[](const char* key) const;
 };

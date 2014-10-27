@@ -204,3 +204,26 @@ JSValue& JSValue::operator[](const char* key)
 {
 	return operator[](std::string(key));
 }
+
+const JSValue& JSValue::operator[](size_t n) const
+{
+	if (!is_array()) {
+		throw std::runtime_error("The JSValue is not an array.");
+	}
+
+	return static_cast<const Array&>(*this)[n];
+}
+
+const JSValue& JSValue::operator[](const std::string& key) const
+{
+	if (!is_object()) {
+		throw std::runtime_error("The JSValue is not an object.");
+	}
+
+	return static_cast<const Object&>(*this).at(key);
+}
+
+const JSValue& JSValue::operator[](const char* key) const
+{
+	return operator[](std::string(key));
+}
