@@ -18,6 +18,30 @@ namespace
 		return bs;
 	}
 
+	class MyV8Handler : public CefV8Handler {
+	public:
+		MyV8Handler(const std::function<void(CefRefPtr<CefV8Value>, const CefV8ValueList&)>& fn) 
+			:_fn(fn)
+		{}
+
+		virtual bool Execute(const CefString& name, CefRefPtr<CefV8Value> object, const CefV8ValueList& arguments, CefRefPtr<CefV8Value>& retval, CefString& exception) OVERRIDE 
+		{
+			try {
+				_fn(object, arguments);
+				return true;
+			} catch (std::exception ex) {
+				exception = ex.what();
+				return false;
+			}
+		}
+
+			// Provide the reference counting implementation for this class.
+		IMPLEMENT_REFCOUNTING(MyV8Handler);
+
+	private:
+		std::function<void(CefRefPtr<CefV8Value>, const CefV8ValueList&)> _fn;
+	};
+
 	void to_js_value_helper(CefRefPtr<CefV8Value> val, JSValue& out)
 	{
 		if (val->IsArray()) {
@@ -57,6 +81,7 @@ namespace
 		return out;
 	}
 
+	CefRefPtr<CefV8Value> to_cef_v8_function(const JSValue::Function& fn);
 	void to_cef_v8_value_helper(const JSValue& val, CefRefPtr<CefV8Value>& out)
 	{
 		if (val.is_array()) {
@@ -79,11 +104,12 @@ namespace
 			});
 		} else if (val.is_bool()) {
 			out = CefV8Value::CreateBool(static_cast<bool>(val));
-		}
-		else if (val.is_null()) {
+		} else if (val.is_null()) {
 			out = CefV8Value::CreateNull();
 		} else if (val.is_string()) {
 			out = CefV8Value::CreateString(static_cast<std::string>(val));
+		} else if (val.is_function()) {
+			out = to_cef_v8_function(val);
 		} else {
 			throw std::runtime_error("Type not supported.");
 		}
@@ -94,6 +120,21 @@ namespace
 		CefRefPtr<CefV8Value> out;
 		to_cef_v8_value_helper(val, out);
 		return out;
+	}
+
+	CefRefPtr<CefV8Value> to_cef_v8_function(const JSValue::Function& fn)
+	{
+		auto wrappedFn = [&fn](CefRefPtr<CefV8Value> rawObject, const CefV8ValueList& rawArguments){
+			JSValue object = to_js_value(rawObject);
+			JSValue::Array arguments;
+			arguments.reserve(rawArguments.size());
+			std::for_each(std::begin(rawArguments), std::end(rawArguments), [&arguments](CefRefPtr<CefV8Value> arg){
+				arguments.push_back(to_js_value(arg));
+			});
+		};
+
+		static CefString nameNotNeeded("");
+		return CefV8Value::CreateFunction(nameNotNeeded, new MyV8Handler(wrappedFn));
 	}
 }
 	
