@@ -18,6 +18,7 @@ int main(int argc, char* argv[])
 	auto processHandlerScope = Browser::ProcessHandler::make();
 	UI ui;
 	Player player;
+	player.move_forward(-meters(2.0));
 	Camera camera(Transform::make_transform(glm::vec3(), Orientation(), player.get_transform()));
 
 	ChunkVault chunkVault(meters(2.0f / 13.0f), glm::vec3(0, 0, 0));
