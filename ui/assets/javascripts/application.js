@@ -33,4 +33,6 @@ require(['angular', 'directives/bullseye'], function(angular){
                 api.stopMovingForwardOrBackward();
         }
     };
+
+    console.log(window.myfunc());
 });

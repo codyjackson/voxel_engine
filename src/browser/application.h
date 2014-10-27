@@ -27,6 +27,9 @@ namespace Browser
 		virtual CefRefPtr<CefBrowserProcessHandler> GetBrowserProcessHandler() override;
 		virtual CefRefPtr<CefRenderProcessHandler> GetRenderProcessHandler() override;
 
+		//CefRenderProcessHandler methods:
+		virtual void OnContextCreated(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame, CefRefPtr<CefV8Context> context) override;
+
 		// CefBrowserProcessHandler methods:
 		virtual void OnContextInitialized() override;
 
