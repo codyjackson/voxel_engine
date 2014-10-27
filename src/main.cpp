@@ -15,18 +15,23 @@
 
 int main(int argc, char* argv[])
 {
+	auto processHandlerScope = Browser::ProcessHandler::make();
+	UI ui;
 	Player player;
 	Camera camera(Transform::make_transform(glm::vec3(), Orientation(), player.get_transform()));
 
 	ChunkVault chunkVault(meters(2.0f / 13.0f), glm::vec3(0, 0, 0));
+	RectSize resolution(1024, 768);
 
 	auto onInitialize = [&](Window& window){
-		window.update_resolution(RectSize(1024, 768));
+		ui.update_resolution(resolution);
+		window.update_resolution(resolution);
 		window.update_title("Voxel Engine");
 
-		JSValue root;
-		root["api"] = player.create_js_object();
-		window.ui().register_api(root);
+		window.on_key_event(std::bind(&UI::forward_key_event, &ui, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
+		window.on_mouse_move_event(std::bind(&UI::forward_mouse_move_event, &ui, std::placeholders::_1, std::placeholders::_2));
+		window.on_mouse_button_event(std::bind(&UI::forward_mouse_button_event, &ui, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
+		window.on_mouse_wheel_event(std::bind(&UI::forward_mouse_wheel_event, &ui, std::placeholders::_1, std::placeholders::_2));
 
 		//window.input().mouse().hide_cursor();
 		//window.input().on(Input::PressableTerminal(Input::Pressable::ESCAPE, Input::PressableEvent::RELEASED), [&window](Input& in){
@@ -91,6 +96,7 @@ int main(int argc, char* argv[])
 	};
 	
 	auto onIterate = [&](Window& window, float timeStepInSeconds){
+		ui.tick();
 		player.tick(timeStepInSeconds);
 
 		Ray r(camera.get_transform()->position(), camera.get_transform()->orientation().forward());
@@ -101,9 +107,9 @@ int main(int argc, char* argv[])
 			Renderer::render_wireframe(camera, modelMatrix, Color(0xFF, 0xFF, 0xFF, 255), mesh);
 		}
 		chunkVault.render(camera);
+		ui.render();
 	};
 
-	auto processHandlerScope = Browser::ProcessHandler::make();
 	MainLoop loop(onInitialize, onIterate, 1.0f/40.0f);
     return 0;
 }

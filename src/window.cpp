@@ -46,7 +46,6 @@ void Window::open()
 
 void Window::render()
 {
-	_ui.render();
 	glfwSwapBuffers(_window);
 }
 
@@ -65,8 +64,28 @@ void Window::update_title(const std::string& title)
 void Window::update_resolution(const RectSize& resolution)
 {
 	glfwSetWindowSize(_window, resolution.width, resolution.height);
-	_ui.update_resolution(resolution);
 }
+
+void Window::on_key_event(const std::function<void(Input::Pressable key, Input::PressableState state, int modifiers)>& fn)
+{
+	_onKeyEvent = fn;
+}
+
+void Window::on_mouse_button_event(const std::function<void(Input::Pressable button, Input::PressableState state, int modifiers)>& fn)
+{
+	_onMouseButtonEvent = fn;
+}
+
+void Window::on_mouse_move_event(const std::function<void(double x, double y)>& fn)
+{
+	_onMouseMoveEvent = fn;
+}
+
+void Window::on_mouse_wheel_event(const std::function<void(double xoffset, double yoffset)>& fn)
+{
+	_onMouseWheelEvent = fn;
+}
+
 
 RectSize Window::get_resolution() const
 {
@@ -96,16 +115,6 @@ const glm::ivec2 Window::get_center() const
 	return glm::ivec2(get_width() / 2, get_height()/2);
 }
 
-Input& Window::input()
-{
-	return _input;
-}
-
-UI& Window::ui()
-{
-	return _ui;
-}
-
 const bool Window::is_open() const 
 {
 	return !glfwWindowShouldClose(_window);
@@ -113,52 +122,52 @@ const bool Window::is_open() const
 
 void Window::tick()
 {
-	glfwSetInputMode(_window, GLFW_CURSOR, _input._mouse.is_mouse_hidden() ? GLFW_CURSOR_HIDDEN : GLFW_CURSOR_NORMAL);
-	_input.prepare_for_updates();
 	glfwPollEvents();
-	_ui.tick();
 }
 
 void Window::on_keyboard_message_forwarder(GLFWwindow* glfwWindow, int key, int scancode, int action, int modifiers)
 {
-	if (action == GLFW_REPEAT) {
+	Window& window = *Window::_glfwWindowToWindowMappingForStaticCallbacks[glfwWindow];
+	if (!window._onKeyEvent) {
 		return;
 	}
 
-	Window& window = *Window::_glfwWindowToWindowMappingForStaticCallbacks[glfwWindow];
 	const Input::PressableState state = static_cast<Input::PressableState>(action);
 	const Input::Pressable terminal = static_cast<Input::Pressable>(key);
-	window._input.update(terminal, state);
-	window._ui.forward_key_event(terminal, state, modifiers);
+	
+	window._onKeyEvent(terminal, state, modifiers);
 }
 
 void Window::on_mouse_position_message_forwarder(GLFWwindow* glfwWindow, double x, double y)
 {
 	Window& window = *Window::_glfwWindowToWindowMappingForStaticCallbacks[glfwWindow];
-	if (!window._input._mouse.is_movement_locked()) {
-		window._ui.forward_mouse_move_event(x, y);
-		return window._input.update_mouse_position(glm::ivec2(static_cast<int>(x), static_cast<int>(y)));
+	if (!window._onMouseMoveEvent) {
+		return;
 	}
 
-	const glm::ivec2 center = window.get_center();
-	window._input.update_mouse_locked_position(center, glm::ivec2(static_cast<int>(x), static_cast<int>(y)));
-	glfwSetCursorPos(glfwWindow, center.x, center.y);
+	window._onMouseMoveEvent(x, y);
 }
 
 void Window::on_mouse_button_message_forwarder(GLFWwindow* glfwWindow, int button, int action, int modifiers)
 {
 	Window& window = *Window::_glfwWindowToWindowMappingForStaticCallbacks[glfwWindow];
+	if (!window._onMouseButtonEvent) {
+		return;
+	}
+
 	const Input::PressableState state = static_cast<Input::PressableState>(action);
 	const Input::Pressable terminal = static_cast<Input::Pressable>(button + static_cast<int>(Input::Pressable::MOUSE_BUTTON_1));
-	window._input.update(terminal, state);
-	window._ui.forward_mouse_button_event(terminal, state, modifiers);
+	window._onMouseButtonEvent(terminal, state, modifiers);
 }
 
 void Window::on_mouse_scroll_wheel_message_forwarder(GLFWwindow* glfwWindow, double xoffset, double yoffset)
 {
 	Window& window = *Window::_glfwWindowToWindowMappingForStaticCallbacks[glfwWindow];
-	window._input.update_mouse_scroll_wheel(static_cast<int>(yoffset));
-	window._ui.forward_mouse_wheel_event(xoffset, yoffset);
+	if (!window._onMouseWheelEvent) {
+		return;
+	}
+
+	window._onMouseWheelEvent(xoffset, yoffset);
 }
 
 std::unordered_map<GLFWwindow*, Window*> Window::_glfwWindowToWindowMappingForStaticCallbacks = std::unordered_map<GLFWwindow*, Window*>();

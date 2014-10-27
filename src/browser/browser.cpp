@@ -8,6 +8,7 @@ namespace
 		static CefWindowInfo wi;
 		wi.SetAsOffScreen(nullptr);
 		wi.SetTransparentPainting(true);
+
 		return wi;
 	}
 
@@ -16,10 +17,88 @@ namespace
 		static CefBrowserSettings bs;
 		return bs;
 	}
+
+	void to_js_value_helper(CefRefPtr<CefV8Value> val, JSValue& out)
+	{
+		if (val->IsArray()) {
+			const int size = val->GetArrayLength();
+			JSValue::Array a;
+			a.reserve(size);
+			for (int i = 0; i < size; ++i) {
+				JSValue subVal;
+				to_js_value_helper(val->GetValue(i), subVal);
+			}
+			out = a;
+		} else if (val->IsObject()) {
+			JSValue::Object o;
+			std::vector<CefString> keys;
+			val->GetKeys(keys);
+			std::for_each(std::begin(keys), std::end(keys), [&o, &val](const CefString& key){
+				to_js_value_helper(val->GetValue(key), o[key.ToString()]);
+			});
+			out = o;
+		} else if (val->IsBool()) {
+			out = JSValue(val->GetBoolValue());
+		} else if (val->IsDouble()) {
+			out = JSValue(val->GetDoubleValue());
+		} else if (val->IsNull()) {
+			out = JSValue::Null();
+		} else if (val->IsString()) {
+			out = JSValue(val->GetStringValue().ToString());
+		} else {
+			throw std::runtime_error("Type not supported.");
+		}
+	}
+
+	JSValue to_js_value(CefRefPtr<CefV8Value> val)
+	{
+		JSValue out;
+		to_js_value_helper(val, out);
+		return out;
+	}
+
+	void to_cef_v8_value_helper(const JSValue& val, CefRefPtr<CefV8Value>& out)
+	{
+		if (val.is_array()) {
+			const JSValue::Array& temp = static_cast<const JSValue::Array&>(val);
+			CefRefPtr<CefV8Value> a = CefV8Value::CreateArray(temp.size());
+			for (size_t i = 0; i < temp.size(); ++i) {
+				CefRefPtr<CefV8Value> subValue;
+				to_cef_v8_value_helper(val[i], subValue);
+				a->SetValue(i, subValue);
+			}
+			out = a;
+		} else if (val.is_object()) {
+			const JSValue::Object& temp = static_cast<const JSValue::Object&>(val);
+			CefRefPtr<CefV8Value> o = CefV8Value::CreateObject(NULL);
+			std::for_each(std::begin(temp), std::end(temp), [&val, &o](const JSValue::Object::value_type& kvp){
+				CefRefPtr<CefV8Value> subValue;
+				const std::string& key = kvp.first;
+				to_cef_v8_value_helper(val[key], subValue);
+				o->SetValue(key, subValue, V8_PROPERTY_ATTRIBUTE_NONE);
+			});
+		} else if (val.is_bool()) {
+			out = CefV8Value::CreateBool(static_cast<bool>(val));
+		}
+		else if (val.is_null()) {
+			out = CefV8Value::CreateNull();
+		} else if (val.is_string()) {
+			out = CefV8Value::CreateString(static_cast<std::string>(val));
+		} else {
+			throw std::runtime_error("Type not supported.");
+		}
+	}
+
+	CefRefPtr<CefV8Value> to_cef_v8_value(const JSValue& val)
+	{
+		CefRefPtr<CefV8Value> out;
+		to_cef_v8_value_helper(val, out);
+		return out;
+	}
 }
 	
 
-Browser::Browser::Browser(const PaintCallbackFunction& onPaint)
+Browser::Browser::Browser(const JSValue& api, const PaintCallbackFunction& onPaint)
 :_handler(new Handler(*this)), _browser(CefBrowserHost::CreateBrowserSync(GetWindowInfo(), _handler.get(), "", GetBrowserSettings(), nullptr)), _onPaint(onPaint)
 {}
 
@@ -31,11 +110,6 @@ Browser::Browser::~Browser()
 void Browser::Browser::load_url(const std::string& url)
 {
 	_browser->GetMainFrame()->LoadURL(url);
-}
-
-void Browser::Browser::register_api(const JSValue& api)
-{
-
 }
 
 void Browser::Browser::update_viewport_size(const RectSize& viewportSize)
@@ -64,6 +138,7 @@ void Browser::Browser::forward_mouse_button_event(Input::Pressable button, Input
 	} else if (button == Input::Pressable::MOUSE_BUTTON_3) {
 		b = CefBrowserHost::MouseButtonType::MBT_MIDDLE;
 	}
+
 	const bool isButtonUp = state == Input::PressableState::UP;
 	_mouseEvent.modifiers = modifiers;
 	_browser->GetHost()->SendMouseClickEvent(_mouseEvent, b, isButtonUp, 1);
@@ -81,6 +156,11 @@ void Browser::Browser::forward_mouse_wheel_event(double xoffset, double yoffset)
 	_browser->GetHost()->SendMouseWheelEvent(_mouseEvent, static_cast<int>(xoffset), static_cast<int>(yoffset));
 }
 
+const JSValue& Browser::Browser::get_api() const
+{
+	return _api;
+}
+
 Browser::Browser::Handler::Handler(Browser& browser)
 :_browser(browser)
 {}
@@ -88,11 +168,6 @@ Browser::Browser::Handler::Handler(Browser& browser)
 CefRefPtr<CefRenderHandler> Browser::Browser::Handler::GetRenderHandler()
 {
 	return this;
-}
-
-void Browser::Browser::Handler::OnContextCreated(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame, CefRefPtr<CefV8Context> context)
-{
-
 }
 
 bool Browser::Browser::Handler::GetViewRect(CefRefPtr<CefBrowser> browser, CefRect &rect)

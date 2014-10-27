@@ -19,13 +19,15 @@ class Window
 		void update_title(const std::string& title);
 		void update_resolution(const RectSize& resolution);
 
+		void on_key_event(const std::function<void(Input::Pressable key, Input::PressableState state, int modifiers)>& fn);
+		void on_mouse_button_event(const std::function<void(Input::Pressable button, Input::PressableState state, int modifiers)>& fn);
+		void on_mouse_move_event(const std::function<void(double x, double y)>& fn);
+		void on_mouse_wheel_event(const std::function<void(double xoffset, double yoffset)>& fn);
+
 		RectSize get_resolution() const;
 		const int get_width() const;
 		const int get_height() const;
 		const glm::ivec2 get_center() const;
-
-		Input& input();
-		UI& ui();
 		
 	private:
 		friend class MainLoop;
@@ -42,7 +44,9 @@ class Window
 
 		static std::unordered_map<GLFWwindow*, Window*> _glfwWindowToWindowMappingForStaticCallbacks;
 
-		Input _input;
-		UI _ui;
 		GLFWwindow* _window;
+		std::function<void(Input::Pressable key, Input::PressableState state, int modifiers)> _onKeyEvent;
+		std::function<void(Input::Pressable button, Input::PressableState state, int modifiers)> _onMouseButtonEvent;
+		std::function<void(double x, double y)> _onMouseMoveEvent;
+		std::function<void(double xoffset, double yoffset)> _onMouseWheelEvent;
 };

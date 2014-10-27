@@ -12,7 +12,7 @@ namespace Browser
 
 		static Scoped make();
 		static void tick();
-		static std::shared_ptr<Browser> create_browser(const Browser::PaintCallbackFunction& paintFn);
+		static std::shared_ptr<Browser> create_browser(const JSValue& api, const Browser::PaintCallbackFunction& paintFn);
 
 		~ProcessHandler();
 

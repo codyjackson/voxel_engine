@@ -11,7 +11,7 @@ namespace
 	const CefSettings& GetAppSettings()
 	{
 		static CefSettings as;
-		as.single_process = false;
+		as.single_process = true;
 		as.no_sandbox = true;
 		as.multi_threaded_message_loop = false;
 		as.command_line_args_disabled = true;
@@ -46,13 +46,13 @@ Browser::ProcessHandler::Scoped Browser::ProcessHandler::make()
 	return Scoped();
 }
 
-std::shared_ptr<Browser::Browser> Browser::ProcessHandler::create_browser(const Browser::PaintCallbackFunction& paintFn)
+std::shared_ptr<Browser::Browser> Browser::ProcessHandler::create_browser(const JSValue& api, const Browser::PaintCallbackFunction& paintFn)
 {
 	if (!_instance) {
 		throw std::runtime_error("The process handler must be instantiated before you can create a browser.");
 	}
 
-	return std::make_shared<Browser>(paintFn);
+	return std::make_shared<Browser>(api, paintFn);
 }
 
 void Browser::ProcessHandler::tick()
@@ -79,5 +79,4 @@ Browser::ProcessHandler::Scoped::Scoped()
 Browser::ProcessHandler::Scoped::~Scoped()
 {
 	ProcessHandler::destroy();
-	CefShutdown();
 }

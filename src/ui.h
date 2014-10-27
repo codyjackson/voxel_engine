@@ -24,8 +24,6 @@ public:
 	void forward_mouse_move_event(double x, double y);
 	void forward_mouse_wheel_event(double xoffset, double yoffset);
 
-	void register_api(const JSValue& api);
-
 	~UI();
 
 	void tick();
