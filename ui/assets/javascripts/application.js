@@ -34,5 +34,5 @@ require(['angular', 'directives/bullseye'], function(angular){
         }
     };
 
-    console.log(window.myfunc());
+    console.log(api.test);
 });

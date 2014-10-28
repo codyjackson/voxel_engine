@@ -9,11 +9,10 @@
 #include <algorithm>
 #include <boost/filesystem.hpp>
 
-UI::UI()
-:_browser(Browser::ProcessHandler::create_browser(JSValue(), std::bind(&UI::update_texture, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)))
+UI::UI(const JSValue& api)
+:_browser(Browser::ProcessHandler::create_browser(api, std::bind(&UI::update_texture, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)))
 {
 	_browser->load_url(Constants::RuntimeFilePaths::ui_index.string());
-	//_browser->load_url("www.google.com");
 }
 
 UI::~UI()

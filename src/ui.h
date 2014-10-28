@@ -14,7 +14,7 @@ typedef unsigned int GLuint;
 class UI
 {
 public:
-	UI();
+	UI(const JSValue& api);
 
 	void update_resolution(const RectSize& resolution);
 	const RectSize& get_resolution() const;
