@@ -3,8 +3,9 @@
 #include "jsvalue.h"
 
 #include "../spatial/rect_size.h"
-
 #include "../input.h"
+
+#include "application.h"
 
 #include <boost/noncopyable.hpp>
 #include <cef/cef_client.h>
@@ -16,7 +17,7 @@ namespace Browser
 	{
 	public:
 		typedef std::function<void(const RectSize& fullSize, const CefRenderHandler::RectList& dirtyRects, const void* dataBuffer)> PaintCallbackFunction;
-		Browser(const JSValue& api, const PaintCallbackFunction& onPaint);
+		static std::shared_ptr<Browser> make(const JSValue& api, const PaintCallbackFunction& onPaint);
 		~Browser();
 
 		void load_url(const std::string& url);
@@ -27,10 +28,15 @@ namespace Browser
 		void forward_mouse_move_event(double x, double y);
 		void forward_mouse_wheel_event(double xoffset, double yoffset);
 
+		void tick();
+
 		const JSValue& get_api() const;
 
 	private:
+		static std::shared_ptr<Browser> _instance;
+		Browser(const JSValue& api, const PaintCallbackFunction& onPaint);
 		class Handler;
+		CefRefPtr<Application> _application;
 		CefRefPtr<Handler> _handler;
 		CefRefPtr<CefBrowser> _browser;
 		PaintCallbackFunction _onPaint;

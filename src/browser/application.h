@@ -14,14 +14,15 @@
 
 namespace Browser
 {
-	class Application : public CefApp, public CefBrowserProcessHandler, public CefRenderProcessHandler
+
+	class Browser;
+
+	class Application : public CefApp, public CefBrowserProcessHandler, public CefRenderProcessHandler, boost::noncopyable
 	{
 	public:
 		class IJSObjectifiable;
-		Application();
+		Application(Browser& browser);
 		~Application();
-
-		bool is_initialized() const;
 
 		// CefApp methods:
 		virtual CefRefPtr<CefBrowserProcessHandler> GetBrowserProcessHandler() override;
@@ -36,8 +37,7 @@ namespace Browser
 
 	private:
 		IMPLEMENT_REFCOUNTING(Application);
-
-		bool _isInitialized;
+		Browser& _browser;
 	};
 
 	class Application::IJSObjectifiable

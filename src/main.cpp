@@ -1,7 +1,6 @@
 #include <Windows.h>
 #include "main_loop.h"
 
-#include "browser/process_handler.h"
 #include "player.h"
 #include "rendering/camera.h"
 #include "rendering/renderer.h"
@@ -15,7 +14,6 @@
 
 int main(int argc, char* argv[])
 {
-	auto processHandlerScope = Browser::ProcessHandler::make();
 	Player player;
 	player.move_forward(-meters(2.0));
 

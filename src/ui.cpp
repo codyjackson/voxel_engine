@@ -1,6 +1,4 @@
 #include "ui.h"
-
-#include "browser/process_handler.h"
 #include "constants/runtime_file_paths.h"
 
 #include <Windows.h>
@@ -10,7 +8,7 @@
 #include <boost/filesystem.hpp>
 
 UI::UI(const JSValue& api)
-:_browser(Browser::ProcessHandler::create_browser(api, std::bind(&UI::update_texture, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)))
+:_browser(Browser::Browser::make(api, std::bind(&UI::update_texture, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)))
 {
 	_browser->load_url(Constants::RuntimeFilePaths::ui_index.string());
 }
@@ -25,7 +23,7 @@ void UI::update_resolution(const RectSize& resolution)
 
 void UI::tick() 
 { 
-	Browser::ProcessHandler::tick();
+	_browser->tick();
 }  
 
 void UI::forward_key_event(Input::Pressable key, Input::PressableState state, int modifiers)
