@@ -31,7 +31,7 @@ CefRefPtr<CefRenderProcessHandler> Browser::Application::GetRenderProcessHandler
 void Browser::Application::OnContextCreated(CefRefPtr<CefBrowser> rawBrowser, CefRefPtr<CefFrame> frame, CefRefPtr<CefV8Context> context)
 {
 	CefRefPtr<CefV8Value> object = context->GetGlobal();
-	//object->SetValue("api", JSValue::to_cef_v8_value(_browser.get_api()), V8_PROPERTY_ATTRIBUTE_NONE);
+	object->SetValue("api", JSValue::to_cef_v8_value(_browser.get_api()), V8_PROPERTY_ATTRIBUTE_NONE);
 }
 
 void Browser::Application::OnContextInitialized() {

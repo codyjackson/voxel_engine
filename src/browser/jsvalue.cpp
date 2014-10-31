@@ -87,6 +87,7 @@ namespace
 				to_cef_v8_value_helper(val[key], subValue);
 				o->SetValue(key, subValue, V8_PROPERTY_ATTRIBUTE_NONE);
 			});
+			out = o;
 		}
 		else if (val.is_bool()) {
 			out = CefV8Value::CreateBool(static_cast<bool>(val));
