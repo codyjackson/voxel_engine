@@ -118,8 +118,8 @@ namespace
 			});
 		};
 
-		static CefString nameNotNeeded("");
-		return CefV8Value::CreateFunction(nameNotNeeded, new MyV8Handler(wrappedFn));
+		static CefString anonymous("anonymous");
+		return CefV8Value::CreateFunction(anonymous, new MyV8Handler(wrappedFn));
 	}
 }
 CefRefPtr<CefV8Value> JSValue::to_cef_v8_value(const JSValue& val)

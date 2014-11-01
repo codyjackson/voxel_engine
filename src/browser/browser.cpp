@@ -33,7 +33,7 @@ namespace
 std::shared_ptr<Browser::Browser> Browser::Browser::_instance(nullptr);
 
 Browser::Browser::Browser(const JSValue& api, const PaintCallbackFunction& onPaint)
-:_handler(new Handler(*this)), _onPaint(onPaint)
+:_api(api), _handler(new Handler(*this)), _onPaint(onPaint)
 {
 	CefMainArgs args(GetModuleHandle(nullptr));
 	_application = new Application(*this);
