@@ -18,10 +18,7 @@ int main(int argc, char* argv[])
 	player.move_forward(-meters(2.0));
 
 	JSValue::Object api;
-	api["test"] = JSValue::wrap_void_function([](){
-		int i = 0;
-		i++;
-	});
+	api["player"] = player.create_ui_api();
 	UI ui(api);
 
 	Camera camera(Transform::make_transform(glm::vec3(), Orientation(), player.get_transform()));
@@ -38,45 +35,6 @@ int main(int argc, char* argv[])
 		window.on_mouse_move_event(std::bind(&UI::forward_mouse_move_event, &ui, std::placeholders::_1, std::placeholders::_2));
 		window.on_mouse_button_event(std::bind(&UI::forward_mouse_button_event, &ui, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
 		window.on_mouse_wheel_event(std::bind(&UI::forward_mouse_wheel_event, &ui, std::placeholders::_1, std::placeholders::_2));
-
-		//window.input().mouse().hide_cursor();
-		//window.input().on(Input::PressableTerminal(Input::Pressable::ESCAPE, Input::PressableEvent::RELEASED), [&window](Input& in){
-		//	window.close();
-		//});
-
-		//window.input().on(Input::PressableTerminal(Input::Pressable::W, Input::PressableEvent::PRESSED), [&](Input& in){
-		//	player.start_moving_forward();
-		//});
-
-		//window.input().on(Input::PressableTerminal(Input::Pressable::W, Input::PressableEvent::RELEASED), [&](Input& in){
-		//	player.stop_moving_forward_or_backward();
-		//});
-
-		//window.input().on(Input::PressableTerminal(Input::Pressable::S, Input::PressableEvent::PRESSED), [&](Input& in){
-		//	player.start_moving_backward();
-		//});
-
-		//window.input().on(Input::PressableTerminal(Input::Pressable::S, Input::PressableEvent::RELEASED), [&](Input& in){
-		//	player.stop_moving_forward_or_backward();
-		//});
-
-
-
-		//window.input().on(Input::PressableTerminal(Input::Pressable::D, Input::PressableEvent::PRESSED), [&](Input& in){
-		//	player.start_moving_right();
-		//});
-
-		//window.input().on(Input::PressableTerminal(Input::Pressable::D, Input::PressableEvent::RELEASED), [&](Input& in){
-		//	player.stop_moving_left_or_right();
-		//});
-
-		//window.input().on(Input::PressableTerminal(Input::Pressable::A, Input::PressableEvent::PRESSED), [&](Input& in){
-		//	player.start_moving_left();
-		//});
-
-		//window.input().on(Input::PressableTerminal(Input::Pressable::A, Input::PressableEvent::RELEASED), [&](Input& in){
-		//	player.stop_moving_left_or_right();
-		//});
 
 		//window.input().on(Input::MoveableCombo(Input::MoveableTerminal::MOUSE), [&](Input& in){
 		//	const auto delta = in.mouse().get_position_delta();

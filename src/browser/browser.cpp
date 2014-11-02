@@ -24,6 +24,7 @@ namespace
 		as.no_sandbox = true;
 		as.multi_threaded_message_loop = false;
 		as.command_line_args_disabled = true;
+		as.remote_debugging_port = 8000;
 		CefString(&as.cache_path) = "ui_cache";
 		return as;
 	}
@@ -76,11 +77,8 @@ void Browser::Browser::update_viewport_size(const RectSize& viewportSize)
 void Browser::Browser::forward_key_event(Input::Pressable key, Input::PressableState state, int modifiers)
 {
 	CefKeyEvent ev;
-	ev.character = 0;
-	ev.unmodified_character = 0;
-	ev.native_key_code = static_cast<int>(key);
-	ev.modifiers = modifiers;
 	ev.type = state == Input::PressableState::UP ? KEYEVENT_KEYUP : KEYEVENT_KEYDOWN;
+	ev.windows_key_code = static_cast<int>(key);;
 	_browser->GetHost()->SendKeyEvent(ev);
 }
 

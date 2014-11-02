@@ -21,18 +21,33 @@ require(['angular', 'directives/bullseye'], function(angular){
     });
 
     window.onkeydown = function(ev){
-        switch(ev.which) {
+        switch(ev.keyCode) {
             case 87:
-                api.startMovingForward();
+                api.player.startMovingForward();
+                break;
+            case 83:
+                api.player.startMovingBackward();
+                break;
+            case 68:
+                api.player.startMovingRight();
+                break;
+            case 65:
+                api.player.startMovingLeft();
+                break;
         }
     };
 
     window.onkeyup = function(ev){
-        switch(ev.which) {
+        switch(ev.keyCode) {
             case 87:
-                api.stopMovingForwardOrBackward();
+            case 83:
+                api.player.stopMovingForwardOrBackward();
+                break;
+            case 68:
+            case 65:
+                api.player.stopMovingLeftOrRight();
+                break;
         }
     };
 
-    console.log(api.test);
 });

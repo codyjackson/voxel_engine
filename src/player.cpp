@@ -59,9 +59,9 @@ void Player::tick(float timeStepInSeconds)
 	move_right(_rightVelocity * timeStepInSeconds);
 }
 
-JSValue Player::create_js_object()
+JSValue Player::create_ui_api()
 {
-	JSValue root;
+	JSValue::Object root;
 	root["startMovingForward"] = JSValue::wrap_void_function(std::bind(&Player::start_moving_forward, this));
 	root["startMovingBackward"] = JSValue::wrap_void_function(std::bind(&Player::start_moving_backward, this));
 	root["stopMovingForwardOrBackward"] = JSValue::wrap_void_function(std::bind(&Player::stop_moving_forward_or_backward, this));

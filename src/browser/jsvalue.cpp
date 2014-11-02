@@ -116,6 +116,7 @@ namespace
 			std::for_each(std::begin(rawArguments), std::end(rawArguments), [&arguments](CefRefPtr<CefV8Value> arg){
 				arguments.push_back(JSValue::to_js_value(arg));
 			});
+			fn(arguments);
 		};
 
 		static CefString anonymous("anonymous");
@@ -139,7 +140,7 @@ JSValue JSValue::to_js_value(CefRefPtr<CefV8Value> val)
 
 JSValue::Function JSValue::wrap_void_function(const VoidFunction& fn)
 {
-	return [fn](CefRefPtr<CefV8Value> object, const CefV8ValueList& arguments) -> CefRefPtr<CefV8Value> {
+	return [fn](const JSValue::Array& args) -> CefRefPtr<CefV8Value> {
 		fn();
 		return nullptr;
 	};

@@ -1,9 +1,9 @@
 #pragma once
 
+#include "browser/jsvalue.h"
 #include "spatial/transform.h"
-#include "browser/application.h"
 
-class Player : public ITransformable, public Browser::Application::IJSObjectifiable
+class Player : public ITransformable
 {
 public:
 	Player();
@@ -21,7 +21,7 @@ public:
 
 	void tick(float timeStepSeconds);
 
-	JSValue create_js_object() override;
+	JSValue create_ui_api();
 
 private:
 	float _forwardVelocity;
