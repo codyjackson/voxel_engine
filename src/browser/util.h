@@ -35,3 +35,12 @@
 #define REQUIRE_FILE_THREAD() ASSERT(CefCurrentlyOn(TID_FILE));
 
 #endif  // CEF_TESTS_CEFCLIENT_UTIL_H_
+
+namespace Browser
+{
+	class Util
+	{
+	public:
+		static std::string get_register_api_message_name();
+	};
+}

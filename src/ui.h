@@ -14,10 +14,12 @@ typedef unsigned int GLuint;
 class UI
 {
 public:
-	UI(const JSValue& api);
+	UI();
 
 	void update_resolution(const RectSize& resolution);
 	const RectSize& get_resolution() const;
+
+	void register_api(const JSValue& api);
 
 	void forward_key_event(Input::Pressable key, Input::PressableState state, int modifiers);
 	void forward_mouse_button_event(Input::Pressable button, Input::PressableState state, int modifiers);

@@ -16,10 +16,7 @@ int main(int argc, char* argv[])
 {
 	Player player;
 	player.move_forward(-meters(2.0));
-
-	JSValue::Object api;
-	api["player"] = player.create_ui_api();
-	UI ui(api);
+	UI ui;
 
 	Camera camera(Transform::make_transform(glm::vec3(), Orientation(), player.get_transform()));
 
@@ -28,6 +25,7 @@ int main(int argc, char* argv[])
 
 	auto onInitialize = [&](Window& window){
 		ui.update_resolution(resolution);
+		
 		window.update_resolution(resolution);
 		window.update_title("Voxel Engine");
 
@@ -35,6 +33,10 @@ int main(int argc, char* argv[])
 		window.on_mouse_move_event(std::bind(&UI::forward_mouse_move_event, &ui, std::placeholders::_1, std::placeholders::_2));
 		window.on_mouse_button_event(std::bind(&UI::forward_mouse_button_event, &ui, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
 		window.on_mouse_wheel_event(std::bind(&UI::forward_mouse_wheel_event, &ui, std::placeholders::_1, std::placeholders::_2));
+
+		JSValue::Object api;
+		api["player"] = player.create_ui_api();
+		ui.register_api(api);
 
 		//window.input().on(Input::MoveableCombo(Input::MoveableTerminal::MOUSE), [&](Input& in){
 		//	const auto delta = in.mouse().get_position_delta();

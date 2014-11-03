@@ -17,11 +17,13 @@ namespace Browser
 	{
 	public:
 		typedef std::function<void(const RectSize& fullSize, const CefRenderHandler::RectList& dirtyRects, const void* dataBuffer)> PaintCallbackFunction;
-		static std::shared_ptr<Browser> make(const JSValue& api, const PaintCallbackFunction& onPaint);
+		static std::shared_ptr<Browser> make(const PaintCallbackFunction& onPaint);
 		~Browser();
 
 		void load_url(const std::string& url);
 		void update_viewport_size(const RectSize& viewportSize);
+
+		void register_api(const JSValue& api);
 
 		void forward_key_event(Input::Pressable key, Input::PressableState state, int modifiers);
 		void forward_mouse_button_event(Input::Pressable button, Input::PressableState state, int modifiers);
@@ -33,8 +35,10 @@ namespace Browser
 		const JSValue& get_api() const;
 
 	private:
+		void on_context_created(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame, CefRefPtr<CefV8Context> context);
+
 		static std::shared_ptr<Browser> _instance;
-		Browser(const JSValue& api, const PaintCallbackFunction& onPaint);
+		Browser(const PaintCallbackFunction& onPaint);
 		class Handler;
 		CefRefPtr<Application> _application;
 		CefRefPtr<Handler> _handler;
@@ -42,7 +46,7 @@ namespace Browser
 		PaintCallbackFunction _onPaint;
 		CefRect _viewportRect;
 		CefMouseEvent _mouseEvent;
-		JSValue _api;
+		CefRefPtr<CefV8Context> _context;
 	};
 
 	class Browser::Handler : public CefClient, public CefRenderProcessHandler, public CefRenderHandler, boost::noncopyable

@@ -1,5 +1,7 @@
 #include "browser.h"
 
+#include "util.h"
+
 namespace
 {
 	const CefWindowInfo& GetWindowInfo()
@@ -33,11 +35,11 @@ namespace
 
 std::shared_ptr<Browser::Browser> Browser::Browser::_instance(nullptr);
 
-Browser::Browser::Browser(const JSValue& api, const PaintCallbackFunction& onPaint)
-:_api(api), _handler(new Handler(*this)), _onPaint(onPaint)
+Browser::Browser::Browser(const PaintCallbackFunction& onPaint)
+:_handler(new Handler(*this)), _onPaint(onPaint)
 {
 	CefMainArgs args(GetModuleHandle(nullptr));
-	_application = new Application(*this);
+	_application = new Application(std::bind(&Browser::on_context_created, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
 	int exitCode = CefExecuteProcess(args, _application.get(), nullptr);
 	if (exitCode >= 0) {
 		exit(exitCode);
@@ -50,12 +52,12 @@ Browser::Browser::Browser(const JSValue& api, const PaintCallbackFunction& onPai
 	_browser = CefBrowserHost::CreateBrowserSync(GetWindowInfo(), _handler.get(), "", GetBrowserSettings(), nullptr);
 }
 
-std::shared_ptr<Browser::Browser> Browser::Browser::make(const JSValue& api, const PaintCallbackFunction& onPaint)
+std::shared_ptr<Browser::Browser> Browser::Browser::make(const PaintCallbackFunction& onPaint)
 {
 	if (_instance) {
 		throw std::runtime_error("Only one browser instance can be instantiated at a time.");
 	}
-	return _instance = std::shared_ptr<Browser>(new Browser(api, onPaint));
+	return _instance = std::shared_ptr<Browser>(new Browser(onPaint));
 }
 
 Browser::Browser::~Browser()
@@ -72,6 +74,19 @@ void Browser::Browser::load_url(const std::string& url)
 void Browser::Browser::update_viewport_size(const RectSize& viewportSize)
 {
 	_viewportRect = CefRect(0, 0, viewportSize.width, viewportSize.height);
+}
+
+void Browser::Browser::register_api(const JSValue& api)
+{
+	//while (_context.get() == nullptr) {
+	//	tick();
+	//}
+
+	//CefRefPtr<CefV8Context> context = _browser->GetMainFrame()->GetV8Context();
+	//CefRefPtr<CefV8Value> value = JSValue::to_cef_v8_value(api, context);
+	//context->GetGlobal()->SetValue("api", value, V8_PROPERTY_ATTRIBUTE_NONE);
+	CefRefPtr<CefProcessMessage> message = CefProcessMessage::Create(Util::get_register_api_message_name());
+	_browser->SendProcessMessage(PID_RENDERER, message);
 }
 
 void Browser::Browser::forward_key_event(Input::Pressable key, Input::PressableState state, int modifiers)
@@ -110,11 +125,6 @@ void Browser::Browser::forward_mouse_wheel_event(double xoffset, double yoffset)
 	_browser->GetHost()->SendMouseWheelEvent(_mouseEvent, static_cast<int>(xoffset), static_cast<int>(yoffset));
 }
 
-const JSValue& Browser::Browser::get_api() const
-{
-	return _api;
-}
-
 void Browser::Browser::tick()
 {
 	CefDoMessageLoopWork();
@@ -138,4 +148,9 @@ bool Browser::Browser::Handler::GetViewRect(CefRefPtr<CefBrowser> browser, CefRe
 void Browser::Browser::Handler::OnPaint(CefRefPtr<CefBrowser> browser, PaintElementType type, const RectList &dirtyRects, const void *buffer, int width, int height)
 {
 	_browser._onPaint(RectSize(width, height), dirtyRects, buffer);
+}
+
+void Browser::Browser::on_context_created(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame, CefRefPtr<CefV8Context> context)
+{
+	_context = context;
 }

@@ -7,8 +7,8 @@
 #include <algorithm>
 #include <boost/filesystem.hpp>
 
-UI::UI(const JSValue& api)
-:_browser(Browser::Browser::make(api, std::bind(&UI::update_texture, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)))
+UI::UI()
+:_browser(Browser::Browser::make(std::bind(&UI::update_texture, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)))
 {
 	_browser->load_url(Constants::RuntimeFilePaths::ui_index.string());
 }
@@ -19,6 +19,11 @@ UI::~UI()
 void UI::update_resolution(const RectSize& resolution)
 {
 	_browser->update_viewport_size(resolution);
+}
+
+void UI::register_api(const JSValue& api)
+{
+	_browser->register_api(api);
 }
 
 void UI::tick() 

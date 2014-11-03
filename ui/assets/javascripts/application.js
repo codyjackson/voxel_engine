@@ -20,6 +20,8 @@ require(['angular', 'directives/bullseye'], function(angular){
         angular.bootstrap(document, ['ui']);
     });
 
+    console.log(window.test);
+
     window.onkeydown = function(ev){
         switch(ev.keyCode) {
             case 87:
