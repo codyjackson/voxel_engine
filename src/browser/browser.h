@@ -37,6 +37,9 @@ namespace Browser
 	private:
 		void on_context_created(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame, CefRefPtr<CefV8Context> context);
 
+		CefRefPtr<CefListValue> to_ipc_message_arguments_helper(const JSValue::Array& o);
+		CefRefPtr<CefDictionaryValue> to_ipc_message_arguments_helper(const JSValue::Object& o);
+
 		static std::shared_ptr<Browser> _instance;
 		Browser(const PaintCallbackFunction& onPaint);
 		class Handler;
@@ -47,15 +50,17 @@ namespace Browser
 		CefRect _viewportRect;
 		CefMouseEvent _mouseEvent;
 		CefRefPtr<CefV8Context> _context;
+		std::unordered_map<int, JSValue::Function> _idToIPCFunction;
 	};
 
-	class Browser::Handler : public CefClient, public CefRenderProcessHandler, public CefRenderHandler, boost::noncopyable
+	class Browser::Handler : public CefClient, public CefRenderHandler, boost::noncopyable
 	{
 	public:
 		Handler(Browser& browser);
 
 		//CefClient methods:
 		CefRefPtr<CefRenderHandler> GetRenderHandler() override;
+		bool OnProcessMessageReceived(CefRefPtr<CefBrowser> browser, CefProcessId source_process, CefRefPtr<CefProcessMessage> message) override;
 
 		//CefRenderHandler methods:
 		bool GetViewRect(CefRefPtr<CefBrowser> browser, CefRect &rect) override;

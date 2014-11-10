@@ -17,7 +17,7 @@ namespace Browser
 
 	class Browser;
 
-	class Application : public CefApp, public CefRenderProcessHandler, boost::noncopyable
+	class Application : public CefApp, boost::noncopyable
 	{
 	public:
 		class IJSObjectifiable;

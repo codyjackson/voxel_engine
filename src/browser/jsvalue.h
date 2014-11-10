@@ -24,8 +24,6 @@ public:
 	typedef std::function<void ()> VoidFunction;
 	typedef boost::variant<std::string, double, Object, Array, bool, Null, Function> Parent;
 
-	static CefRefPtr<CefV8Value> to_cef_v8_value(const JSValue& val);
-	static JSValue to_js_value(CefRefPtr<CefV8Value> val);
 	static Function wrap_void_function(const VoidFunction& fn);
 
 	JSValue();

@@ -30,6 +30,17 @@ namespace
 		CefString(&as.cache_path) = "ui_cache";
 		return as;
 	}
+
+	int generate_ipc_function_id()
+	{
+		static int i = 0;
+		return i++;
+	}
+
+	std::string create_placeholder(int id)
+	{
+		return Browser::Util::get_ipc_function_string_placeholder() + std::to_string(id);
+	}
 }
 	
 
@@ -86,6 +97,7 @@ void Browser::Browser::register_api(const JSValue& api)
 	//CefRefPtr<CefV8Value> value = JSValue::to_cef_v8_value(api, context);
 	//context->GetGlobal()->SetValue("api", value, V8_PROPERTY_ATTRIBUTE_NONE);
 	CefRefPtr<CefProcessMessage> message = CefProcessMessage::Create(Util::get_register_api_message_name());
+	message->GetArgumentList()->SetDictionary(0, to_ipc_message_arguments_helper(static_cast<const JSValue::Object&>(api)));
 	_browser->SendProcessMessage(PID_RENDERER, message);
 }
 
@@ -139,6 +151,13 @@ CefRefPtr<CefRenderHandler> Browser::Browser::Handler::GetRenderHandler()
 	return this;
 }
 
+bool Browser::Browser::Handler::OnProcessMessageReceived(CefRefPtr<CefBrowser> browser, CefProcessId source_process, CefRefPtr<CefProcessMessage> message)
+{
+	CefRefPtr<CefListValue> args = message->GetArgumentList();
+	_browser._idToIPCFunction[args->GetInt(0)](JSValue::Array());
+	return true;
+}
+
 bool Browser::Browser::Handler::GetViewRect(CefRefPtr<CefBrowser> browser, CefRect &rect)
 {
 	rect = _browser._viewportRect;
@@ -153,4 +172,81 @@ void Browser::Browser::Handler::OnPaint(CefRefPtr<CefBrowser> browser, PaintElem
 void Browser::Browser::on_context_created(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame, CefRefPtr<CefV8Context> context)
 {
 	_context = context;
+}
+
+CefRefPtr<CefListValue> Browser::Browser::to_ipc_message_arguments_helper(const JSValue::Array& o)
+{
+	CefRefPtr<CefListValue> out = CefListValue::Create();
+	out->SetSize(o.size());
+	for (size_t i = 0; i < o.size(); ++i) {
+		const JSValue& val = o[i];
+		if (val.is_array()) {
+			out->SetList(i, to_ipc_message_arguments_helper(static_cast<const JSValue::Array&>(val)));
+		}
+		else if (val.is_object()) {
+			out->SetDictionary(i, to_ipc_message_arguments_helper(static_cast<const JSValue::Object&>(val)));
+		}
+		else if (val.is_bool()) {
+			out->SetBool(i, static_cast<bool>(val));
+		}
+		else if (val.is_null()) {
+			out->SetNull(i);
+		}
+		else if (val.is_string()) {
+			const std::string& temp = static_cast<const std::string&>(val);
+			if (temp == Util::get_ipc_function_string_placeholder()) {
+				throw std::runtime_error("String value cannot be " + Util::get_ipc_function_string_placeholder());
+			}
+			out->SetString(i, temp);
+		}
+		else if (val.is_function()) {
+			const int id = generate_ipc_function_id();
+			_idToIPCFunction[id] = static_cast<const JSValue::Function&>(val);
+			out->SetString(i, create_placeholder(id));
+		}
+		else {
+			throw std::runtime_error("Type not supported.");
+		}
+	}
+
+	return out;
+}
+
+CefRefPtr<CefDictionaryValue> Browser::Browser::to_ipc_message_arguments_helper(const JSValue::Object& o)
+{
+	CefRefPtr<CefDictionaryValue> out = CefDictionaryValue::Create();
+	std::for_each(std::begin(o), std::end(o), [this, &out](const std::pair<std::string, JSValue>& kvp){
+		const std::string& key = kvp.first;
+		const JSValue& val = kvp.second;
+
+		if (val.is_array()) {
+			out->SetList(key, to_ipc_message_arguments_helper(static_cast<const JSValue::Array&>(val)));
+		}
+		else if (val.is_object()) {
+			out->SetDictionary(key, to_ipc_message_arguments_helper(static_cast<const JSValue::Object&>(val)));
+		}
+		else if (val.is_bool()) {
+			out->SetBool(key, static_cast<bool>(val));
+		}
+		else if (val.is_null()) {
+			out->SetNull(key);
+		}
+		else if (val.is_string()) {
+			const std::string& temp = static_cast<const std::string&>(val);
+			if (temp == Util::get_ipc_function_string_placeholder()) {
+				throw std::runtime_error("String value cannot be " + Util::get_ipc_function_string_placeholder());
+			}
+			out->SetString(key, temp);
+		}
+		else if (val.is_function()) {
+			const int id = generate_ipc_function_id();
+			_idToIPCFunction[id] = static_cast<const JSValue::Function&>(val);
+			out->SetString(key, create_placeholder(id));
+		}
+		else {
+			throw std::runtime_error("Type not supported.");
+		}
+	});
+
+	return out;
 }

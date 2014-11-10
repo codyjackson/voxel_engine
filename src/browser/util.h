@@ -42,5 +42,6 @@ namespace Browser
 	{
 	public:
 		static std::string get_register_api_message_name();
+		static std::string get_ipc_function_string_placeholder();
 	};
 }
