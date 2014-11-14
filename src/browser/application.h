@@ -30,5 +30,6 @@ namespace Browser
 	private:
 		IMPLEMENT_REFCOUNTING(Application);
 		std::function<void(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame, CefRefPtr<CefV8Context> context)> _onContextCreated;
+		CefRefPtr<CefRenderProcessHandler> _renderProcessHandler;
 	};
 }

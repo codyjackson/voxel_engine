@@ -34,11 +34,11 @@ namespace Browser
 
 		const JSValue& get_api() const;
 
-	private:
-		void on_context_created(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame, CefRefPtr<CefV8Context> context);
-
 		CefRefPtr<CefListValue> to_ipc_message_arguments_helper(const JSValue::Array& o);
 		CefRefPtr<CefDictionaryValue> to_ipc_message_arguments_helper(const JSValue::Object& o);
+	private:
+		void on_context_created(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame, CefRefPtr<CefV8Context> context);
+		
 
 		static std::shared_ptr<Browser> _instance;
 		Browser(const PaintCallbackFunction& onPaint);

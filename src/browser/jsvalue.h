@@ -14,13 +14,13 @@ struct JSNullRaw
 
 typedef std::function<CefRefPtr<CefV8Value>(CefRefPtr<CefV8Value> object, const CefV8ValueList& arguments)> JSRawFunction;
 
-class JSValue : public boost::variant<std::string, double, std::unordered_map<std::string, JSValue>, std::vector<JSValue>, bool, JSNullRaw, std::function<CefRefPtr<CefV8Value> (const std::vector<JSValue>&) >>
+class JSValue : public boost::variant<std::string, double, std::unordered_map<std::string, JSValue>, std::vector<JSValue>, bool, JSNullRaw, std::function<std::vector<JSValue>(const std::vector<JSValue>&) >>
 {
 public:
 	typedef std::unordered_map<std::string, JSValue> Object;
 	typedef std::vector<JSValue> Array;
 	typedef JSNullRaw Null;
-	typedef std::function<CefRefPtr<CefV8Value> (const JSValue::Array& arguments)> Function;
+	typedef std::function<JSValue::Array (const JSValue::Array& arguments)> Function;
 	typedef std::function<void ()> VoidFunction;
 	typedef boost::variant<std::string, double, Object, Array, bool, Null, Function> Parent;
 

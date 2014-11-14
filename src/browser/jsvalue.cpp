@@ -101,9 +101,9 @@ namespace
 
 JSValue::Function JSValue::wrap_void_function(const VoidFunction& fn)
 {
-	return [fn](const JSValue::Array& args) -> CefRefPtr<CefV8Value> {
+	return [fn](const JSValue::Array& args) -> JSValue::Array {
 		fn();
-		return nullptr;
+		return JSValue::Array();
 	};
 }
 

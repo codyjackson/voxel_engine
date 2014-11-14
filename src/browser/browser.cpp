@@ -89,13 +89,6 @@ void Browser::Browser::update_viewport_size(const RectSize& viewportSize)
 
 void Browser::Browser::register_api(const JSValue& api)
 {
-	//while (_context.get() == nullptr) {
-	//	tick();
-	//}
-
-	//CefRefPtr<CefV8Context> context = _browser->GetMainFrame()->GetV8Context();
-	//CefRefPtr<CefV8Value> value = JSValue::to_cef_v8_value(api, context);
-	//context->GetGlobal()->SetValue("api", value, V8_PROPERTY_ATTRIBUTE_NONE);
 	CefRefPtr<CefProcessMessage> message = CefProcessMessage::Create(Util::get_register_api_message_name());
 	message->GetArgumentList()->SetDictionary(0, to_ipc_message_arguments_helper(static_cast<const JSValue::Object&>(api)));
 	_browser->SendProcessMessage(PID_RENDERER, message);
@@ -154,7 +147,21 @@ CefRefPtr<CefRenderHandler> Browser::Browser::Handler::GetRenderHandler()
 bool Browser::Browser::Handler::OnProcessMessageReceived(CefRefPtr<CefBrowser> browser, CefProcessId source_process, CefRefPtr<CefProcessMessage> message)
 {
 	CefRefPtr<CefListValue> args = message->GetArgumentList();
-	_browser._idToIPCFunction[args->GetInt(0)](JSValue::Array());
+
+	try {
+		CefRefPtr<CefProcessMessage> responseMessage = CefProcessMessage::Create(Util::get_resolve_promise_message_name());
+		auto returnArgs = _browser.to_ipc_message_arguments_helper(_browser._idToIPCFunction[args->GetInt(0)](JSValue::Array()));
+		responseMessage->GetArgumentList()->SetList(0, returnArgs);
+		responseMessage->GetArgumentList()->SetInt(1, args->GetInt(1));
+		browser->SendProcessMessage(PID_RENDERER, responseMessage);
+	}
+	catch (std::exception& ex) {
+		CefRefPtr<CefProcessMessage> responseMessage = CefProcessMessage::Create(Util::get_reject_promise_message_name());
+		responseMessage->GetArgumentList()->SetString(0, ex.what());
+		responseMessage->GetArgumentList()->SetInt(1, args->GetInt(1));
+		browser->SendProcessMessage(PID_RENDERER, responseMessage);
+	}
+
 	return true;
 }
 

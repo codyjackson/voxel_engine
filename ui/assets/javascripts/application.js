@@ -25,7 +25,9 @@ require(['angular', 'directives/bullseye'], function(angular){
     window.onkeydown = function(ev){
         switch(ev.keyCode) {
             case 87:
-                api.player.startMovingForward();
+                api.player.startMovingForward().then(function(){
+                    console.log('forward');
+                });
                 break;
             case 83:
                 api.player.startMovingBackward();

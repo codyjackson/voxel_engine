@@ -36,12 +36,28 @@
 
 #endif  // CEF_TESTS_CEFCLIENT_UTIL_H_
 
+#include <cef/cef_app.h>
+
 namespace Browser
 {
 	class Util
 	{
 	public:
 		static std::string get_register_api_message_name();
+		static std::string get_reject_promise_message_name();
+		static std::string get_resolve_promise_message_name();
 		static std::string get_ipc_function_string_placeholder();
+
+		class ContextOpener
+		{
+		public:
+			ContextOpener(CefRefPtr<CefV8Context> context);
+				~ContextOpener();
+
+				CefRefPtr<CefV8Context> get() const;
+
+		private:
+			CefRefPtr<CefV8Context> _context;
+		};
 	};
 }

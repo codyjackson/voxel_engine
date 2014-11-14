@@ -16,10 +16,11 @@ Browser::Application::~Application()
 }
 
 Browser::Application::Application(const std::function<void(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame, CefRefPtr<CefV8Context> context)>& onContextCreated)
+:_renderProcessHandler(new RenderProcessHandler())
 {}
 
 
 CefRefPtr<CefRenderProcessHandler> Browser::Application::GetRenderProcessHandler()
 {
-	return new RenderProcessHandler();
+	return _renderProcessHandler;
 }

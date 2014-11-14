@@ -125,6 +125,7 @@
     <ClInclude Include="src\browser\application.h" />
     <ClInclude Include="src\browser\browser.h" />
     <ClInclude Include="src\browser\render_process_handler.h" />
+    <ClInclude Include="src\browser\deferred.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\rendering\color.cpp">
@@ -196,5 +197,6 @@
     <ClCompile Include="src\browser\browser.cpp" />
     <ClCompile Include="src\browser\render_process_handler.cpp" />
     <ClCompile Include="src\browser\util.cpp" />
+    <ClCompile Include="src\browser\deferred.cpp" />
   </ItemGroup>
 </Project>
