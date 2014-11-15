@@ -38,44 +38,6 @@ namespace
 		CefRefPtr< CefV8Context > _context;
 		CefRefPtr< CefBrowser > _browser;
 	};
-
-	void to_js_value_helper(CefRefPtr<CefV8Value> val, JSValue& out)
-	{
-		if (val->IsArray()) {
-			const int size = val->GetArrayLength();
-			JSValue::Array a;
-			a.reserve(size);
-			for (int i = 0; i < size; ++i) {
-				JSValue subVal;
-				to_js_value_helper(val->GetValue(i), subVal);
-			}
-			out = a;
-		}
-		else if (val->IsObject()) {
-			JSValue::Object o;
-			std::vector<CefString> keys;
-			val->GetKeys(keys);
-			std::for_each(std::begin(keys), std::end(keys), [&o, &val](const CefString& key){
-				to_js_value_helper(val->GetValue(key), o[key.ToString()]);
-			});
-			out = o;
-		}
-		else if (val->IsBool()) {
-			out = JSValue(val->GetBoolValue());
-		}
-		else if (val->IsDouble()) {
-			out = JSValue(val->GetDoubleValue());
-		}
-		else if (val->IsNull()) {
-			out = JSValue::Null();
-		}
-		else if (val->IsString()) {
-			out = JSValue(val->GetStringValue().ToString());
-		}
-		else {
-			throw std::runtime_error("Type not supported.");
-		}
-	}
 }
 
 
@@ -84,6 +46,8 @@ namespace Browser
 	RenderProcessHandler::RenderProcessHandler()
 	{
 		_messageHandlers[Util::get_register_api_message_name()] = std::bind(&RenderProcessHandler::on_register_api, this, std::placeholders::_1, std::placeholders::_2);
+		_messageHandlers[Util::get_resolve_promise_message_name()] = std::bind(&RenderProcessHandler::on_resolve_promise, this, std::placeholders::_1, std::placeholders::_2);
+		_messageHandlers[Util::get_reject_promise_message_name()] = std::bind(&RenderProcessHandler::on_reject_promise, this, std::placeholders::_1, std::placeholders::_2);
 	}
 
 	void RenderProcessHandler::OnContextCreated(CefRefPtr< CefBrowser > browser, CefRefPtr< CefFrame > frame, CefRefPtr< CefV8Context > context)
@@ -111,6 +75,24 @@ namespace Browser
 		CefRefPtr<CefV8Value> val;
 		to_cef_v8_value_helper(arguments->GetDictionary(0), val);
 		global->SetValue(CefString("api"), val, CefV8Value::PropertyAttribute::V8_PROPERTY_ATTRIBUTE_NONE);
+	}
+
+	void RenderProcessHandler::on_resolve_promise(CefRefPtr< CefBrowser > browser, CefRefPtr< CefListValue > arguments)
+	{
+		CefV8ValueList convertedArgs;
+		to_cef_v8_value_list(arguments->GetList(0), convertedArgs);
+		const auto iter = _idToDeferred.find(arguments->GetInt(1));
+		iter->second.resolve(convertedArgs);
+		_idToDeferred.erase(iter);
+	}
+
+	void RenderProcessHandler::on_reject_promise(CefRefPtr< CefBrowser > browser, CefRefPtr< CefListValue > arguments)
+	{
+		CefV8ValueList convertedArgs;
+		convertedArgs.push_back(CefV8Value::CreateString(arguments->GetString(0)));
+		const auto iter = _idToDeferred.find(arguments->GetInt(1));
+		iter->second.resolve(convertedArgs);
+		_idToDeferred.erase(iter);
 	}
 
 	void RenderProcessHandler::to_cef_v8_function(int id, CefRefPtr<CefV8Value>& out)
@@ -192,6 +174,37 @@ namespace Browser
 				throw std::runtime_error("An unsupported type was passed in.");
 			}
 			out->SetValue(i, elem);
+		}
+	}
+
+	void RenderProcessHandler::to_cef_v8_value_list(CefRefPtr<CefListValue> val, CefV8ValueList& out)
+	{
+		for (size_t i = 0; i < val->GetSize(); ++i) {
+			CefRefPtr<CefV8Value> elem;
+			CefValueType type = val->GetType(i);
+			if (type == CefValueType::VTYPE_LIST) {
+				to_cef_v8_value_helper(val->GetList(i), elem);
+			}
+			else if (type == CefValueType::VTYPE_DICTIONARY) {
+				to_cef_v8_value_helper(val->GetDictionary(i), elem);
+			}
+			else if (type == CefValueType::VTYPE_BOOL) {
+				elem = CefV8Value::CreateBool(val->GetBool(i));
+			}
+			else if (type == CefValueType::VTYPE_DOUBLE) {
+				elem = CefV8Value::CreateDouble(val->GetDouble(i));
+			}
+			else if (type == CefValueType::VTYPE_NULL) {
+				elem = CefV8Value::CreateNull();
+			}
+			else if (type == CefValueType::VTYPE_STRING) {
+				const std::string& s = val->GetString(i);
+				to_cef_v8_value_helper(s, elem);
+			}
+			else {
+				throw std::runtime_error("An unsupported type was passed in.");
+			}
+			out.push_back(elem);
 		}
 	}
 }

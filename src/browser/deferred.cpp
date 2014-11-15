@@ -110,12 +110,14 @@ void Browser::Deferred::resolve(const CefV8ValueList& args)
 {
 	Util::ContextOpener opener(_context);
 	_privateObject->SetValue(get_resolved_arguments_key(), args_to_value(args), CefV8Value::PropertyAttribute::V8_PROPERTY_ATTRIBUTE_NONE);
+	::finish(_privateObject);
 }
 
 void Browser::Deferred::reject(const CefV8ValueList& args)
 {
 	Util::ContextOpener opener(_context);
 	_privateObject->SetValue(get_rejected_arguments_key(), args_to_value(args), CefV8Value::PropertyAttribute::V8_PROPERTY_ATTRIBUTE_NONE);
+	::finish(_privateObject);
 }
 
 void Browser::Deferred::finish()
