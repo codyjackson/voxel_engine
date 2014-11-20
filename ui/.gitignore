@@ -13,10 +13,6 @@
 *.log
 /tmp
 
-#ignore vendor files
-/assets/javascripts/vendor/*
-/assets/stylesheets/vendor/*
-
 ## Ignore all generated files
 /.mimosa
 /coverage
