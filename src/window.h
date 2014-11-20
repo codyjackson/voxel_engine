@@ -28,8 +28,12 @@ class Window
 		const int get_width() const;
 		const int get_height() const;
 		const glm::ivec2 get_center() const;
+
+		Input& input();
+		const Input& input() const;
 		
 	private:
+		friend class Input::Mouse;
 		friend class MainLoop;
 		Window();
 
@@ -44,6 +48,7 @@ class Window
 
 		static std::unordered_map<GLFWwindow*, Window*> _glfwWindowToWindowMappingForStaticCallbacks;
 
+		Input _input;
 		GLFWwindow* _window;
 		std::function<void(Input::Pressable key, Input::PressableState state, int modifiers)> _onKeyEvent;
 		std::function<void(Input::Pressable button, Input::PressableState state, int modifiers)> _onMouseButtonEvent;

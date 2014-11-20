@@ -54,4 +54,12 @@ require(['angular', 'directives/bullseye'], function(angular){
         }
     };
 
+    window.lock = function(ev) {
+        api.input.mouse.lockMovement();
+    };
+
+    window.unlock = function(ev) {
+        api.input.mouse.unlockMovement();
+    };
+
 });

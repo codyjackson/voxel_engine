@@ -36,6 +36,7 @@ int main(int argc, char* argv[])
 
 		JSValue::Object api;
 		api["player"] = player.create_ui_api();
+		api["input"] = window.input().create_ui_api();
 		ui.register_api(api);
 
 		//window.input().on(Input::MoveableCombo(Input::MoveableTerminal::MOUSE), [&](Input& in){

@@ -1,6 +1,7 @@
 #include "window.h"
 
 Window::Window()
+:_input(*this)
 {
 	if (!glfwInit()) {
 		throw std::runtime_error("Failed to initialize glfw.");
@@ -115,6 +116,16 @@ const glm::ivec2 Window::get_center() const
 	return glm::ivec2(get_width() / 2, get_height()/2);
 }
 
+Input& Window::input()
+{
+	return _input;
+}
+
+const Input& Window::input() const
+{
+	return _input;
+}
+
 const bool Window::is_open() const 
 {
 	return !glfwWindowShouldClose(_window);
@@ -141,6 +152,7 @@ void Window::on_keyboard_message_forwarder(GLFWwindow* glfwWindow, int key, int 
 void Window::on_mouse_position_message_forwarder(GLFWwindow* glfwWindow, double x, double y)
 {
 	Window& window = *Window::_glfwWindowToWindowMappingForStaticCallbacks[glfwWindow];
+	window._input.update_mouse_movement();
 	if (!window._onMouseMoveEvent) {
 		return;
 	}

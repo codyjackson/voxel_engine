@@ -6,10 +6,13 @@
 #pragma push_macro("DELETE")
 #undef DELETE
 
+#include "browser/jsvalue.h"
+
 #include <array>
 #include <functional>
 #include <unordered_map>
 
+#include <boost/optional.hpp>
 #include <glm/glm.hpp>
 #include <GLFW/glfw3.h>
 
@@ -155,118 +158,37 @@ public:
 		RELEASED
 	};
 
-	class PressableTerminal
-	{
-	public:
-		struct Hasher{ size_t operator()(const PressableTerminal& t) const; };
-		PressableTerminal(Pressable p, PressableEvent e);
-
-		bool operator==(const PressableTerminal& rhs) const;
-
-		Pressable get_pressable() const;
-		PressableEvent get_event() const;
-
-	private:
-		Pressable _pressable;
-		PressableEvent _event;
-	};
-
 	enum class MoveableTerminal
 	{
 		MOUSE,
 		MOUSE_WHEEL
 	};
 
-	template<typename TERMINAL_TYPE>
-	class Combo
-	{
-	public:
-		struct Hasher
-		{ 
-			size_t operator()(const Combo& s) const
-			{
-				const auto hashAccumulateModifier = [](const size_t& l, const Pressable& r) {return l ^ std::hash<size_t>()(static_cast<size_t>(r)); };
-				const size_t modifiersHash = std::accumulate(std::begin(s._modifiers), std::end(s._modifiers), static_cast<size_t>(0), hashAccumulateModifier);
-				const size_t terminalHash = std::hash<TERMINAL_TYPE>()(s._terminal);
-
-				return modifiersHash ^ terminalHash;
-			}
-		};
-
-		Combo(Pressable mod0, Pressable mod1, Pressable mod2, TERMINAL_TYPE terminal)
-			:_modifiers{ { mod0, mod1, mod2 } }, _terminal(terminal)
-		{
-			//Necessary for easier equality tests since the order of the modifiers doesn't matter.
-			std::sort(std::begin(_modifiers), std::end(_modifiers));
-		}
-
-		Combo(Pressable mod0, Pressable mod1, TERMINAL_TYPE terminal)
-			: Combo(mod0, mod1, Pressable::NONE, terminal)
-		{}
-
-		Combo(Pressable mod0, TERMINAL_TYPE terminal)
-			: Combo(mod0, Pressable::NONE, terminal)
-		{}
-
-		Combo(TERMINAL_TYPE terminal)
-			: Combo(Pressable::NONE, terminal)
-		{}
-
-		bool operator==(const Combo& rhs) const
-		{
-			return (this->_terminal == rhs._terminal) && (this->_modifiers == rhs._modifiers);
-		}
-
-		TERMINAL_TYPE get_terminal() const
-		{
-			return _terminal;
-		}
-
-		const std::array<Pressable, 3>& get_modifiers() const
-		{
-			return _modifiers;
-		}
-
-	private:
-		std::array<Pressable, 3> _modifiers;
-		TERMINAL_TYPE _terminal;
-	};
-
-	typedef Combo<PressableTerminal> PressableCombo;
-	typedef Combo<MoveableTerminal> MoveableCombo;
-
 	class Mouse
 	{
 	public: 
 		void hide_cursor();
 		void show_cursor();
-		bool is_mouse_hidden() const;
+		bool is_cursor_hidden() const;
 
-		void lock_movement();
+		void lock_movement(int x, int y);
 		void unlock_movement();
 		bool is_movement_locked() const;
 
-		glm::ivec2 get_position() const;
-		glm::ivec2 get_position_delta() const;
-		int get_wheel_delta() const;
+		JSValue create_ui_api();
 
 	private:
 		friend class Input;
-		Mouse();
+		Mouse(Window& window);
+		void update_mouse_movement();
 
-		void update_position(const glm::ivec2& position);
-		void update_locked_position(const glm::ivec2& lockedPosition, const glm::ivec2& movedPosition);
-
-		glm::ivec2 _position;
-		glm::ivec2 _oldPosition;
-		int _wheelDelta;
-		bool _isMovementLocked;
-		bool _isMouseHidden;
+		Window& _window;
+		boost::optional<glm::ivec2> _lockedPosition;
 	};
 
+	JSValue create_ui_api();
+
 	Mouse& mouse();
-	void on(const PressableCombo& combo, const std::function<void(Input&)>& callback);
-	void on(const MoveableCombo& combo, const std::function<void(Input&)>& callback);
 
 	enum class PressableState
 	{
@@ -276,43 +198,10 @@ public:
 
 private:
 	friend class Window;
-
-	void prepare_for_updates();
-	void update(Pressable pressable, PressableState state);
-	void update_mouse_locked_position(const glm::ivec2& lockedPosition, const glm::ivec2& movedPosition);
-	void update_mouse_position(const glm::ivec2& xy);
-	void update_mouse_scroll_wheel(int clicks);
-
-	void invoke_bound_callback(const PressableCombo& combo);
-	void invoke_bound_callback(const MoveableCombo& combo);
-
-	void signal_pressable(PressableTerminal t);
-	void signal_moveable(MoveableTerminal m);
-
-	bool is_pressable_pressed(Pressable p) const;
-	bool are_modifiers_pressed(const std::array<Pressable, 3>& modifiers) const;
+	Input(Window& window);
+	void update_mouse_movement();
 
 	Mouse _mouse;
-
-	std::unordered_map<PressableTerminal, std::vector<PressableCombo>, PressableTerminal::Hasher> _pressableTerminalToCombos;
-	std::unordered_map<MoveableTerminal, std::vector<MoveableCombo>> _moveableTerminalToCombos;
-
-	std::unordered_map<PressableCombo, std::function<void(Input&)>, PressableCombo::Hasher> _pressableComboToCallback;
-	std::unordered_map<MoveableCombo, std::function<void(Input&)>, MoveableCombo::Hasher> _moveableComboToCallback;
-
-	std::unordered_map<Pressable, PressableState> _pressableToKeyState;
 };
-
-namespace std
-{
-	template<>
-	struct hash<Input::PressableTerminal>
-	{
-		size_t operator()(const Input::PressableTerminal& x) const
-		{
-			return  Input::PressableTerminal::Hasher()(x);
-		}
-	};
-}
 
 #pragma pop_macro("DELETE")
