@@ -33,10 +33,14 @@ require(['angular', 'directives/bullseye'], function(angular){
                 api.player.startMovingBackward();
                 break;
             case 68:
-                api.player.startMovingRight();
+                api.player.rotateYaw(0.5).then(function(){}, function(error){
+                    console.log(error);
+                });
                 break;
             case 65:
-                api.player.startMovingLeft();
+                api.player.rotateYaw(-0.5).then(function(){}, function(error){
+                    console.log(error);
+                });
                 break;
         }
     };
@@ -54,12 +58,6 @@ require(['angular', 'directives/bullseye'], function(angular){
         }
     };
 
-    window.lock = function(ev) {
-        api.input.mouse.lockMovement();
-    };
-
-    window.unlock = function(ev) {
-        api.input.mouse.unlockMovement();
-    };
-
+    document.documentElement.onmousedown = api.input.mouse.lockMovement;
+    document.documentElement.onmouseup = api.input.mouse.unlockMovement;
 });

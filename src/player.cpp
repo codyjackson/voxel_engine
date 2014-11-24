@@ -68,6 +68,23 @@ JSValue Player::create_ui_api()
 	root["startMovingLeft"] = JSValue::wrap_void_function(std::bind(&Player::start_moving_left, this));
 	root["startMovingRight"] = JSValue::wrap_void_function(std::bind(&Player::start_moving_right, this));
 	root["stopMovingLeftOrRight"] = JSValue::wrap_void_function(std::bind(&Player::stop_moving_left_or_right, this));
+	root["rotatePitch"] = [this](const JSValue::Array& args){
+		if ((args.size() != 1) || !args[0].is_double()) {
+			throw std::runtime_error("Expected degrees as the first argument.");
+		}
+
+		rotate_pitch(static_cast<float>(static_cast<double>(args[0])));
+		return JSValue::Array();
+	};
+
+	root["rotateYaw"] = [this](const JSValue::Array& args){
+		if ((args.size() != 1) || !args[0].is_double()) {
+			throw std::runtime_error("Expected degrees as the first argument.");
+		}
+
+		rotate_yaw(static_cast<float>(static_cast<double>(args[0])));
+		return JSValue::Array();
+	};
 
 	return root;
 }

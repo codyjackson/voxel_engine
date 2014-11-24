@@ -41,6 +41,72 @@ namespace
 	{
 		return Browser::Util::get_ipc_function_string_placeholder() + std::to_string(id);
 	}
+
+	JSValue::Array to_js_value(CefRefPtr<CefListValue> l);
+	JSValue::Object to_js_value(CefRefPtr<CefDictionaryValue> d)
+	{
+		JSValue::Object out;
+		CefDictionaryValue::KeyList keys;
+		d->GetKeys(keys);
+		std::for_each(std::begin(keys), std::end(keys), [&](const CefString& key){
+			switch (d->GetType(key)) {
+			case CefValueType::VTYPE_DICTIONARY:
+				out[key.ToString()] = to_js_value(d->GetDictionary(key));
+				break;
+			case CefValueType::VTYPE_LIST:
+				out[key.ToString()] = to_js_value(d->GetList(key));
+				break;
+			case CefValueType::VTYPE_BOOL:
+				out[key.ToString()] = d->GetBool(key);
+				break;
+			case CefValueType::VTYPE_DOUBLE:
+				out[key.ToString()] = d->GetDouble(key);
+				break;
+			case CefValueType::VTYPE_NULL:
+				out[key.ToString()] = JSValue::Null();
+				break;
+			case CefValueType::VTYPE_STRING:
+				out[key.ToString()] = d->GetString(key).ToString();
+				break;
+			default:
+				throw std::runtime_error("Unsupported type.");
+			};
+		});
+
+		return out;
+	}
+
+	JSValue::Array to_js_value(CefRefPtr<CefListValue> l)
+	{
+		JSValue::Array out;
+		out.reserve(l->GetSize());
+		for (size_t i = 0; i < l->GetSize(); ++i) {
+			switch (l->GetType(i)) {
+				case CefValueType::VTYPE_DICTIONARY:
+					out.push_back(to_js_value(l->GetDictionary(i)));
+				break;
+				case CefValueType::VTYPE_LIST:
+					out.push_back(to_js_value(l->GetList(i)));
+				break;
+				case CefValueType::VTYPE_BOOL:
+					out.push_back(l->GetBool(i));
+				break;
+				case CefValueType::VTYPE_DOUBLE:
+					out.push_back(l->GetDouble(i));
+				break;
+				case CefValueType::VTYPE_NULL:
+					out.push_back(JSValue::Null());
+				break;
+				case CefValueType::VTYPE_STRING:
+					out.push_back(l->GetString(i).ToString());
+				break;
+				default:
+					throw std::runtime_error("Unsupported type.");
+			};
+		}
+
+		return out;
+	}
 }
 	
 
@@ -150,7 +216,7 @@ bool Browser::Browser::Handler::OnProcessMessageReceived(CefRefPtr<CefBrowser> b
 
 	try {
 		CefRefPtr<CefProcessMessage> responseMessage = CefProcessMessage::Create(Util::get_resolve_promise_message_name());
-		auto returnArgs = _browser.to_ipc_message_arguments_helper(_browser._idToIPCFunction[args->GetInt(0)](JSValue::Array()));
+		auto returnArgs = _browser.to_ipc_message_arguments_helper(_browser._idToIPCFunction[args->GetInt(0)](to_js_value(args->GetList(2))));
 		responseMessage->GetArgumentList()->SetList(0, returnArgs);
 		responseMessage->GetArgumentList()->SetInt(1, args->GetInt(1));
 		browser->SendProcessMessage(PID_RENDERER, responseMessage);
