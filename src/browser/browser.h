@@ -60,6 +60,7 @@ namespace Browser
 
 		//CefClient methods:
 		CefRefPtr<CefRenderHandler> GetRenderHandler() override;
+		//CefRefPtr< CefLifeSpanHandler > GetLifeSpanHandler() override;
 		bool OnProcessMessageReceived(CefRefPtr<CefBrowser> browser, CefProcessId source_process, CefRefPtr<CefProcessMessage> message) override;
 
 		//CefRenderHandler methods:

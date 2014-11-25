@@ -77,6 +77,6 @@ int main(int argc, char* argv[])
 		ui.render();
 	};
 
-	MainLoop loop(onInitialize, onIterate, 1.0f/40.0f);
+	MainLoop loop(onInitialize, onIterate, 1.0f/100.0f);
     return 0;
 }

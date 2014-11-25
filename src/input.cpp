@@ -41,9 +41,17 @@ bool Input::Mouse::is_movement_locked() const
 JSValue Input::Mouse::create_ui_api()
 {
 	JSValue::Object o;
-	o["lockMovement"] = JSValue::wrap_void_function([this](){
-		lock_movement(200, 200);
-	});
+	o["lockMovement"] = [this](const JSValue::Array& args){
+		if ((args.size() != 2) || !args[0].is_double() || !args[1].is_double()) {
+			throw std::runtime_error("Expected two arguments representing the x and y coordinates of where we will lock the cursor position.");
+		}
+
+		const int x = static_cast<int>(static_cast<double>(args[0]));
+		const int y = static_cast<int>(static_cast<double>(args[1]));
+		lock_movement(x, y);
+		return JSValue::Array();
+	};
+		
 	o["unlockMovement"] = JSValue::wrap_void_function(std::bind(&Input::Mouse::unlock_movement, this));
 	o["hideCursor"] = JSValue::wrap_void_function(std::bind(&Input::Mouse::hide_cursor, this));
 	o["showCursor"] = JSValue::wrap_void_function(std::bind(&Input::Mouse::show_cursor, this));
