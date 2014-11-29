@@ -27,6 +27,7 @@ Obj/
 *.unsuccessfulbuild
 *.lastbuildstate
 *.idb
+/UI_Debug/*
 /Debug/*
 /Release/*
 /lib/*
