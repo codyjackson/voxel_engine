@@ -9,6 +9,10 @@
       <Configuration>Release</Configuration>
       <Platform>Win32</Platform>
     </ProjectConfiguration>
+    <ProjectConfiguration Include="UI_Debug|Win32">
+      <Configuration>UI_Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\browser\application.h" />
@@ -19,7 +23,6 @@
     <ClInclude Include="src\browser\util.h" />
     <ClInclude Include="src\constants\runtime_file_paths.h" />
     <ClInclude Include="src\constants\vector.h" />
-    <ClInclude Include="src\database.h" />
     <ClInclude Include="src\input.h" />
     <ClInclude Include="src\main_loop.h" />
     <ClInclude Include="src\player.h" />
@@ -59,7 +62,6 @@
     <ClCompile Include="src\browser\util.cpp" />
     <ClCompile Include="src\constants\runtime_file_paths.cpp" />
     <ClCompile Include="src\constants\vector.cpp" />
-    <ClCompile Include="src\database.cpp" />
     <ClCompile Include="src\input.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\main_loop.cpp" />
@@ -84,7 +86,7 @@
     <ResourceFiles Include="resources\**\*.pak" />
   </ItemGroup>
   <ItemGroup>
-    <DllFiles Include="lib\bin\$(configuration)\*.dll" />
+    <DebugDllFiles Include="lib\bin\debug\$(configuration)\*.dll" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{278E7F88-EEC1-4890-9995-0F89AFE54C9F}</ProjectGuid>
@@ -93,6 +95,12 @@
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v120</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='UI_Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
@@ -111,6 +119,9 @@
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='UI_Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
@@ -124,6 +135,15 @@
     <CustomBuildAfterTargets>Build</CustomBuildAfterTargets>
     <CustomBuildBeforeTargets>
     </CustomBuildBeforeTargets>
+    <PostBuildEventUseInBuild>true</PostBuildEventUseInBuild>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='UI_Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+    <SourcePath />
+    <IncludePath>$(ProjectDir)\include;$(ProjectDir)\lib\include;$(SourcePath);$(IncludePath)</IncludePath>
+    <LibraryPath>$(ProjectDir)\lib\bin\debug;$(LibraryPath)</LibraryPath>
+    <CustomBuildAfterTargets>Build</CustomBuildAfterTargets>
+    <CustomBuildBeforeTargets />
     <PostBuildEventUseInBuild>true</PostBuildEventUseInBuild>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -145,7 +165,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>sqlite3.lib;comctl32.lib;shlwapi.lib;libcef_dll_wrapper.lib;libcef.lib;glfw3_debug.lib;opengl32.lib;glu32.lib;libboost_filesystem-vc120-sgd-1_55.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>comctl32.lib;shlwapi.lib;libcef_dll_wrapper.lib;libcef.lib;glfw3_debug.lib;opengl32.lib;glu32.lib;libboost_filesystem-vc120-sgd-1_55.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>
@@ -165,6 +185,31 @@ if %errorlevel% == -1 (
       <Outputs>non_existant_always_runs.txt</Outputs>
     </CustomBuildStep>
   </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='UI_Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>UI_LOCALHOST;WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <TreatWarningAsError>true</TreatWarningAsError>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>comctl32.lib;shlwapi.lib;libcef_dll_wrapper.lib;libcef.lib;glfw3_debug.lib;opengl32.lib;glu32.lib;libboost_filesystem-vc120-sgd-1_55.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+    <PostBuildEvent>
+      <Command>
+      </Command>
+    </PostBuildEvent>
+    <CustomBuildStep>
+      <Command>
+      </Command>
+      <Outputs>non_existant_always_runs.txt</Outputs>
+    </CustomBuildStep>
+  </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
@@ -180,7 +225,7 @@ if %errorlevel% == -1 (
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>sqlite3.lib;comctl32.lib;shlwapi.lib;libcef_dll_wrapper.lib;libcef.lib;glfw3.lib;opengl32.lib;glu32.lib;boost_filesystem.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>comctl32.lib;shlwapi.lib;libcef_dll_wrapper.lib;libcef.lib;glfw3.lib;opengl32.lib;glu32.lib;boost_filesystem.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>
@@ -205,7 +250,7 @@ if %errorlevel% == -1 (
     <Copy SourceFiles="@(ResourceFiles)" DestinationFolder="$(OutDir)%(RecursiveDir)" SkipUnchangedFiles="true">
       <Output TaskParameter="CopiedFiles" ItemName="SuccessfullyCopiedFiles" />
     </Copy>
-    <Copy SourceFiles="@(DllFiles)" DestinationFolder="$(OutDir)%(RecursiveDir)" SkipUnchangedFiles="true">
+    <Copy SourceFiles="@(DebugDllFiles)" DestinationFolder="$(OutDir)%(RecursiveDir)" SkipUnchangedFiles="true">
       <Output TaskParameter="CopiedFiles" ItemName="SuccessfullyCopiedFiles" />
     </Copy>
   </Target>

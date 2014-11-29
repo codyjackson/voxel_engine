@@ -18,7 +18,7 @@ AxiallyAligned::Voxel::Face ChunkVault::Intersected::get_face() const
 }
 
 ChunkVault::ChunkVault(float voxelSideLength, const glm::vec3& originLocationInWorld)
-:_temporaryMap("temporaryMap.db"), _voxelSideLength(voxelSideLength)
+: _voxelSideLength(voxelSideLength)
 {
 	add_empty_chunk(glm::ivec3(0, 0, 0))->add_voxel(glm::ivec3(0, 0, 0), Color(0xFF, 0xFF, 0xFF, 0xFF));
 }

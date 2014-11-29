@@ -102,9 +102,6 @@
     <ClInclude Include="src\ui.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="src\database.h">
-      <Filter>src</Filter>
-    </ClInclude>
     <ClInclude Include="src\spatial\intersection.h">
       <Filter>src\spatial</Filter>
     </ClInclude>
@@ -183,9 +180,6 @@
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="src\player.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="src\database.cpp">
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="src\input.cpp">

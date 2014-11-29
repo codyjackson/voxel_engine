@@ -20,6 +20,8 @@ namespace Browser
 		virtual bool OnProcessMessageReceived(CefRefPtr< CefBrowser > browser, CefProcessId source_process, CefRefPtr< CefProcessMessage > message) override;
 
 	private:
+		void register_api(CefRefPtr<CefV8Context> context);
+
 		void on_register_api(CefRefPtr< CefBrowser > browser, CefRefPtr< CefListValue > arguments);
 		void on_resolve_promise(CefRefPtr< CefBrowser > browser, CefRefPtr< CefListValue > arguments);
 		void on_reject_promise(CefRefPtr< CefBrowser > browser, CefRefPtr< CefListValue > arguments);
@@ -30,6 +32,7 @@ namespace Browser
 		void to_cef_v8_value_helper(CefRefPtr<CefListValue> val, CefRefPtr<CefV8Value>& out);
 		void to_cef_v8_value_list(CefRefPtr<CefListValue> val, CefV8ValueList& out);
 
+		CefRefPtr<CefDictionaryValue> _api;
 		std::unordered_map<int, Deferred> _idToDeferred;
 		CefRefPtr< CefV8Context > _context;
 		CefRefPtr< CefBrowser > _browser;

@@ -148,6 +148,11 @@ namespace Browser
 	{
 		_context = context;
 		_browser = browser;
+
+		if (_api.get() == nullptr) {
+			return;
+		}
+		register_api(context);
 	}
 
 	bool RenderProcessHandler::OnProcessMessageReceived(CefRefPtr< CefBrowser > browser, CefProcessId source_process, CefRefPtr< CefProcessMessage > message)
@@ -162,13 +167,19 @@ namespace Browser
 		return true;
 	}
 
+	void RenderProcessHandler::register_api(CefRefPtr<CefV8Context> context)
+	{
+		Util::ContextOpener contextOpener(context);
+		CefRefPtr<CefV8Value> global = contextOpener.get()->GetGlobal();
+		CefRefPtr<CefV8Value> val;
+		to_cef_v8_value_helper(_api, val);
+		global->SetValue(CefString("api"), val, CefV8Value::PropertyAttribute::V8_PROPERTY_ATTRIBUTE_NONE);
+	}
+
 	void RenderProcessHandler::on_register_api(CefRefPtr< CefBrowser > browser, CefRefPtr< CefListValue > arguments)
 	{
-		Util::ContextOpener context(browser->GetMainFrame()->GetV8Context());
-		CefRefPtr<CefV8Value> global = context.get()->GetGlobal();
-		CefRefPtr<CefV8Value> val;
-		to_cef_v8_value_helper(arguments->GetDictionary(0), val);
-		global->SetValue(CefString("api"), val, CefV8Value::PropertyAttribute::V8_PROPERTY_ATTRIBUTE_NONE);
+		_api = arguments->GetDictionary(0)->Copy(false);
+		register_api(browser->GetMainFrame()->GetV8Context());
 	}
 
 	void RenderProcessHandler::on_resolve_promise(CefRefPtr< CefBrowser > browser, CefRefPtr< CefListValue > arguments)

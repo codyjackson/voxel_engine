@@ -10,7 +10,11 @@
 UI::UI()
 :_browser(Browser::Browser::make(std::bind(&UI::update_texture, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)))
 {
-	_browser->load_url(Constants::RuntimeFilePaths::ui_index.string());
+	#ifdef UI_LOCALHOST
+		_browser->load_url(Constants::RuntimeFilePaths::ui_localhost_path);
+	#else
+		_browser->load_url(Constants::RuntimeFilePaths::ui_index.string());
+	#endif 
 }
 
 UI::~UI()
