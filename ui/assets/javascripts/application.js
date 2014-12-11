@@ -14,39 +14,43 @@ require.config({
     },
 });
 
-require(['angular', 'directives/bullseye'], function(angular){
-    var app = angular.module('ui', ['bullseye']);
-    app.controller('GlobalController', ['$rootScope', function($rootScope){
+require(['angular', 'directives/bullseye', '../modules/color-picker/color-sv-picker', '../modules/color-picker/color-hue-picker'], function(angular){
+    var app = angular.module('ui', ['bullseye', 'color-picker']);
+    app.factory('$mouseNavigation', [function(){
+        var isMouseAssociated = false;
+        var mouseLockLocation = {x: window.innerWidth/2, y:window.innerHeight/2};
+        return {
+            toggleMousePlayerAssociation: function(){
+                isMouseAssociated = !isMouseAssociated;
+                if(isMouseAssociated) {
+                    api.input.mouse.lockMovement(mouseLockLocation.x, mouseLockLocation.y);
+                    api.input.mouse.hideCursor();
+                } else {
+                    api.input.mouse.unlockMovement();
+                    api.input.mouse.showCursor();
+                }
+            },
+            mouseMove: function(x, y) {
+                if(isMouseAssociated) {
+                    var dx = x - mouseLockLocation.x;
+                    var dy = y - mouseLockLocation.y;
+
+                    api.player.rotate(dx*0.5, dy*0.5);
+                }
+            }
+        };
+    }]);
+
+    app.controller('GlobalController', ['$rootScope', '$mouseNavigation', function($rootScope, $mouseNavigation){
+        $rootScope.test = { hue: 30};
+        $rootScope.$watch(function(){return $rootScope.test.hue;}, function(){
+            console.log($rootScope.test.hue);
+        });
         var mouseDown = false;
         var changingOrientation = false;
         var lockedLocation = {x:0, y:0};
         $rootScope.onMouseMove = function(ev) {
-            if(!mouseDown) {
-                return;
-            }
-
-            if(!changingOrientation) {
-                api.input.mouse.hideCursor();
-            }
-
-            changingOrientation = true;
-            var dx = ev.screenX - lockedLocation.x;
-            var dy = ev.screenY - lockedLocation.y;
-            api.player.rotate(dx*0.5, dy*0.5);
-        };
-
-        $rootScope.onMouseDown = function(ev) {
-            mouseDown = true;
-            lockedLocation.x = ev.screenX 
-            lockedLocation.y = ev.screenY;
-            api.input.mouse.lockMovement(lockedLocation.x, lockedLocation.y);
-        };
-
-        $rootScope.onMouseUp = function(ev) {
-            changingOrientation = false;
-            mouseDown = false;
-            api.input.mouse.unlockMovement();
-            api.input.mouse.showCursor();
+            $mouseNavigation.mouseMove(ev.screenX, ev.screenY);
         };
     }]);
 
@@ -54,6 +58,8 @@ require(['angular', 'directives/bullseye'], function(angular){
         angular.bootstrap(document, ['ui']);
     });
 
+    var angularInjector = angular.element(document).injector();
+    var mouseNavigationService = angularInjector.get('$mouseNavigation');
     window.onkeydown = function(ev){
         switch(ev.keyCode) {
             case 87:
@@ -73,6 +79,9 @@ require(['angular', 'directives/bullseye'], function(angular){
 
     window.onkeyup = function(ev){
         switch(ev.keyCode) {
+            case 341:
+                mouseNavigationService.toggleMousePlayerAssociation();
+                break;
             case 87:
             case 83:
                 api.player.stopMovingForwardOrBackward();

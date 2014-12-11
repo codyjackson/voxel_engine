@@ -5,6 +5,7 @@
     "jquery": "2.0.3",
     "angularjs": "*",
     "angular-route": "~1.2.16",
-    "requirejs": "2.1.8"
+    "requirejs": "2.1.8",
+    "angular-minicolors": "~0.0.5"
   }
 }

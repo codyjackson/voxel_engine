@@ -1,3 +1,16 @@
+@primary-dark-color: #222;
+@primary-med-color: blue;
+@primary-light-color: white;
+@accent-dark-color: #000;
+@accent-med-color: #444;
+@accent-light-color: white;
+
+@dialog-border-radius: 5px;
+@dialog-border: 1px solid @accent-dark-color;
+@dialog-box-shadow: 2px 2px 2px @accent-med-color;
+
+@import "../modules/color-picker/style.less";
+
 @blue: #5B83AD;
 @yellow: #FFFFE0;
 
@@ -6,6 +19,7 @@
 }
 
 html, body {
+  -webkit-user-select: none; 
   margin: 0;
   padding: 0;
 
@@ -18,4 +32,8 @@ html, body {
 .crosshair {
   font-size: 32px;
   color: #FFF;
+}
+
+.minicolors-panel {
+    box-shadow: none;
 }

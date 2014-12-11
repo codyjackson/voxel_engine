@@ -1,0 +1,107 @@
+@color-picker-height: 250px;
+@color-picker-width: 355px;
+@color-picker-padding: 10px;
+
+@picker-side-length: @color-picker-height - (@color-picker-padding * 2);
+@picker-spacing: 12px;
+
+@hue-indicator-width: 20px;
+@hue-indicator-font-size: 10px;
+
+.color-picker {
+    select: none;
+    background-color: @primary-dark-color;
+
+    border: @dialog-border;
+    border-radius: @dialog-border-radius;
+    box-shadow: @dialog-box-shadow;
+
+    position: absolute;
+    top: -@color-picker-height;
+
+    width: @color-picker-width;
+    height: @color-picker-height;
+
+    [color-sv-picker] {
+        position: absolute;
+        top: @color-picker-padding;
+        left: @color-picker-padding;
+
+        width: @picker-side-length;
+        height: @picker-side-length;
+    }
+
+    [color-hue-picker] {
+        position: absolute;
+        top: @color-picker-padding;
+        left: @picker-side-length + @color-picker-padding + @picker-spacing;
+
+        width: 20px;
+        height: @picker-side-length;
+        overflow: visible;
+
+        .indicator {
+            position: absolute;
+            top: 0;
+            width: @hue-indicator-width;
+
+            font-size: @hue-indicator-font-size;
+            color: #fff;
+            text-shadow:
+            -1px -1px 0 #000,
+            1px -1px 0 #000,
+            -1px 1px 0 #000,
+            1px 1px 0 #000;  
+        }
+
+        .indicator::before {
+            position: absolute;
+            left: -@hue-indicator-font-size;
+            top: -@hue-indicator-font-size + 2;
+            content: '▶';
+        }
+
+        .indicator::after {
+            position: absolute;
+            left: @hue-indicator-width + 1;
+            top: -@hue-indicator-font-size + 2;
+            content: '◀';
+        }
+    }
+
+    .right {
+        position: absolute;
+        top: @color-picker-padding;
+        right: @color-picker-padding;
+
+        height: @picker-side-length;
+    }
+}
+
+
+
+.color-swatch {
+    position: relative;
+    width: 40px;
+    height: 40px;
+
+    .border {
+        position: absolute;
+        left: 0;
+        top: 0;
+        right: 0;
+        bottom: 0;
+
+        border-radius: 3px;
+
+        overflow: hidden;
+
+        .color {
+            position: absolute;
+            left: 0;
+            top: 0;
+            right: 0;
+            bottom: 0;
+        }
+    }
+}
