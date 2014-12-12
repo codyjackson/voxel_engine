@@ -13,7 +13,7 @@ define(['angular', './color-picker', './color-utils'], function(angular, colorPi
         }
         return {
             restrict: 'A',
-            template: '<canvas ng-mousemove="onMouseMove($event)"></canvas><div class="indicator"></div>',
+            template: '<canvas></canvas><div class="indicator"></div>',
             transclude: true,
             replace: false,
             require: '?ngModel',

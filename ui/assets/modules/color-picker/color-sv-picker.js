@@ -1,21 +1,36 @@
 define(['./color-picker', './color-utils'], function(colorPicker, colorUtils){
 
     colorPicker.directive('colorSvPicker', ['colorUtils', function(colorUtils){
+        function constrain(x, low, high) {
+            if(x < low) {
+                return low;
+            }
+
+            if(x > high) {
+                return high;
+            }
+
+            return x;
+        }
         return {
             restrict: 'A',
-            template: '<canvas></canvas>',
+            template: '<canvas></canvas><div class="indicator"></div>',
             transclude: true,
-            replace: true,
+            replace: false,
+            require: '?ngModel',
             scope: {
                 ngModel: '=',
                 hue: '='
             },
-            link: function(scope, element, attrs) {
-                var canvasElement = $(element)[0];
+            link: function(scope, element, attrs, ngModelController) {
+                if(!ngModelController) {
+                    throw "Couldn't find ng-model";
+                }
+                var canvasElement = $(element).find('canvas')[0];
                 var context = canvasElement.getContext('2d');
                 var rect = {
-                    width: $(canvasElement).innerWidth(),
-                    height: $(canvasElement).innerHeight()
+                    width: $(element).innerWidth(),
+                    height: $(element).innerHeight()
                 };
                 context.canvas.width = rect.width;
                 context.canvas.height = rect.height;
@@ -43,6 +58,26 @@ define(['./color-picker', './color-utils'], function(colorPicker, colorUtils){
                         }
                     }
                     context.putImageData(image, 0, 0);
+                });
+
+                var indicatorElement = $(element).find('.indicator');
+                ngModelController.$render = function(){
+                    indicatorElement.css({left: indicatorPos.x, top: indicatorPos.y});
+                };
+
+                var indicatorPos = {x: 0, y: 0};
+                function updateModelsFromMouseEvent(event) {
+                    indicatorPos.x = constrain(event.pageX - $(element).offset().left, 0, rect.width);
+                    indicatorPos.y = constrain(event.pageY - $(element).offset().top, 0, rect.height);
+                    ngModelController.$render();
+                }
+                $(element).on('mousedown', function(event){
+                    $(document).on('mousemove', updateModelsFromMouseEvent);
+                    $(document).on('mouseup', function(){
+                        $(document).off('mousemove');
+                        $(document).off('mouseup');
+                    });
+                    updateModelsFromMouseEvent(event);
                 });
             },
             controller: ['$scope', function($scope){

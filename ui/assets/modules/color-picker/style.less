@@ -29,6 +29,31 @@
 
         width: @picker-side-length;
         height: @picker-side-length;
+
+        .indicator {
+            position: absolute;
+            top: 0;
+            left: 0;
+
+            width: 0;
+            height: 0;
+        }
+
+        .indicator::before {
+            position: absolute;
+            top: -12px;
+            content: '̊';
+
+            font-weight: bold;
+            font-size: 40px;
+
+            color: #FFF;
+            text-shadow:
+            -1px -1px 0 #000,
+            1px -1px 0 #000,
+            -1px 1px 0 #000,
+            1px 1px 0 #000;  
+        }
     }
 
     [color-hue-picker] {
