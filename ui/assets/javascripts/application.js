@@ -43,9 +43,6 @@ require(['angular', 'directives/bullseye', '../modules/color-picker/color-sv-pic
 
     app.controller('GlobalController', ['$rootScope', '$mouseNavigation', function($rootScope, $mouseNavigation){
         $rootScope.test = { hue: 30};
-        $rootScope.$watch(function(){return $rootScope.test.hue;}, function(){
-            console.log($rootScope.test.hue);
-        });
         var mouseDown = false;
         var changingOrientation = false;
         var lockedLocation = {x:0, y:0};

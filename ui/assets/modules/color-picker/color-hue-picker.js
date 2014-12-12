@@ -61,17 +61,22 @@ define(['angular', './color-picker', './color-utils'], function(angular, colorPi
                 }
                 context.putImageData(image, 0, 0);
 
+                var localHue = null;
                 var indicatorY = ngModelController.$viewValue / dy;
                 var indicatorElement = $(element).find('.indicator');
                 ngModelController.$render = function() {
                     indicatorElement.css({ top: indicatorY + 'px'});
                 };
+
+                function invertY(y){
+                    return rect.height - y;
+                }
+
                 function updateModelsFromMouseEvent(event) {
                     indicatorY = constrain(event.pageY - $(element).offset().top, 0, rect.height);
-                    var hue = (indicatorY * dy) % 360;
-                    ngModelController.$setViewValue(hue);
+                    localHue = (invertY(indicatorY) * dy) % 360;
+                    ngModelController.$setViewValue(localHue);
                     ngModelController.$render();
-                    scope.$apply();
                 }
                 $(element).on('mousedown', function(event){
                     $(document).on('mousemove', updateModelsFromMouseEvent);
@@ -82,8 +87,12 @@ define(['angular', './color-picker', './color-utils'], function(angular, colorPi
                     updateModelsFromMouseEvent(event);
                 });
                 scope.$watch('ngModel', function(hue){
-                   indicatorY = constrain(hue / dy, 0, rect.height);
-                   ngModelController.$render();
+                    if(localHue === hue) {
+                        return;
+                    }
+                    localHue = hue;
+                    indicatorY = invertY(constrain(hue / dy, 0, rect.height));
+                    ngModelController.$render();
                 });
             },
             controller: ['$scope', function($scope){
