@@ -14,7 +14,7 @@ require.config({
     },
 });
 
-require(['angular', 'directives/bullseye', '../modules/color-picker/color-sv-picker', '../modules/color-picker/color-hue-picker'], function(angular){
+require(['angular', 'directives/bullseye', '../modules/color-picker/color-picker'], function(angular){
     var app = angular.module('ui', ['bullseye', 'color-picker']);
     app.factory('$mouseNavigation', [function(){
         var isMouseAssociated = false;
@@ -51,8 +51,16 @@ require(['angular', 'directives/bullseye', '../modules/color-picker/color-sv-pic
             $mouseNavigation.mouseMove(ev.screenX, ev.screenY);
         };
 
-        $scope.$watch('test.saturation', function(saturation){
-            console.log(saturation);
+        $scope.$watch('hue', function(hue){
+            
+        });
+
+        $scope.$watch('saturation', function(saturation){
+
+        });
+
+        $scope.$watch('value', function(saturation){
+            
         });
     }]);
 

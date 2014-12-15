@@ -1,5 +1,5 @@
-define(['angular', './color-picker', './color-utils'], function(angular, colorPicker, colorUtils){
-    colorPicker.directive('colorHuePicker', ['colorUtils', '$timeout', '$parse', function(colorUtils, $timeout, $parse){
+define(['angular', './module-declaration', './color-utils'], function(angular, colorPickerModule, colorUtils){
+    colorPickerModule.directive('colorHuePicker', ['colorUtils', '$timeout', '$parse', function(colorUtils, $timeout, $parse){
         function constrain(x, low, high) {
             if(x < low) {
                 return low;
@@ -71,6 +71,7 @@ define(['angular', './color-picker', './color-utils'], function(angular, colorPi
                         scope.hue = (invertY(indicatorY) * dy) % 360;
                     });
                 }
+
                 $(element).on('mousedown', function(event){
                     $(document).on('mousemove', updateModelsFromMouseEvent);
                     $(document).on('mouseup', function(){
@@ -79,6 +80,7 @@ define(['angular', './color-picker', './color-utils'], function(angular, colorPi
                     });
                     updateModelsFromMouseEvent(event);
                 });
+                
                 scope.$watch('hue', function(hue){
                     if(indicatorY !== 0 || hue !== 0) {
                         indicatorY = invertY(constrain(hue / dy, 0, rect.height));

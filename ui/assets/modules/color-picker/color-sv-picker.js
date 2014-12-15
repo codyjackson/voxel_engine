@@ -1,6 +1,6 @@
-define(['./color-picker', './color-utils'], function(colorPicker, colorUtils){
+define(['./module-declaration', './color-utils'], function(colorPickerModule, colorUtils){
 
-    colorPicker.directive('colorSvPicker', ['colorUtils', '$parse', function(colorUtils, $parse){
+    colorPickerModule.directive('colorSvPicker', ['colorUtils', '$parse', function(colorUtils, $parse){
         function constrain(x, low, high) {
             if(x < low) {
                 return low;
@@ -12,22 +12,18 @@ define(['./color-picker', './color-utils'], function(colorPicker, colorUtils){
 
             return x;
         }
+
         return {
             restrict: 'A',
             template: '<canvas></canvas><div class="indicator"></div>',
             transclude: true,
             replace: false,
-            require: '?ngModel',
             scope: {
-                ngModel: '=',
                 hue: '=',
                 saturation: '=',
                 value: '='
             },
-            link: function(scope, element, attrs, ngModelController) {
-                if(!ngModelController) {
-                    throw "Couldn't find ng-model";
-                }
+            link: function(scope, element, attrs) {
                 var canvasElement = $(element).find('canvas')[0];
                 var context = canvasElement.getContext('2d');
                 var rect = {
@@ -39,14 +35,6 @@ define(['./color-picker', './color-utils'], function(colorPicker, colorUtils){
                 var image = context.createImageData(rect.width, rect.height);
                 var imageData = image.data;
                 var numberOfColorChannels = 4;
-
-                function calculateSaturation(x) {
-                    return x / (rect.width - 1);
-                }
-
-                function calculateValue(y) {
-                    return 1 - (y / (rect.height - 1));
-                }
 
                 scope.$watch('hue', function(){
                     for(var i = 0; i < imageData.length; ++i) {
@@ -71,19 +59,33 @@ define(['./color-picker', './color-utils'], function(colorPicker, colorUtils){
                 });
 
                 var indicatorElement = $(element).find('.indicator');
-                ngModelController.$render = function(){
-                    indicatorElement.css({left: indicatorPos.x, top: indicatorPos.y});
-                };
-
-                scope.saturation = 200;
                 var indicatorPos = {x: 0, y: 0};
-                function updateModelsFromMouseEvent(event) {
-                    indicatorPos.x = event.pageX - $(element).offset().left;
-                    indicatorPos.y = event.pageY - $(element).offset().top;
-                    ngModelController.$render();
-                    scope.saturation = calculateSaturation(indicatorPos.x);
-                    scope.$apply();
+
+                function calculateSaturation(x) {
+                    return x / (rect.width - 1);
                 }
+
+                function calculateX(saturation) {
+                    return saturation * (rect.width - 1);
+                }
+
+                function calculateValue(y) {
+                    return 1 - (y / (rect.height - 1));
+                }
+
+                function calculateY(value) {
+                    return (value - 1) * -(rect.height - 1);
+                }
+
+                function updateModelsFromMouseEvent(event) {
+                    scope.$apply(function(){
+                        indicatorPos.x = constrain(event.pageX - $(element).offset().left, 0, rect.width);
+                        indicatorPos.y = constrain(event.pageY - $(element).offset().top, 0, rect.height);
+                        scope.saturation = constrain(calculateSaturation(indicatorPos.x), 0, 1);
+                        scope.value = constrain(calculateValue(indicatorPos.y), 0, 1);
+                    });
+                }
+
                 $(element).on('mousedown', function(event){
                     $(document).on('mousemove', updateModelsFromMouseEvent);
                     $(document).on('mouseup', function(){
@@ -91,6 +93,20 @@ define(['./color-picker', './color-utils'], function(colorPicker, colorUtils){
                         $(document).off('mouseup');
                     });
                     updateModelsFromMouseEvent(event);
+                });
+
+                function render() {
+                    indicatorElement.css({left: indicatorPos.x, top: indicatorPos.y});
+                }
+
+                scope.$watch('saturation', function(saturation){
+                    indicatorPos.x = calculateX(saturation);
+                    render();
+                });
+
+                scope.$watch('value', function(value){
+                    indicatorPos.y = calculateY(value);
+                    render();
                 });
             },
             controller: ['$scope', function($scope){

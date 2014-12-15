@@ -1,6 +1,5 @@
-define(['angular', './color-picker'], function(angular, colorPicker){
-    console.log('hello');
-    colorPicker
+define(['angular', './module-declaration'], function(angular, colorPickerModule){
+    colorPickerModule
     .factory('colorUtils', [function(){
         function isBetween(x, lower, upper) {
             return (lower <= x ) && (x < upper);
@@ -57,6 +56,10 @@ define(['angular', './color-picker'], function(angular, colorPicker){
             this.g = g;
             this.b = b;
         }
+
+        Rgb.prototype.toRgbString = function() {
+            return 'rgb(' + Math.floor(this.r) + ',' + Math.floor(this.g) + ',' + Math.floor(this.b) + ')';
+        };
 
         return {
            Hsv: Hsv,
