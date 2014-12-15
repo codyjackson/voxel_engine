@@ -5,7 +5,8 @@ define(['angular'], function(angular){
             restrict: 'E',
             template: '<div style="min-height: 100%; min-width: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center;"><div ng-transclude></div></div>',
             transclude: true,
-            replace: true
+            replace: true,
+            scope: false
         };
     }]);
 });

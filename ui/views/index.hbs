@@ -13,8 +13,8 @@
       <bullseye ng-mousemove="onMouseMove($event)" ng-mousedown="onMouseDown($event)" ng-mouseup="onMouseUp($event)">
         <div style="position: relative">
           <div class="color-picker">
-            <div color-sv-picker ng-model="test.sv" hue="test.hue"></div>
-            <div color-hue-picker ng-model="test.hue"></div>
+            <div color-sv-picker ng-model="test.sv" hue="test.hue" saturation="test.saturation" value="value"></div>
+            <div color-hue-picker hue="test.hue"></div>
             <div class="right">
               <input type="button" value="Cancel">
               <br>

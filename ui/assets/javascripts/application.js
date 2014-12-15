@@ -41,14 +41,19 @@ require(['angular', 'directives/bullseye', '../modules/color-picker/color-sv-pic
         };
     }]);
 
-    app.controller('GlobalController', ['$rootScope', '$mouseNavigation', function($rootScope, $mouseNavigation){
-        $rootScope.test = { hue: 30};
+    app.controller('GlobalController', ['$rootScope', '$mouseNavigation', '$scope', function($rootScope, $mouseNavigation, $scope){
+        $scope.foo = "lame";
+        $rootScope.test = { hue: 30, saturation: 40};
         var mouseDown = false;
         var changingOrientation = false;
         var lockedLocation = {x:0, y:0};
         $rootScope.onMouseMove = function(ev) {
             $mouseNavigation.mouseMove(ev.screenX, ev.screenY);
         };
+
+        $scope.$watch('test.saturation', function(saturation){
+            console.log(saturation);
+        });
     }]);
 
     angular.element(document).ready(function(){

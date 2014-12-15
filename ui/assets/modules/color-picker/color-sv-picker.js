@@ -1,6 +1,6 @@
 define(['./color-picker', './color-utils'], function(colorPicker, colorUtils){
 
-    colorPicker.directive('colorSvPicker', ['colorUtils', function(colorUtils){
+    colorPicker.directive('colorSvPicker', ['colorUtils', '$parse', function(colorUtils, $parse){
         function constrain(x, low, high) {
             if(x < low) {
                 return low;
@@ -20,7 +20,9 @@ define(['./color-picker', './color-utils'], function(colorPicker, colorUtils){
             require: '?ngModel',
             scope: {
                 ngModel: '=',
-                hue: '='
+                hue: '=',
+                saturation: '=',
+                value: '='
             },
             link: function(scope, element, attrs, ngModelController) {
                 if(!ngModelController) {
@@ -38,6 +40,14 @@ define(['./color-picker', './color-utils'], function(colorPicker, colorUtils){
                 var imageData = image.data;
                 var numberOfColorChannels = 4;
 
+                function calculateSaturation(x) {
+                    return x / (rect.width - 1);
+                }
+
+                function calculateValue(y) {
+                    return 1 - (y / (rect.height - 1));
+                }
+
                 scope.$watch('hue', function(){
                     for(var i = 0; i < imageData.length; ++i) {
                         imageData[i] = 255;
@@ -47,8 +57,8 @@ define(['./color-picker', './color-utils'], function(colorPicker, colorUtils){
                         for(var x = 0; x < rect.width; ++x) {
                             var i = ((rect.width * y) + x) * numberOfColorChannels;
                             var h = scope.hue;
-                            var s = x / (rect.width - 1);
-                            var v = 1 - (y / (rect.height - 1));
+                            var s = calculateSaturation(x);
+                            var v = calculateValue(y);
                             var hsv = new colorUtils.Hsv(h, s, v);
                             var rgb = hsv.toRgb();
                             imageData[i+0] = rgb.r;
@@ -65,11 +75,14 @@ define(['./color-picker', './color-utils'], function(colorPicker, colorUtils){
                     indicatorElement.css({left: indicatorPos.x, top: indicatorPos.y});
                 };
 
+                scope.saturation = 200;
                 var indicatorPos = {x: 0, y: 0};
                 function updateModelsFromMouseEvent(event) {
-                    indicatorPos.x = constrain(event.pageX - $(element).offset().left, 0, rect.width);
-                    indicatorPos.y = constrain(event.pageY - $(element).offset().top, 0, rect.height);
+                    indicatorPos.x = event.pageX - $(element).offset().left;
+                    indicatorPos.y = event.pageY - $(element).offset().top;
                     ngModelController.$render();
+                    scope.saturation = calculateSaturation(indicatorPos.x);
+                    scope.$apply();
                 }
                 $(element).on('mousedown', function(event){
                     $(document).on('mousemove', updateModelsFromMouseEvent);
