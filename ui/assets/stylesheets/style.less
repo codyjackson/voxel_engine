@@ -51,6 +51,24 @@
   background-color: lighten(@positive-color, 5%);
 }
 
+.input {
+  padding: @input-padding;
+
+  border-width: 1px;
+  border-style: solid;
+  border-radius: @input-border-radius;
+  border-color: lighten(#DDD, 10%);
+
+  box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+
+  color: #555;
+  background-color: #DDD;
+}
+
+.input:focus {
+  outline: 0;
+}
+
 @import "../modules/color-picker/style.less";
 
 @blue: #5B83AD;

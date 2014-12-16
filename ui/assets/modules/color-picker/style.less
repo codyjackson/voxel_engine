@@ -1,5 +1,5 @@
 @color-picker-height: 250px;
-@color-picker-width: 355px;
+@color-picker-width: 370px;
 @color-picker-padding: 10px;
 
 @picker-side-length: @color-picker-height - (@color-picker-padding * 2);
@@ -95,7 +95,7 @@
     }
 
     .right {
-        width: 62px;
+        width: 75px;
         height: @picker-side-length;
 
         position: absolute;
@@ -114,8 +114,17 @@
             left: 0;
             right: 0;
 
-            input:first-child {
+            input:nth-child(2), .hex {
                 margin-bottom: 6px;
+            }
+
+            .hex {
+                color: #FFF;
+                text-align: right;
+                input {
+                    width: 50px;
+                    text-transform: lowercase;
+                }
             }
         }
     }
