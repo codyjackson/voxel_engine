@@ -95,17 +95,29 @@
     }
 
     .right {
+        width: 62px;
+        height: @picker-side-length;
+
         position: absolute;
         top: @color-picker-padding;
+        bottom: @color-picker-padding;
         right: @color-picker-padding;
-
-        height: @picker-side-length;
 
         .color-staging-area {
             width: 100%;
             padding-top: 100%;
         }
 
+        .bottom {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+
+            input:first-child {
+                margin-bottom: 6px;
+            }
+        }
     }
 }
 

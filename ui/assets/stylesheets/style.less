@@ -4,10 +4,52 @@
 @accent-dark-color: #000;
 @accent-med-color: #444;
 @accent-light-color: white;
+@positive-color: #456580;
+@neutral-color: #454545;
+@negative-color: red;
 
 @dialog-border-radius: 5px;
 @dialog-border: 1px solid @accent-dark-color;
 @dialog-box-shadow: 2px 2px 2px @accent-med-color;
+
+@input-border-radius: 2px;
+@input-padding: 4px;
+
+.full-width {
+  width: 100%;
+}
+
+.btn {
+  cursor: pointer;
+  padding: @input-padding;
+
+  border-width: 1px;
+  border-style: solid;
+  border-radius: @input-border-radius;
+  border-color: lighten(@neutral-color, 10%);
+
+  background-color: @neutral-color;
+
+  color: #FFF;
+}
+
+.btn:hover {
+  background-color: lighten(@neutral-color, 5%);
+}
+
+.btn:focus {
+  outline: 0;
+  box-shadow: rgba(0, 0, 0, 0.121569) 0px 3px 5px 0px inset;
+}
+
+.btn-positive {
+  background-color: @positive-color;
+  border-color: lighten(@positive-color, 10%);
+}
+
+.btn-positive:hover {
+  background-color: lighten(@positive-color, 5%);
+}
 
 @import "../modules/color-picker/style.less";
 
