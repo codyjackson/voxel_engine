@@ -37,10 +37,6 @@ define(['./module-declaration', './color-utils'], function(colorPickerModule, co
                 var numberOfColorChannels = 4;
 
                 scope.$watch('hue', function(){
-                    for(var i = 0; i < imageData.length; ++i) {
-                        imageData[i] = 255;
-                    }
-                    console.log("test:" + scope.hue);
                     for(var y = 0; y < rect.height; ++y) {
                         for(var x = 0; x < rect.width; ++x) {
                             var i = ((rect.width * y) + x) * numberOfColorChannels;

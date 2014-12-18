@@ -61,6 +61,12 @@ define(['angular', './module-declaration'], function(angular, colorPickerModule)
             return 'rgb(' + Math.floor(this.r) + ',' + Math.floor(this.g) + ',' + Math.floor(this.b) + ')';
         };
 
+        Rgb.prototype.toHexString = function() {
+            var hex = ((this.r << 16) | (this.g << 8) | this.b).toString(16).substr(-6);
+            var paddedHex = ('000000' + hex).substr(-6);
+            return '#' + paddedHex;
+        };
+
         return {
            Hsv: Hsv,
            Rgb: Rgb
