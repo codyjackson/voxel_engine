@@ -5,7 +5,7 @@
         <div class="color-staging-area" ng-style="stagingAreaBackgroundColor"></div>
         <div class="bottom">
             <div class="hex">
-                # <input type="text" class="input" ng-model="currentColor" maxlength="6">
+                # <input type="text" class="input" ng-model="currentColor" maxlength="6" ng-change="updateCurrentColorFromHexInput(currentColor)">
             </div>
             <input type="button" value="Cancel" class="btn full-width">
             <br>

@@ -67,6 +67,29 @@ define(['angular', './module-declaration'], function(angular, colorPickerModule)
             return '#' + paddedHex;
         };
 
+        Rgb.prototype.toHsv = function(){
+            //Using algorithm described at: http://www.javascripter.net/faq/rgb2hsv.htm
+            var r = this.r/255;
+            var g = this.g/255;
+            var b = this.b/255;
+
+            var minRGB = Math.min(r, g, b);
+            var maxRGB = Math.max(r, g, b);
+            var dMaxMin = maxRGB - minRGB;
+
+            if(minRGB === maxRGB) {
+                return new Hsv(0, 0, minRGB);
+            }
+
+            var d = (r==minRGB) ? g-b : ((b==minRGB) ? r-g : b-r);
+            var h = (r==minRGB) ? 3 : ((b==minRGB) ? 1 : 5);
+            var computedH = 60*(h - d/(maxRGB - minRGB));
+            var computedS = (maxRGB - minRGB)/maxRGB;
+            var computedV = maxRGB;
+
+            return new Hsv(computedH, computedS, computedV);;
+        };
+
         return {
            Hsv: Hsv,
            Rgb: Rgb

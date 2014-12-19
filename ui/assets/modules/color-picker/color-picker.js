@@ -36,6 +36,21 @@ define(['./module-declaration','./color-utils', './color-hue-picker', './color-s
                     $scope.stagingAreaBackgroundColor['background-color'] = rgb.toHexString();
                     $scope.currentColor = $scope.stagingAreaBackgroundColor['background-color'].slice(1);
                 });
+
+                $scope.updateCurrentColorFromHexInput = function(color){
+                    if(color.length !== 6) {
+                        return;
+                    }
+                    color = parseInt(color, 16);
+                    var r = (color & 0xFF0000) >> 16;
+                    var g = (color & 0x00FF00) >> 8;
+                    var b = color & 0x0000FF;
+                    var rgb = new colorUtils.Rgb(r, g, b);
+                    var hsv = rgb.toHsv();
+                    $scope.hue = hsv.h;
+                    $scope.saturation = hsv.s;
+                    $scope.value = hsv.v;
+                };
             }]
         };
     }]);
