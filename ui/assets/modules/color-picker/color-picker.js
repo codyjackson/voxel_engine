@@ -1,18 +1,6 @@
 define(['./module-declaration','./color-utils', './color-hue-picker', './color-sv-picker'], function(colorPickerModule, colorUtils){
 
     colorPickerModule.directive('colorPicker', ['colorUtils', '$parse', function(colorUtils, $parse){
-        function constrain(x, low, high) {
-            if(x < low) {
-                return low;
-            }
-
-            if(x > high) {
-                return high;
-            }
-
-            return x;
-        }
-
         return {
             restrict: 'A',
             templateUrl: 'modules/color-picker/color-picker.html',
