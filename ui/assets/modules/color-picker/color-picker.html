@@ -7,9 +7,9 @@
             <div class="hex">
                 # <input type="text" class="input" ng-model="currentColor" maxlength="6" ng-change="updateCurrentColorFromHexInput(currentColor)">
             </div>
-            <input type="button" value="Cancel" class="btn full-width">
+            <input type="button" value="Cancel" class="btn full-width" ng-click="cancel()">
             <br>
-            <input type="button" value="Ok" class="btn btn-positive full-width">
+            <input type="button" value="Ok" class="btn btn-positive full-width" ng-click="ok()">
         </div>
     </div>
 </div>

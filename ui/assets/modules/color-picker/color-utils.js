@@ -87,12 +87,20 @@ define(['angular', './module-declaration'], function(angular, colorPickerModule)
             var computedS = (maxRGB - minRGB)/maxRGB;
             var computedV = maxRGB;
 
-            return new Hsv(computedH, computedS, computedV);;
+            return new Hsv(computedH, computedS, computedV);
         };
+
+        function hexToRgb(hexInteger) {
+            var r = (hexInteger & 0xFF0000) >> 16;
+            var g = (hexInteger & 0x00FF00) >> 8;
+            var b = hexInteger & 0x0000FF;
+            return new Rgb(r, g, b);
+        }
 
         return {
            Hsv: Hsv,
-           Rgb: Rgb
+           Rgb: Rgb,
+           hexToRgb: hexToRgb
         };
     }]);
 });
