@@ -1,3 +1,5 @@
+@color-swatch-padding: 4px;
+
 @color-picker-height: 250px;
 @color-picker-width: 370px;
 @color-picker-padding: 10px;
@@ -134,26 +136,30 @@
 
 .color-swatch {
     position: relative;
-    width: 40px;
-    height: 40px;
+    width: 30px;
+    height: 30px;
 
     .border {
         position: absolute;
-        left: 0;
+        left: 0; 
         top: 0;
         right: 0;
         bottom: 0;
 
-        border-radius: 3px;
+        background-color: @primary-dark-color;
 
-        overflow: hidden;
+        border: @dialog-border;
+        border-radius: @dialog-border-radius;
 
         .color {
+            background-color: red;
             position: absolute;
-            left: 0;
-            top: 0;
-            right: 0;
-            bottom: 0;
+            left: @color-swatch-padding;
+            top: @color-swatch-padding;
+            right: @color-swatch-padding;
+            bottom: @color-swatch-padding;
+
+            border-radius: 1px;
         }
     }
 }

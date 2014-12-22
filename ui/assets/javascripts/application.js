@@ -14,7 +14,7 @@ require.config({
     },
 });
 
-require(['angular', 'directives/bullseye', '../modules/color-picker/color-picker'], function(angular){
+require(['angular', 'directives/bullseye', '../modules/color-picker/color-swatch'], function(angular){
     var app = angular.module('ui', ['bullseye', 'color-picker']);
     app.factory('$mouseNavigation', [function(){
         var isMouseAssociated = false;

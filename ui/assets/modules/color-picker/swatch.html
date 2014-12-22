@@ -1,8 +1,6 @@
-<div class="color-swatch" ng-click="openColorPicker()">
-    <div class="color-picker">
-        <div sv-picker ng-show="isColorPickerOpen" ng-click="closeColorPicker($event)"></div>
+<div class="color-swatch">
+    <div class="border" ng-click="openColorPicker()">
+        <div class="color"></div>
     </div>
-    <div class="border">
-        <div class="color" ng-style="getSelectedColorStyle()"></div>
-    </div>
+    <div color-picker hue="hue" saturation="saturation" value="value" ng-if="isColorPickerOpen"></div>
 </div>

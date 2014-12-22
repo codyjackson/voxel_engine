@@ -1,0 +1,8 @@
+<div class="color-swatch" ng-click="openColorPicker()">
+    <div class="picker" ng-show="isColorPickerOpen" ng-click="closeColorPicker($event)">
+        <canvas></canvas>
+    </div>
+    <div class="border">
+        <div class="color" ng-style="getSelectedColorStyle()"></div>
+    </div>
+</div>
