@@ -1,4 +1,4 @@
-define(['./module-declaration', './color-utils', './color-picker'], function(colorPicker, colorUtils){
+define(['./module-declaration', './color-utils', './color-picker', './right-click'], function(colorPicker, colorUtils, rightClick){
     colorPicker
     .directive('colorSwatch', ['colorUtils', function(colorUtils){
         return {
@@ -10,6 +10,7 @@ define(['./module-declaration', './color-utils', './color-picker'], function(col
             controller: ['$scope', function($scope){
                 $scope.isColorPickerOpen = false;
                 $scope.openColorPicker = function() {
+                    console.log('open');
                     $scope.isColorPickerOpen = true;
                 };
 
@@ -19,7 +20,7 @@ define(['./module-declaration', './color-utils', './color-picker'], function(col
 
                     var newColorHexInteger = parseInt(newColor, 16);
                     $scope.currentRgb = colorUtils.hexToRgb(newColorHexInteger);
-                    
+
                     $scope.isColorPickerOpen = false;
                 });
 
