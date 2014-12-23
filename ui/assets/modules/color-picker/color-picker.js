@@ -1,4 +1,4 @@
-define(['./module-declaration','./color-utils', './color-hue-picker', './color-sv-picker'], function(colorPickerModule, colorUtils){
+define(['./module-declaration','./color-utils', './color-hue-picker', './color-sv-picker', './click-net'], function(colorPickerModule, colorUtils){
 
     colorPickerModule.directive('colorPicker', ['colorUtils', '$parse', function(colorUtils, $parse){
         return {

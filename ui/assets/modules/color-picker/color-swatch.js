@@ -10,7 +10,6 @@ define(['./module-declaration', './color-utils', './color-picker', './right-clic
             controller: ['$scope', function($scope){
                 $scope.isColorPickerOpen = false;
                 $scope.openColorPicker = function() {
-                    console.log('open');
                     $scope.isColorPickerOpen = true;
                 };
 
