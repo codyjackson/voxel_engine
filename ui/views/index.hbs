@@ -12,10 +12,12 @@
   <body ng-cloak ng-controller="GlobalController">
       <bullseye ng-mousemove="onMouseMove($event)" ng-mousedown="onMouseDown($event)" ng-mouseup="onMouseUp($event)">
         <div style="position: relative">
-          <div color-swatch hue="hue" saturation="saturation" value="value"></div>
         </div>
         <span class="crosshair">+</span>
       </bullseye>
+      <div class="bottom">
+        <div color-palette rgb="rgb"></div>
+      </div>
 
       {{#reload}}
         <script src="/socket.io/socket.io.js"></script>

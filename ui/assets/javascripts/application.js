@@ -14,7 +14,7 @@ require.config({
     },
 });
 
-require(['angular', 'directives/bullseye', '../modules/color-picker/color-swatch'], function(angular){
+require(['angular', 'directives/bullseye', '../modules/color-picker/color-palette'], function(angular){
     var app = angular.module('ui', ['bullseye', 'color-picker']);
     app.factory('$mouseNavigation', [function(){
         var isMouseAssociated = false;
@@ -42,8 +42,6 @@ require(['angular', 'directives/bullseye', '../modules/color-picker/color-swatch
     }]);
 
     app.controller('GlobalController', ['$rootScope', '$mouseNavigation', '$scope', function($rootScope, $mouseNavigation, $scope){
-        $scope.foo = "lame";
-        $rootScope.test = { hue: 30, saturation: 40};
         var mouseDown = false;
         var changingOrientation = false;
         var lockedLocation = {x:0, y:0};
@@ -51,16 +49,9 @@ require(['angular', 'directives/bullseye', '../modules/color-picker/color-swatch
             $mouseNavigation.mouseMove(ev.screenX, ev.screenY);
         };
 
-        $scope.$watch('hue', function(hue){
-            
-        });
 
-        $scope.$watch('saturation', function(saturation){
-
-        });
-
-        $scope.$watch('value', function(saturation){
-            
+        $scope.$watch('rgb', function(rgb){
+            console.log(rgb);
         });
     }]);
 

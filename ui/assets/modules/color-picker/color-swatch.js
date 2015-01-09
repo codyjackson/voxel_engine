@@ -6,19 +6,20 @@ define(['./module-declaration', './color-utils', './color-picker', './right-clic
             templateUrl: 'modules/color-picker/swatch.html',
             transclude: true,
             replace: true,
-            scope: true,
+            scope: {
+                rgb: '='
+            },
             controller: ['$scope', function($scope){
                 $scope.isColorPickerOpen = false;
                 $scope.openColorPicker = function() {
                     $scope.isColorPickerOpen = true;
                 };
 
-                $scope.currentRgb = new colorUtils.Rgb(255, 0, 255);
                 $scope.$on('color-picker: picked-new-color', function(ev, newColor){
                     ev.stopPropagation();
 
                     var newColorHexInteger = parseInt(newColor, 16);
-                    $scope.currentRgb = colorUtils.hexToRgb(newColorHexInteger);
+                    $scope.rgb = colorUtils.hexToRgb(newColorHexInteger);
 
                     $scope.isColorPickerOpen = false;
                 });
@@ -29,7 +30,7 @@ define(['./module-declaration', './color-utils', './color-picker', './right-clic
                     $scope.isColorPickerOpen = false;
                 });
 
-                $scope.$watch('currentRgb', function(rgb){
+                $scope.$watch('rgb', function(rgb){
                     var hsv = rgb.toHsv();
                     $scope.hue = hsv.h;
                     $scope.saturation = hsv.s;

@@ -20,6 +20,7 @@
 
     position: absolute;
     top: -@color-picker-height;
+    z-index: 1001;
 
     width: @color-picker-width;
     height: @color-picker-height;
@@ -135,6 +136,7 @@
 
 
 .color-swatch {
+    display: inline-block;
     position: relative;
     width: 30px;
     height: 30px;
@@ -159,6 +161,23 @@
             bottom: @color-swatch-padding;
 
             border-radius: 1px;
+        }
+    }
+}
+
+.color-palette {
+    .selected.color-swatch {
+        .border {
+            border: none;
+            overflow: hidden;
+            .color {
+                left: 0;
+                top: 0;
+                right: 0;
+                bottom: 0;
+
+                border-radius: 0;
+            }
         }
     }
 }

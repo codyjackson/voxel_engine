@@ -1,14 +1,17 @@
 define(['./module-declaration',], function(colorPickerModule){
-    colorPickerModule.directive('rightClick', ['$parse', function($parse){
+    colorPickerModule.directive('leftClick', ['$parse', function($parse){
         return {
             restrict: 'A',
             link: function(scope, element, attrs) {
                 var fn = null;
-                scope.$watch('rightClick', function(expression){ 
-                    fn = $parse(attrs['rightClick']);
+                scope.$watch('leftClick', function(expression){ 
+                    fn = $parse(attrs['leftClick']);
                 });
 
-                element.on('contextmenu', function(ev){
+                element.on('click', function(ev){
+                    if(ev.which !== 1) {
+                        return;
+                    }
                     ev.preventDefault();
                     scope.$apply(function(){
                         fn(scope);
