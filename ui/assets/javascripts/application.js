@@ -40,7 +40,7 @@ require(['angular', 'directives/bullseye', '../modules/color-picker/color-palett
             },
             addVoxel: function(color) {
                 if(isMouseAssociated) {
-                    api.editor.add_voxel(color);
+                    api.editor.add_voxel(color.getWithoutPrototype());
                 }
             }
         };

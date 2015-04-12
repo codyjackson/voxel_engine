@@ -39,9 +39,9 @@ int main(int argc, char* argv[])
 			JSValue::Object color = args[0];
 			Ray ray(camera.get_ray_projected_through_center());
 			if (const auto intersection = chunkVault.find_nearest_intersection(ray)) {
-				unsigned char r = static_cast<unsigned char>(static_cast<double>(color["r"]) * 255);
-				unsigned char g = static_cast<unsigned char>(static_cast<double>(color["g"]) * 255);
-				unsigned char b = static_cast<unsigned char>(static_cast<double>(color["b"]) * 255);
+				unsigned char r = static_cast<unsigned char>(static_cast<double>(color["r"]));
+				unsigned char g = static_cast<unsigned char>(static_cast<double>(color["g"]));
+				unsigned char b = static_cast<unsigned char>(static_cast<double>(color["b"]));
 				chunkVault.add_adjacent_voxel(intersection->get_object_of_interest(), Color(r, g, b));
 			}
 

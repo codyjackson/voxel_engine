@@ -57,6 +57,14 @@ define(['angular', './module-declaration'], function(angular, colorPickerModule)
             this.b = b;
         }
 
+        Rgb.prototype.getWithoutPrototype = function() {
+            return {
+                r: this.r,
+                g: this.g,
+                b: this.b
+            };
+        }
+
         Rgb.prototype.toRgbString = function() {
             return 'rgb(' + Math.floor(this.r) + ',' + Math.floor(this.g) + ',' + Math.floor(this.b) + ')';
         };
