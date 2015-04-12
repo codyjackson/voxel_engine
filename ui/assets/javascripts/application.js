@@ -37,6 +37,11 @@ require(['angular', 'directives/bullseye', '../modules/color-picker/color-palett
 
                     api.player.rotate(dx*0.5, dy*0.5);
                 }
+            },
+            addVoxel: function(color) {
+                if(isMouseAssociated) {
+                    api.editor.add_voxel(color);
+                }
             }
         };
     }]);
@@ -50,9 +55,9 @@ require(['angular', 'directives/bullseye', '../modules/color-picker/color-palett
         };
 
 
-        $scope.$watch('rgb', function(rgb){
-            console.log(rgb);
-        });
+        $scope.addVoxel = function() {
+            $mouseNavigation.addVoxel($scope.rgb);
+        };
     }]);
 
     angular.element(document).ready(function(){

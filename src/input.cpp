@@ -26,6 +26,7 @@ bool Input::Mouse::is_cursor_hidden() const
 void Input::Mouse::lock_movement(int x, int y)
 {
 	_lockedPosition = glm::ivec2(x, y);
+	update_mouse_movement();
 }
 
 void Input::Mouse::unlock_movement()

@@ -3,8 +3,8 @@
 
 MainLoop::MainLoop(const std::function<void (Window&)>& onInitialize, const std::function<void (Window&, float timeStepinMs)>& onIteration, float timeStepInSeconds)
 {
-	if (timeStepInSeconds < 0.01f) {
-		throw std::runtime_error("100 fps is plenty. Don't be so darn greedy! =P");
+	if (timeStepInSeconds < 0.005f) {
+		throw std::runtime_error("200 fps is plenty. Don't be so darn greedy! =P");
 	}
 	const long long timeStepInMs = static_cast<long long>(timeStepInSeconds*1000.0f);
 

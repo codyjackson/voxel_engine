@@ -10,6 +10,11 @@ Camera::Camera(std::shared_ptr<Transform> transform)
 :ITransformable(transform)
 {}
 
+Ray Camera::get_ray_projected_through_center() const
+{
+	return Ray(get_transform()->position(), get_transform()->orientation().forward());
+}
+
 glm::mat4 Camera::get_view_matrix() const
 {
 	return glm::inverse(_transform->get_model_matrix());

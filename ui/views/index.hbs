@@ -10,9 +10,7 @@
     {{/optimize}}
   </head>
   <body ng-cloak ng-controller="GlobalController">
-      <bullseye ng-mousemove="onMouseMove($event)" ng-mousedown="onMouseDown($event)" ng-mouseup="onMouseUp($event)">
-        <div style="position: relative">
-        </div>
+      <bullseye ng-mousemove="onMouseMove($event)" ng-click="addVoxel()">
         <span class="crosshair">+</span>
       </bullseye>
       <div class="bottom">

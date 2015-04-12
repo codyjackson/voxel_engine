@@ -78,9 +78,9 @@ namespace
 		for (size_t i = 0; i < l.size(); ++i) {
 			CefRefPtr<CefV8Value> val = l[i];
 			if (val->IsArray()) {
-				out->SetList(i, to_cef_list_value(val->GetValue(i)));
+				out->SetList(i, to_cef_list_value(val));
 			} else if (val->IsObject()) {
-				out->SetDictionary(i, to_cef_dictionary_value(val->GetValue(i)));
+				out->SetDictionary(i, to_cef_dictionary_value(val));
 			} else if (val->IsBool()) {
 				out->SetBool(i, val->GetBoolValue());
 			} else if (val->IsDouble()) {

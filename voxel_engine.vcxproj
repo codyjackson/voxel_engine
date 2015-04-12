@@ -23,6 +23,7 @@
     <ClInclude Include="src\browser\util.h" />
     <ClInclude Include="src\constants\runtime_file_paths.h" />
     <ClInclude Include="src\constants\vector.h" />
+    <ClInclude Include="src\editor\editor.h" />
     <ClInclude Include="src\input.h" />
     <ClInclude Include="src\main_loop.h" />
     <ClInclude Include="src\player.h" />
@@ -62,6 +63,7 @@
     <ClCompile Include="src\browser\util.cpp" />
     <ClCompile Include="src\constants\runtime_file_paths.cpp" />
     <ClCompile Include="src\constants\vector.cpp" />
+    <ClCompile Include="src\editor\editor.cpp" />
     <ClCompile Include="src\input.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\main_loop.cpp" />
