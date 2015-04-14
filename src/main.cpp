@@ -1,6 +1,7 @@
 #include <Windows.h>
 #include "main_loop.h"
 
+#include "editor/editor.h"
 #include "player.h"
 #include "rendering/camera.h"
 #include "rendering/renderer.h"
@@ -22,6 +23,7 @@ int main(int argc, char* argv[])
 
 	ChunkVault chunkVault(meters(2.0f / 13.0f), glm::vec3(0, 0, 0));
 	RectSize resolution(1024, 768);
+	Editor editor(chunkVault, camera);
 
 	auto onInitialize = [&](Window& window){
 		ui.update_resolution(resolution);
@@ -34,23 +36,11 @@ int main(int argc, char* argv[])
 		window.on_mouse_button_event(std::bind(&UI::forward_mouse_button_event, &ui, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
 		window.on_mouse_wheel_event(std::bind(&UI::forward_mouse_wheel_event, &ui, std::placeholders::_1, std::placeholders::_2));
 
-		JSValue::Object editor;
-		editor["add_voxel"] = [&](const JSValue::Array& args) -> JSValue::Array {
-			JSValue::Object color = args[0];
-			Ray ray(camera.get_ray_projected_through_center());
-			if (const auto intersection = chunkVault.find_nearest_intersection(ray)) {
-				unsigned char r = static_cast<unsigned char>(static_cast<double>(color["r"]));
-				unsigned char g = static_cast<unsigned char>(static_cast<double>(color["g"]));
-				unsigned char b = static_cast<unsigned char>(static_cast<double>(color["b"]));
-				chunkVault.add_adjacent_voxel(intersection->get_object_of_interest(), Color(r, g, b));
-			}
-
-			return JSValue::Array();
-		};
+		
 		JSValue::Object api;
 		api["player"] = player.create_ui_api();
 		api["input"] = window.input().create_ui_api();
-		api["editor"] = editor;
+		api["editor"] = editor.create_ui_api();
 		ui.register_api(api);
 
 		//window.input().on(Input::MoveableCombo(Input::MoveableTerminal::MOUSE), [&](Input& in){
