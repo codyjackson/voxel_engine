@@ -27,9 +27,9 @@ namespace Browser
 		void on_reject_promise(CefRefPtr< CefBrowser > browser, CefRefPtr< CefListValue > arguments);
 
 		void to_cef_v8_function(int id, CefRefPtr<CefV8Value>& out);
-		void to_cef_v8_value_helper(std::string s, CefRefPtr<CefV8Value>& out);
-		void to_cef_v8_value_helper(CefRefPtr<CefDictionaryValue>& val, CefRefPtr<CefV8Value>& out);
-		void to_cef_v8_value_helper(CefRefPtr<CefListValue> val, CefRefPtr<CefV8Value>& out);
+		void to_cef_v8_string_helper(std::string s, CefRefPtr<CefV8Value>& out);
+		void to_cef_v8_dictionary_helper(CefRefPtr<CefDictionaryValue>& val, CefRefPtr<CefV8Value>& out);
+		void to_cef_v8_list_helper(CefRefPtr<CefListValue> val, CefRefPtr<CefV8Value>& out);
 		void to_cef_v8_value_list(CefRefPtr<CefListValue> val, CefV8ValueList& out);
 
 		CefRefPtr<CefDictionaryValue> _api;

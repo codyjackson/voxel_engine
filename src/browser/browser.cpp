@@ -7,9 +7,7 @@ namespace
 	const CefWindowInfo& GetWindowInfo()
 	{
 		static CefWindowInfo wi;
-		wi.SetAsOffScreen(nullptr);
-		wi.SetTransparentPainting(true);
-
+		wi.SetAsWindowless(NULL, true);
 		return wi;
 	}
 
@@ -27,6 +25,8 @@ namespace
 		as.multi_threaded_message_loop = false;
 		as.command_line_args_disabled = true;
 		as.remote_debugging_port = 8000;
+		as.windowless_rendering_enabled = true;
+		CefString(&as.locales_dir_path) = "locales";
 		CefString(&as.cache_path) = "ui_cache";
 		return as;
 	}
@@ -244,6 +244,7 @@ void Browser::Browser::Handler::OnPaint(CefRefPtr<CefBrowser> browser, PaintElem
 
 void Browser::Browser::on_context_created(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame, CefRefPtr<CefV8Context> context)
 {
+	browser->GetHost()->WasResized();
 	_context = context;
 }
 

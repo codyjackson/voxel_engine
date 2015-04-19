@@ -19,7 +19,7 @@ namespace
 		}
 
 			// Provide the reference counting implementation for this class.
-		IMPLEMENT_REFCOUNTING(MyV8Handler);
+		IMPLEMENT_REFCOUNTING(PassThroughHandler);
 
 	private:
 		Function _fn;

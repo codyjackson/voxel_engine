@@ -200,7 +200,7 @@ if %errorlevel% == -1 (
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>comctl32.lib;shlwapi.lib;libcef_dll_wrapper.lib;libcef.lib;glfw3_debug.lib;opengl32.lib;glu32.lib;libboost_filesystem-vc120-sgd-1_55.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>comctl32.lib;shlwapi.lib;libcef.lib;libcef_dll_wrapper.lib;glfw3_debug.lib;opengl32.lib;glu32.lib;libboost_filesystem-vc120-sgd-1_55.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>

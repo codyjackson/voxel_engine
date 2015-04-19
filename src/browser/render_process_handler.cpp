@@ -6,7 +6,7 @@
 namespace
 {
 	CefRefPtr<CefListValue> to_cef_list_value(CefRefPtr<CefV8Value> v);
-	CefRefPtr<CefDictionaryValue> to_cef_dictionary_value(CefRefPtr<CefV8Value> v)
+	CefRefPtr<CefDictionaryValue> to_cef_value_helper(CefRefPtr<CefV8Value> v)
 	{
 		CefRefPtr<CefDictionaryValue> out = CefDictionaryValue::Create();
 		std::vector<CefString> keys;
@@ -17,7 +17,7 @@ namespace
 				out->SetList(key, to_cef_list_value(val));
 			}
 			else if (val->IsObject()) {
-				out->SetDictionary(key, to_cef_dictionary_value(val));
+				out->SetDictionary(key, to_cef_value_helper(val));
 			}
 			else if (val->IsBool()) {
 				out->SetBool(key, val->GetBoolValue());
@@ -50,7 +50,7 @@ namespace
 				out->SetList(i, to_cef_list_value(val));
 			}
 			else if (val->IsObject()) {
-				out->SetDictionary(i, to_cef_dictionary_value(val));
+				out->SetDictionary(i, to_cef_value_helper(val));
 			}
 			else if (val->IsBool()) {
 				out->SetBool(i, val->GetBoolValue());
@@ -80,7 +80,7 @@ namespace
 			if (val->IsArray()) {
 				out->SetList(i, to_cef_list_value(val));
 			} else if (val->IsObject()) {
-				out->SetDictionary(i, to_cef_dictionary_value(val));
+				out->SetDictionary(i, to_cef_value_helper(val));
 			} else if (val->IsBool()) {
 				out->SetBool(i, val->GetBoolValue());
 			} else if (val->IsDouble()) {
@@ -172,7 +172,7 @@ namespace Browser
 		Util::ContextOpener contextOpener(context);
 		CefRefPtr<CefV8Value> global = contextOpener.get()->GetGlobal();
 		CefRefPtr<CefV8Value> val;
-		to_cef_v8_value_helper(_api, val);
+		to_cef_v8_dictionary_helper(_api, val);
 		global->SetValue(CefString("api"), val, CefV8Value::PropertyAttribute::V8_PROPERTY_ATTRIBUTE_NONE);
 	}
 
@@ -205,7 +205,7 @@ namespace Browser
 		out = CefV8Value::CreateFunction("anonymous", new MyV8Handler(id, _idToDeferred, _context, _browser));
 	}
 
-	void RenderProcessHandler::to_cef_v8_value_helper(std::string s, CefRefPtr<CefV8Value>& out)
+	void RenderProcessHandler::to_cef_v8_string_helper(std::string s, CefRefPtr<CefV8Value>& out)
 	{
 		const std::string& placeholder = Browser::Util::get_ipc_function_string_placeholder();
 		auto iter = std::find_first_of(std::begin(s), std::end(s), std::begin(placeholder), std::end(placeholder));
@@ -216,7 +216,7 @@ namespace Browser
 		out = CefV8Value::CreateString(s);
 	}
 
-	void RenderProcessHandler::to_cef_v8_value_helper(CefRefPtr<CefDictionaryValue>& val, CefRefPtr<CefV8Value>& out)
+	void RenderProcessHandler::to_cef_v8_dictionary_helper(CefRefPtr<CefDictionaryValue>& val, CefRefPtr<CefV8Value>& out)
 	{
 		out = CefV8Value::CreateObject(nullptr);
 		CefDictionaryValue::KeyList keys;
@@ -225,10 +225,10 @@ namespace Browser
 			CefRefPtr<CefV8Value> elem;
 			CefValueType type = val->GetType(key);
 			if (type == CefValueType::VTYPE_LIST) {
-				to_cef_v8_value_helper(val->GetList(key), elem);
+				to_cef_v8_list_helper(val->GetList(key), elem);
 			}
 			else if (type == CefValueType::VTYPE_DICTIONARY) {
-				to_cef_v8_value_helper(val->GetDictionary(key), elem);
+				to_cef_v8_dictionary_helper(val->GetDictionary(key), elem);
 			}
 			else if (type == CefValueType::VTYPE_BOOL) {
 				elem = CefV8Value::CreateBool(val->GetBool(key));
@@ -241,7 +241,7 @@ namespace Browser
 			}
 			else if (type == CefValueType::VTYPE_STRING) {
 				const std::string& s = val->GetString(key);
-				to_cef_v8_value_helper(s, elem);
+				to_cef_v8_string_helper(s, elem);
 			}
 			else {
 				throw std::runtime_error("An unsupported type was passed in.");
@@ -250,17 +250,17 @@ namespace Browser
 		});
 	}
 
-	void RenderProcessHandler::to_cef_v8_value_helper(CefRefPtr<CefListValue> val, CefRefPtr<CefV8Value>& out)
+	void RenderProcessHandler::to_cef_v8_list_helper(CefRefPtr<CefListValue> val, CefRefPtr<CefV8Value>& out)
 	{
 		out = CefV8Value::CreateArray(val->GetSize());
 		for (size_t i = 0; i < val->GetSize(); ++i) {
 			CefRefPtr<CefV8Value> elem;
 			CefValueType type = val->GetType(i);
 			if (type == CefValueType::VTYPE_LIST) {
-				to_cef_v8_value_helper(val->GetList(i), elem);
+				to_cef_v8_list_helper(val->GetList(i), elem);
 			}
 			else if (type == CefValueType::VTYPE_DICTIONARY) {
-				to_cef_v8_value_helper(val->GetDictionary(i), elem);
+				to_cef_v8_dictionary_helper(val->GetDictionary(i), elem);
 			}
 			else if (type == CefValueType::VTYPE_BOOL) {
 				elem = CefV8Value::CreateBool(val->GetBool(i));
@@ -273,7 +273,7 @@ namespace Browser
 			}
 			else if (type == CefValueType::VTYPE_STRING) {
 				const std::string& s = val->GetString(i);
-				to_cef_v8_value_helper(s, elem);
+				to_cef_v8_string_helper(s, elem);
 			}
 			else {
 				throw std::runtime_error("An unsupported type was passed in.");
@@ -288,10 +288,10 @@ namespace Browser
 			CefRefPtr<CefV8Value> elem;
 			CefValueType type = val->GetType(i);
 			if (type == CefValueType::VTYPE_LIST) {
-				to_cef_v8_value_helper(val->GetList(i), elem);
+				to_cef_v8_list_helper(val->GetList(i), elem);
 			}
 			else if (type == CefValueType::VTYPE_DICTIONARY) {
-				to_cef_v8_value_helper(val->GetDictionary(i), elem);
+				to_cef_v8_dictionary_helper(val->GetDictionary(i), elem);
 			}
 			else if (type == CefValueType::VTYPE_BOOL) {
 				elem = CefV8Value::CreateBool(val->GetBool(i));
@@ -304,7 +304,7 @@ namespace Browser
 			}
 			else if (type == CefValueType::VTYPE_STRING) {
 				const std::string& s = val->GetString(i);
-				to_cef_v8_value_helper(s, elem);
+				to_cef_v8_string_helper(s, elem);
 			}
 			else {
 				throw std::runtime_error("An unsupported type was passed in.");
