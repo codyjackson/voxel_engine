@@ -85,10 +85,13 @@
     <ClCompile Include="src\window.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceFiles Include="resources\**\*.pak" />
+    <ResourceFiles Include="resources\**\*" />
   </ItemGroup>
   <ItemGroup>
-    <DebugDllFiles Include="lib\bin\debug\$(configuration)\*.dll" />
+    <DebugDllFiles Include="lib\bin\debug\*.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <DebugExeFiles Include="lib\bin\debug\*.exe" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{278E7F88-EEC1-4890-9995-0F89AFE54C9F}</ProjectGuid>
@@ -253,6 +256,9 @@ if %errorlevel% == -1 (
       <Output TaskParameter="CopiedFiles" ItemName="SuccessfullyCopiedFiles" />
     </Copy>
     <Copy SourceFiles="@(DebugDllFiles)" DestinationFolder="$(OutDir)%(RecursiveDir)" SkipUnchangedFiles="true">
+      <Output TaskParameter="CopiedFiles" ItemName="SuccessfullyCopiedFiles" />
+    </Copy>
+    <Copy SourceFiles="@(DebugExeFiles)" DestinationFolder="$(OutDir)%(RecursiveDir)" SkipUnchangedFiles="true">
       <Output TaskParameter="CopiedFiles" ItemName="SuccessfullyCopiedFiles" />
     </Copy>
   </Target>
