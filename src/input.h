@@ -14,7 +14,6 @@
 
 #include <boost/optional.hpp>
 #include <glm/glm.hpp>
-#include <GLFW/glfw3.h>
 
 class Window;
 

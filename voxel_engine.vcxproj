@@ -29,6 +29,9 @@
     <ClInclude Include="src\player.h" />
     <ClInclude Include="src\rendering\camera.h" />
     <ClInclude Include="src\rendering\color.h" />
+    <ClInclude Include="src\rendering\gl_rendering\shader.h" />
+    <ClInclude Include="src\rendering\gl_rendering\vertex_array_object.h" />
+    <ClInclude Include="src\rendering\gl_rendering\vertex_attribute.h" />
     <ClInclude Include="src\rendering\mesh.h" />
     <ClInclude Include="src\rendering\pixel_data_type.h" />
     <ClInclude Include="src\rendering\pixel_format.h" />
@@ -49,12 +52,14 @@
     <ClInclude Include="src\spatial\utility.h" />
     <ClInclude Include="src\ui.h" />
     <ClInclude Include="src\units.h" />
+    <ClInclude Include="src\utility\filesystem.h" />
     <ClInclude Include="src\utility\functional.h" />
     <ClInclude Include="src\utility\numerical.h" />
     <ClInclude Include="src\utility\serialization.h" />
     <ClInclude Include="src\window.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\rendering\gl_rendering\program.cpp" />
     <ClCompile Include="src\browser\application.cpp" />
     <ClCompile Include="src\browser\browser.cpp" />
     <ClCompile Include="src\browser\deferred.cpp" />
@@ -70,6 +75,8 @@
     <ClCompile Include="src\player.cpp" />
     <ClCompile Include="src\rendering\camera.cpp" />
     <ClCompile Include="src\rendering\color.cpp" />
+    <ClCompile Include="src\rendering\gl_rendering\shader.cpp" />
+    <ClCompile Include="src\rendering\gl_rendering\vertex_array_object.cpp" />
     <ClCompile Include="src\rendering\mesh.cpp" />
     <ClCompile Include="src\rendering\quad.cpp" />
     <ClCompile Include="src\rendering\texture.cpp" />
@@ -82,6 +89,7 @@
     <ClCompile Include="src\spatial\transform.cpp" />
     <ClCompile Include="src\spatial\ray.cpp" />
     <ClCompile Include="src\ui.cpp" />
+    <ClCompile Include="src\utility\filesystem.cpp" />
     <ClCompile Include="src\window.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -92,6 +100,10 @@
   </ItemGroup>
   <ItemGroup>
     <DebugExeFiles Include="lib\bin\debug\*.exe" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="src\shaders\test\test.frag" />
+    <None Include="src\shaders\test\test.vert" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{278E7F88-EEC1-4890-9995-0F89AFE54C9F}</ProjectGuid>
@@ -170,7 +182,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>comctl32.lib;shlwapi.lib;libcef_dll_wrapper.lib;libcef.lib;glfw3_debug.lib;opengl32.lib;glu32.lib;libboost_filesystem-vc120-sgd-1_55.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>comctl32.lib;shlwapi.lib;libcef_dll_wrapper.lib;libcef.lib;glfw3_debug.lib;opengl32.lib;glu32.lib;libboost_filesystem-vc120-sgd-1_55.lib;glew32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>
@@ -203,7 +215,7 @@ if %errorlevel% == -1 (
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>comctl32.lib;shlwapi.lib;libcef.lib;libcef_dll_wrapper.lib;glfw3_debug.lib;opengl32.lib;glu32.lib;libboost_filesystem-vc120-sgd-1_55.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>comctl32.lib;shlwapi.lib;libcef.lib;libcef_dll_wrapper.lib;glfw3_debug.lib;opengl32.lib;glu32.lib;libboost_filesystem-vc120-sgd-1_55.lib;glew32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>

@@ -1,4 +1,5 @@
 #pragma once
+#include <GL/glew.h>
 #include <Windows.h>
 #include "input.h"
 #include "ui.h"

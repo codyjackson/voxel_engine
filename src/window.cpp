@@ -6,10 +6,22 @@ Window::Window()
 	if (!glfwInit()) {
 		throw std::runtime_error("Failed to initialize glfw.");
 	}
+
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
+	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_COMPAT_PROFILE);
+
 	if (!(_window = glfwCreateWindow(1024, 768, "", NULL, NULL))) {
 		throw std::runtime_error("Failed to create window.");
 	}
-	glfwHideWindow(_window);
+	glfwMakeContextCurrent(_window);
+
+	glewExperimental = GL_TRUE;
+	auto returnCode = glewInit();
+	if ( returnCode != GLEW_OK) {
+		auto error = glewGetErrorString(returnCode);
+		throw std::runtime_error("Failed to initialize GLEW.");
+	}
 
 	//Remember to clear callbacks in the destructor
 	glfwSetKeyCallback(_window, Window::on_keyboard_message_forwarder);

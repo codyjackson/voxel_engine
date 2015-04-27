@@ -124,6 +124,11 @@
     <ClInclude Include="src\browser\render_process_handler.h" />
     <ClInclude Include="src\browser\deferred.h" />
     <ClInclude Include="src\editor\editor.h" />
+    <ClInclude Include="src\utility\filesystem.h" />
+    <ClInclude Include="src\rendering\gl_rendering\shader.h" />
+    <ClInclude Include="src\rendering\gl_rendering\program.h" />
+    <ClInclude Include="src\rendering\gl_rendering\vertex_attribute.h" />
+    <ClInclude Include="src\rendering\gl_rendering\vertex_array_object.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\rendering\color.cpp">
@@ -194,5 +199,13 @@
     <ClCompile Include="src\browser\util.cpp" />
     <ClCompile Include="src\browser\deferred.cpp" />
     <ClCompile Include="src\editor\editor.cpp" />
+    <ClCompile Include="src\utility\filesystem.cpp" />
+    <ClCompile Include="src\rendering\gl_rendering\shader.cpp" />
+    <ClCompile Include="src\rendering\gl_rendering\program.cpp" />
+    <ClCompile Include="src\rendering\gl_rendering\vertex_array_object.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="src\shaders\test\test.vert" />
+    <None Include="src\shaders\test\test.frag" />
   </ItemGroup>
 </Project>
