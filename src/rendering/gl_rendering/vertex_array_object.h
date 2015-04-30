@@ -22,21 +22,41 @@ public:
 	}
 
 	template<>
-	void addVertexAttribute<glm::vec3>();
+	void addVertexAttribute<glm::vec3>()
+	{
+		_attributes.push_back(Attribute(3, Attribute::Type::FLOAT, 0));
+	}
 
 	template<>
-	void addVertexAttribute<glm::vec4>();
+	void addVertexAttribute<glm::vec4>()
+	{
+		_attributes.push_back(Attribute(4, Attribute::Type::FLOAT, 0));
+	}
 
 	template<>
-	void addVertexAttribute<Color>();
+	void addVertexAttribute<Color>()
+	{
+		_attributes.push_back(Attribute(4, Attribute::Type::FLOAT, 0));
+	}
+
+	void bind() const;
+	void unbind() const;
 
 private:
 	struct Attribute
 	{
-		Attribute(GLuint size, GLuint type, GLuint stride);
+		enum class Type
+		{
+			FLOAT
+		};
+
+		Attribute(GLuint size, Type type, GLuint stride);
 		const GLuint size;
 		const GLuint type;
 		const GLuint stride;
+
+	private: 
+		static GLuint toGl(Type type);
 	};
 
 	GLuint _id;

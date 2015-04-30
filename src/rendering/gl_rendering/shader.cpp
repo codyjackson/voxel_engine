@@ -1,6 +1,8 @@
 #include "shader.h"
 #include "../../utility/filesystem.h"
 
+#include "error.h"
+
 #include <GL/glew.h>
 #include <glfw/glfw3.h>
 
@@ -22,18 +24,20 @@ namespace
 Shader::Shader(Type type, boost::filesystem::path path)
 :_id(glCreateShader(toGl(type)))
 {
+	gl_error_check();
+
 	std::string fileContents = Filesystem::get_file_contents(path);
 	const char* contentsPointer = fileContents.c_str();
-	glShaderSource(_id, 1, &contentsPointer, NULL);
-	glCompileShader(_id);
+	glShaderSource(_id, 1, &contentsPointer, NULL); gl_error_check();
+	glCompileShader(_id); gl_error_check();
 
 	GLint compiled = GL_FALSE;
-	glGetShaderiv(_id, GL_COMPILE_STATUS, &compiled);
+	glGetShaderiv(_id, GL_COMPILE_STATUS, &compiled); gl_error_check();
 	if (compiled == GL_FALSE) {
 		int errorLength = 0;
-		glGetShaderiv(_id, GL_INFO_LOG_LENGTH, &errorLength);
+		glGetShaderiv(_id, GL_INFO_LOG_LENGTH, &errorLength); gl_error_check();
 		std::vector<char> error(errorLength, 0);
-		glGetShaderInfoLog(_id, errorLength, NULL, error.data());
+		glGetShaderInfoLog(_id, errorLength, NULL, error.data()); gl_error_check();
 		throw CompilationError(path, "There was an error compiling " + path.string() + ":\n" + std::string(std::begin(error), std::end(error)));
 	}
 }
@@ -41,7 +45,7 @@ Shader::Shader(Type type, boost::filesystem::path path)
 Shader::~Shader()
 {
 	if (_id) {
-		glDeleteShader(_id);
+		glDeleteShader(_id); gl_error_check();
 	}
 }
 
