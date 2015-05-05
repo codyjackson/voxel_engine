@@ -8,15 +8,12 @@
 
 
 Program::Program(const boost::filesystem::path& vertexPath, const boost::filesystem::path& fragmentPath)
-:_id(glCreateProgram())
+:_vertexShader(vertexPath), _fragmentShader(fragmentPath), _id(glCreateProgram())
 {
 	gl_error_check();
 
-	VertexShader vertexShader(vertexPath);
-	FragmentShader fragmentShader(fragmentPath);
-
-	glAttachShader(_id, vertexShader.getId()); gl_error_check();
-	glAttachShader(_id, fragmentShader.getId()); gl_error_check();
+	glAttachShader(_id, _vertexShader.getId()); gl_error_check();
+	glAttachShader(_id, _fragmentShader.getId()); gl_error_check();
 	glLinkProgram(_id); gl_error_check();
 
 	GLint linked = GL_FALSE;
@@ -34,6 +31,8 @@ Program::Program(const boost::filesystem::path& vertexPath, const boost::filesys
 Program::~Program()
 {
 	if (_id) {
+		glDetachShader(_id, _vertexShader.getId()); gl_error_check();
+		glDetachShader(_id, _fragmentShader.getId()); gl_error_check();
 		glDeleteProgram(_id); gl_error_check();
 	}
 }

@@ -10,14 +10,20 @@
 #include "units.h"
 
 #include <glm/glm.hpp>
-#include <GLFW/glfw3.h>
 #include <memory>
+
+
+#include "rendering/gl_rendering/vertex_array_object.h"
+#include "rendering/gl_rendering/vertex_buffer_object.h"
+#include "rendering/gl_rendering/program.h"
+#include "rendering/gl_rendering/buffer.h"
+#include "rendering/gl_rendering/error.h"
 
 int main(int argc, char* argv[])
 {
 	Player player;
 	player.move_forward(-meters(2.0));
-	UI ui;
+	//UI ui;
 
 	Camera camera(Transform::make_transform(glm::vec3(), Orientation(), player.get_transform()));
 
@@ -25,23 +31,27 @@ int main(int argc, char* argv[])
 	RectSize resolution(1024, 768);
 	Editor editor(chunkVault, camera);
 
+	std::shared_ptr<VertexArrayObject> vao;
+	std::shared_ptr<VertexBufferObject> buffer;
+	std::shared_ptr<Program> pro;
+
 	auto onInitialize = [&](Window& window){
-		ui.update_resolution(resolution);
+		//ui.update_resolution(resolution);
 		
 		window.update_resolution(resolution);
 		window.update_title("Voxel Engine");
 
-		window.on_key_event(std::bind(&UI::forward_key_event, &ui, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
+		/*window.on_key_event(std::bind(&UI::forward_key_event, &ui, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
 		window.on_mouse_move_event(std::bind(&UI::forward_mouse_move_event, &ui, std::placeholders::_1, std::placeholders::_2));
 		window.on_mouse_button_event(std::bind(&UI::forward_mouse_button_event, &ui, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
-		window.on_mouse_wheel_event(std::bind(&UI::forward_mouse_wheel_event, &ui, std::placeholders::_1, std::placeholders::_2));
+		window.on_mouse_wheel_event(std::bind(&UI::forward_mouse_wheel_event, &ui, std::placeholders::_1, std::placeholders::_2));*/
 
 		
 		JSValue::Object api;
 		api["player"] = player.create_ui_api();
 		api["input"] = window.input().create_ui_api();
 		api["editor"] = editor.create_ui_api();
-		ui.register_api(api);
+		//ui.register_api(api);
 
 		//window.input().on(Input::MoveableCombo(Input::MoveableTerminal::MOUSE), [&](Input& in){
 		//	const auto delta = in.mouse().get_position_delta();
@@ -64,11 +74,23 @@ int main(int argc, char* argv[])
 		//});
 
 		//window.input().mouse().lock_movement();
+
+		std::string vertexPath = "C:/Users/sxenog/Documents/Projects/voxel_engine/src/shaders/test/test.vert";
+		std::string fragmentPath = "C:/Users/sxenog/Documents/Projects/voxel_engine/src/shaders/test/test.frag";
+		std::vector<glm::vec3> verts = {
+			glm::vec3(-1.0f, -1.0f, 0.0f),
+			glm::vec3(1.0f, -1.0f, 0.0f),
+			glm::vec3(0.0f, 1.0f, 0.0f)
+		};
+		vao = std::make_shared<VertexArrayObject>();
+		vao->addVertexAttribute<glm::vec3>();
+		buffer = std::make_shared<VertexBufferObject>(Buffer::Usage::STATIC_DRAW, verts, vao);
+		pro = std::make_shared<Program>(vertexPath, fragmentPath);
 	};
 	
 	auto onIterate = [&](Window& window, float timeStepInSeconds){
-		ui.tick();
-		player.tick(timeStepInSeconds);
+		//ui.tick();
+		/*player.tick(timeStepInSeconds);
 
 		Ray r(camera.get_transform()->position(), camera.get_transform()->orientation().forward());
 		Renderer::clear_screen();
@@ -77,10 +99,28 @@ int main(int argc, char* argv[])
 			const auto mesh = chunkVault.get_mesh_of_voxel(intersection->get_object_of_interest());
 			Renderer::render_wireframe(camera, modelMatrix, Color(0xFF, 0xFF, 0xFF, 255), mesh);
 		}
-		chunkVault.render(camera);
-		ui.render();
+		chunkVault.render(camera);*/
+		//ui.render();
+		/*Binder<Program> programBinder(*pro);
+		Binder<VertexArrayObject> vaoBinder(*vao);
+		Binder<Buffer> bufferBinder(*buffer);*/
+
+		pro->bind();
+		buffer->bind();
+
+		Renderer::clear_screen();
+		glDrawArrays(GL_TRIANGLES, 0, 3); gl_error_check();
 	};
 
-	MainLoop loop(onInitialize, onIterate, 1.0f/200.0f);
+	auto onClosing = [&](Window& window) {
+		pro.reset();
+		vao.reset();
+		buffer.reset();
+		
+	};
+
+	
+
+	MainLoop loop(onInitialize, onIterate, onClosing, 1.0f/200.0f);
     return 0;
 }

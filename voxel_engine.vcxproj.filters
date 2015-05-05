@@ -126,11 +126,11 @@
     <ClInclude Include="src\editor\editor.h" />
     <ClInclude Include="src\utility\filesystem.h" />
     <ClInclude Include="src\rendering\gl_rendering\shader.h" />
-    <ClInclude Include="src\rendering\gl_rendering\program.h" />
     <ClInclude Include="src\rendering\gl_rendering\vertex_array_object.h" />
     <ClInclude Include="src\rendering\gl_rendering\buffer.h" />
     <ClInclude Include="src\rendering\gl_rendering\binder.h" />
     <ClInclude Include="src\rendering\gl_rendering\error.h" />
+    <ClInclude Include="src\rendering\gl_rendering\vertex_buffer_object.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\rendering\color.cpp">
@@ -207,6 +207,7 @@
     <ClCompile Include="src\rendering\gl_rendering\vertex_array_object.cpp" />
     <ClCompile Include="src\rendering\gl_rendering\buffer.cpp" />
     <ClCompile Include="src\rendering\gl_rendering\error.cpp" />
+    <ClCompile Include="src\rendering\gl_rendering\vertex_buffer_object.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\shaders\test\test.vert" />

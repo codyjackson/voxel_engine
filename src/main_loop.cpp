@@ -1,7 +1,7 @@
 #include "main_loop.h"
 #include <algorithm>
 
-MainLoop::MainLoop(const std::function<void (Window&)>& onInitialize, const std::function<void (Window&, float timeStepinMs)>& onIteration, float timeStepInSeconds)
+MainLoop::MainLoop(const std::function<void(Window&)>& onInitialize, const std::function<void(Window&, float timeStepinMs)>& onIteration, const std::function<void(Window&)>& onClosing, float timeStepInSeconds)
 try
 {
 	if (timeStepInSeconds < 0.005f) {
@@ -23,6 +23,7 @@ try
 		const long long sleep = std::max(timeStepInMs - ((get_ms_since_epoch() - begin) / 1000000), 0LL);
 		Sleep(static_cast<int>(sleep));
 	}
+	onClosing(window);
 }
 catch (std::exception ex) 
 {

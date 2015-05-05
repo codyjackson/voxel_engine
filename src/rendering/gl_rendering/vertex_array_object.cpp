@@ -22,8 +22,10 @@ VertexArrayObject::~VertexArrayObject()
 
 void VertexArrayObject::bind() const
 {
+	glBindVertexArray(_id); gl_error_check();
 	for (unsigned int i = 0; i < _attributes.size(); ++i) {
 		const Attribute& attribute = _attributes[i];
+		glEnableVertexAttribArray(i); gl_error_check();
 		glVertexAttribPointer(i, attribute.size, attribute.type, GL_FALSE, 0, 0); gl_error_check();
 	}
 }
@@ -33,6 +35,7 @@ void VertexArrayObject::unbind() const
 	for (unsigned int i = 0; i < _attributes.size(); ++i) {
 		glDisableVertexAttribArray(i); gl_error_check();
 	}
+	glBindVertexArray(0);
 }
 
 VertexArrayObject::Attribute::Attribute(GLuint size, Type type, GLuint stride)

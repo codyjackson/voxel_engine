@@ -21,6 +21,8 @@ public:
 	};
 
 private:
+	VertexShader _vertexShader;
+	FragmentShader _fragmentShader;
 	GLuint _id;
 };
 

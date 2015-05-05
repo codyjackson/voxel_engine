@@ -34,6 +34,7 @@
     <ClInclude Include="src\rendering\gl_rendering\shader.h" />
     <ClInclude Include="src\rendering\gl_rendering\error.h" />
     <ClInclude Include="src\rendering\gl_rendering\vertex_array_object.h" />
+    <ClInclude Include="src\rendering\gl_rendering\vertex_buffer_object.h" />
     <ClInclude Include="src\rendering\mesh.h" />
     <ClInclude Include="src\rendering\pixel_data_type.h" />
     <ClInclude Include="src\rendering\pixel_format.h" />
@@ -81,6 +82,7 @@
     <ClCompile Include="src\rendering\gl_rendering\shader.cpp" />
     <ClCompile Include="src\rendering\gl_rendering\error.cpp" />
     <ClCompile Include="src\rendering\gl_rendering\vertex_array_object.cpp" />
+    <ClCompile Include="src\rendering\gl_rendering\vertex_buffer_object.cpp" />
     <ClCompile Include="src\rendering\mesh.cpp" />
     <ClCompile Include="src\rendering\quad.cpp" />
     <ClCompile Include="src\rendering\texture.cpp" />

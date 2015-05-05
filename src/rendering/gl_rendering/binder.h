@@ -1,7 +1,9 @@
 #pragma once
 
+#include <boost/noncopyable.hpp>
+
 template<typename T>
-class Binder
+class Binder : boost::noncopyable
 {
 public:
 	Binder(const T& bound)

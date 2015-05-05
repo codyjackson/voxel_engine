@@ -16,7 +16,7 @@ Window::Window()
 	}
 	glfwMakeContextCurrent(_window);
 
-	glewExperimental = GL_TRUE;
+	glewExperimental = true;
 	auto returnCode = glewInit();
 	if ( returnCode != GLEW_OK) {
 		auto error = glewGetErrorString(returnCode);
@@ -29,6 +29,8 @@ Window::Window()
 	glfwSetMouseButtonCallback(_window, Window::on_mouse_button_message_forwarder);
 	glfwSetScrollCallback(_window, Window::on_mouse_scroll_wheel_message_forwarder);
 	_glfwWindowToWindowMappingForStaticCallbacks.emplace(_window, this);
+
+	glViewport(0, 0, 1024, 768);
 }
 
 Window::~Window()
@@ -54,7 +56,6 @@ void Window::open()
 
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_TEXTURE_2D);
-	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 }
 
 void Window::render()
