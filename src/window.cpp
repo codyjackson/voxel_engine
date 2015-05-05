@@ -58,7 +58,7 @@ void Window::open()
 	glEnable(GL_TEXTURE_2D);
 }
 
-void Window::render()
+void Window::swap_buffers()
 {
 	glfwSwapBuffers(_window);
 }

@@ -14,7 +14,6 @@ class Window
 	public:
 		~Window();
 
-		void render();
 		void close();
 
 		void update_title(const std::string& title);
@@ -35,6 +34,7 @@ class Window
 		
 	private:
 		friend class Input::Mouse;
+		template <typename GAME>
 		friend class MainLoop;
 		Window();
 
@@ -43,6 +43,7 @@ class Window
 		static void on_mouse_button_message_forwarder(GLFWwindow* glfwWindow, int button, int action, int modifiers);
 		static void on_mouse_scroll_wheel_message_forwarder(GLFWwindow* glfwWindow, double xoffset, double yoffset);
 
+		void swap_buffers();
 		void open();
 		const bool is_open() const;
 		void tick();
