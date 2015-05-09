@@ -24,6 +24,7 @@
     <ClInclude Include="src\constants\runtime_file_paths.h" />
     <ClInclude Include="src\constants\vector.h" />
     <ClInclude Include="src\editor\editor.h" />
+    <ClInclude Include="src\game.h" />
     <ClInclude Include="src\input.h" />
     <ClInclude Include="src\main_loop.h" />
     <ClInclude Include="src\player.h" />
@@ -62,6 +63,7 @@
     <ClInclude Include="src\window.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\game.cpp" />
     <ClCompile Include="src\rendering\gl_rendering\buffer.cpp" />
     <ClCompile Include="src\rendering\gl_rendering\program.cpp" />
     <ClCompile Include="src\browser\application.cpp" />
@@ -75,7 +77,6 @@
     <ClCompile Include="src\editor\editor.cpp" />
     <ClCompile Include="src\input.cpp" />
     <ClCompile Include="src\main.cpp" />
-    <ClCompile Include="src\main_loop.cpp" />
     <ClCompile Include="src\player.cpp" />
     <ClCompile Include="src\rendering\camera.cpp" />
     <ClCompile Include="src\rendering\color.cpp" />

@@ -7,47 +7,38 @@
 #include <algorithm>
 #include <functional>
 
-void Mesh::push_back(const Quad& q)
+namespace
+{
+	struct MeshMaker : public Mesh
+	{
+		MeshMaker(const std::vector<Quad>& quads)
+			:Mesh(quads)
+		{}
+	};
+}
+
+Mesh::Builder& Mesh::Builder::push_back(const Quad& q)
 {
 	_quads.push_back(q);
+	return *this;
 }
 
-void Mesh::concatenate(const Mesh& m)
+Mesh::Builder& Mesh::Builder::concatenate(const Builder& rhs)
 {
-	_quads.insert(_quads.end(), m._quads.begin(), m._quads.end());
+	_quads.insert(_quads.end(), rhs._quads.begin(), rhs._quads.end());
+	return *this;
 }
 
-void Mesh::clear()
-{
-	_quads.clear();
-}
-
-size_t Mesh::size() const
+size_t Mesh::Builder::size() const
 {
 	return _quads.size();
 }
 
-void Mesh::draw_with_color() const
+std::shared_ptr<Mesh> Mesh::Builder::build() const
 {
-	if (_quads.size() == 0) {
-		return;
-	}
-
-	glBegin(GL_QUADS);
-	const auto first = _quads.begin();
-	first->draw_with_color();
-
-	const auto second = first+1;
-	std::for_each(second, _quads.end(), [](const Quad& q){q.draw_with_color();});
-	glEnd();
+	return std::make_shared<MeshMaker>(_quads);
 }
 
-void Mesh::draw_without_color() const
-{
-	if (_quads.size() == 0)
-		return;
-
-	glBegin(GL_QUADS);
-		std::for_each(_quads.begin(), _quads.end(), [](const Quad& q){q.draw_without_color(); });
-	glEnd();
-}
+Mesh::Mesh(const std::vector<Quad>& quads)
+:_vbo(Buffer::Usage::STATIC_DRAW, quads, VertexArrayObject::make<Vertex>())
+{}

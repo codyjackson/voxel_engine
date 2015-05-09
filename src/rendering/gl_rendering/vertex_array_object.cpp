@@ -7,8 +7,23 @@
 
 #include <algorithm>
 
-VertexArrayObject::VertexArrayObject()
-:_id(0)
+namespace
+{
+	struct VertexArrayObjectMaker : public VertexArrayObject
+	{
+		VertexArrayObjectMaker(const std::vector<VertexArrayObject::Attribute>&& attributes)
+			:VertexArrayObject(std::move(attributes))
+		{}
+	};
+}
+
+std::shared_ptr<VertexArrayObject> VertexArrayObject::make(const std::vector<Attribute>&& attributes)
+{
+	return std::make_shared<VertexArrayObjectMaker>(std::move(attributes));
+}
+
+VertexArrayObject::VertexArrayObject(const std::vector<Attribute>&& attributes)
+:_id(0), _attributes(attributes)
 {
 	glGenVertexArrays(1, &_id); gl_error_check();
 }

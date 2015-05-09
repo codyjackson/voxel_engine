@@ -31,7 +31,8 @@ namespace AxiallyAligned
 		bool is_inside(const Ray& r) const;
 		Intersection<Intersected> find_intersection(const Ray& r) const;
 
-		Mesh generate_mesh(const Color& c, bool isFrontVisible, bool isBackVisible, bool isTopVisible, bool isBottomVisible, bool isLeftVisible, bool isRightVisible) const;
+		Mesh::Builder generate_mesh_builder(const Color& c, bool isFrontVisible, bool isBackVisible, bool isTopVisible, bool isBottomVisible, bool isLeftVisible, bool isRightVisible) const;
+		std::shared_ptr<Mesh> generate_mesh(const Color& c, bool isFrontVisible, bool isBackVisible, bool isTopVisible, bool isBottomVisible, bool isLeftVisible, bool isRightVisible) const;
 
 	private:
 		Intersection<Intersected> get_top_face_intersection(const Ray& r) const;

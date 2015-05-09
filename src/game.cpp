@@ -56,8 +56,7 @@ Game::Game(Window& window)
 		glm::vec3(1.0f, -1.0f, 0.0f),
 		glm::vec3(0.0f, 1.0f, 0.0f)
 	};
-	vao = std::make_shared<VertexArrayObject>();
-	vao->addVertexAttribute<glm::vec3>();
+	vao = VertexArrayObject::make<Vertex>();
 	buffer = std::make_shared<VertexBufferObject>(Buffer::Usage::STATIC_DRAW, verts, vao);
 	pro = std::make_shared<Program>(vertexPath, fragmentPath);
 }

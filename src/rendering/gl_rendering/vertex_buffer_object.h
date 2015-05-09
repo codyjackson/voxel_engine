@@ -19,6 +19,12 @@ public:
 		}
 	}
 
+	template<typename T>
+	void upload_data(const std::vector<T>& data)
+	{
+		_buffer.upload_data(data);
+	}
+
 	void bind() const;
 	void unbind() const;
 

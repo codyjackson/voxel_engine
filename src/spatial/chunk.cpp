@@ -53,10 +53,6 @@ int Chunk::get_num_of_voxels_per_side()
 
 Intersection<Chunk::Intersected> Chunk::find_nearest_intersection(const Ray& r) const
 {
-	if (_mesh.size() == 0) {
-		return make_intersection<Intersected>();
-	}
-
 	const Ray localRay = r.transform_into_new_space(glm::inverse(get_model_matrix()));
 	if (auto intersection = _octree.find_nearest_intersection(localRay)) {
 		return intersection;
@@ -64,14 +60,14 @@ Intersection<Chunk::Intersected> Chunk::find_nearest_intersection(const Ray& r) 
 	return make_intersection<Intersected>();
 }
 
-const Mesh& Chunk::get_mesh() const
+std::shared_ptr<Mesh> Chunk::get_mesh() const
 {
 	return _mesh;
 }
 
-Mesh Chunk::get_voxel_mesh(const glm::ivec3& indices) const
+Mesh::Builder Chunk::get_voxel_mesh_builder(const glm::ivec3& indices) const
 {
-	return Voxel(*this, indices).generate_mesh();
+	return Voxel(*this, indices).generate_mesh_builder();
 }
 
 const glm::mat4& Chunk::get_model_matrix() const
@@ -93,12 +89,13 @@ void Chunk::delete_voxel(const glm::ivec3& indices)
 
 void Chunk::generate_mesh()
 {
-	_mesh.clear();
-	for_each_voxel([this](const Voxel& v){
+	Mesh::Builder builder;
+	for_each_voxel([&builder](const Voxel& v){
 		if (v.is_visible()) {
-			_mesh.concatenate(v.generate_mesh());
+			builder.concatenate(v.generate_mesh_builder());
 		}
 	});
+	_mesh = builder.build();
 }
 
 Chunk::Voxel::Voxel(const Chunk& chunk, const glm::ivec3& indices)
@@ -201,13 +198,15 @@ Chunk::Voxel Chunk::Voxel::get_voxel_to_left() const
 	return Voxel(_chunk, _indices + Constants::IVec3::left);
 }
 
-Mesh Chunk::Voxel::generate_mesh() const
+Mesh::Builder Chunk::Voxel::generate_mesh_builder() const
 {
+	Mesh::Builder builder;
+
 	if (!is_visible()) {
-		return Mesh();
+		return builder;
 	}
 	const auto v = AxiallyAligned::Voxel(get_model_left_top_front(), 1.0f);
-	return v.generate_mesh(get_color(), !is_front_occluded(), !is_back_occluded(), !is_top_occluded(), !is_bottom_occluded(), !is_left_occluded(), !is_right_occluded());
+	return v.generate_mesh_builder(get_color(), !is_front_occluded(), !is_back_occluded(), !is_top_occluded(), !is_bottom_occluded(), !is_left_occluded(), !is_right_occluded());
 }
 
 void Chunk::for_each_voxel(const std::function<void(const Voxel&)>& f) const

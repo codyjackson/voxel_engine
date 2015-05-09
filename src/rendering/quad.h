@@ -5,6 +5,8 @@
 #include "vertex.h"
 #include <glm/glm.hpp>
 
+#include <array>
+
 class Quad
 {
 public:
@@ -44,13 +46,8 @@ public:
 		return Quad(color, frontTop, frontBottom, backBottom, backTop, order);
 	}
 
-	void draw_with_color() const;
-	void draw_without_color() const;
+	const std::array<Vertex, 4>& get_vertices() const;
 
 private:
-	//Drawn in order from 1st to 4th.
-	Vertex _first;
-	Vertex _second;
-	Vertex _third;
-	Vertex _fourth;
+	std::array<Vertex, 4> _vertices;
 };

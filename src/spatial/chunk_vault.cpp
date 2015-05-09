@@ -49,26 +49,23 @@ glm::mat4 ChunkVault::get_voxel_model_matrix(const glm::ivec3& indices) const
 	return _originToChunk.find(chunkOrigin)->second->get_model_matrix();
 }
 
-Mesh ChunkVault::get_mesh_of_voxel(const Intersected& intersected) const
+std::shared_ptr<Mesh> ChunkVault::get_mesh_of_voxel(const Intersected& intersected) const
 {
 	return get_mesh_of_voxel(intersected.get_indices());
 }
 
-Mesh ChunkVault::get_mesh_of_voxel(const glm::ivec3& indices) const
+std::shared_ptr<Mesh> ChunkVault::get_mesh_of_voxel(const glm::ivec3& indices) const
 {
 	const auto chunkOrigin = convert_vault_indices_to_chunk_origin(indices);
 	const auto chunkIndices = indices - chunkOrigin;
-	return _originToChunk.find(chunkOrigin)->second->get_voxel_mesh(chunkIndices);
+	return _originToChunk.find(chunkOrigin)->second->get_voxel_mesh_builder(chunkIndices).build();
 }
 
 void ChunkVault::render(const Camera& camera) const
 {
 	const auto render = [&camera](const std::pair<glm::ivec3, std::shared_ptr<Chunk>>& pair){
-		if (pair.second->get_mesh().size() <= 0) {
-			return;
-		}
-		Renderer::render(camera, pair.second->get_model_matrix(), pair.second->get_mesh());
-		Renderer::render_wireframe(camera, pair.second->get_model_matrix(), Color(0x0C, 0x22, 0x33, 255), pair.second->get_mesh());
+		//Renderer::render(camera, pair.second->get_model_matrix(), pair.second->get_mesh());
+		//Renderer::render_wireframe(camera, pair.second->get_model_matrix(), Color(0x0C, 0x22, 0x33, 255), pair.second->get_mesh());
 	};
 	std::for_each(std::begin(_originToChunk), std::end(_originToChunk), render);
 }

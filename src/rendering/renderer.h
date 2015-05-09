@@ -27,10 +27,7 @@ public:
 	static void render(const Camera& camera, const glm::mat4& modelMatrix, const Mesh& mesh)
 	{
 		glPolygonMode(GL_FRONT, GL_FILL);
-
 		setup_matrices(camera.get_projection_matrix(), camera.get_view_matrix(), modelMatrix);
-
-		mesh.draw_with_color();
 	}
 
 	template<typename T>
@@ -48,7 +45,6 @@ public:
 		glColor3ub(color.get_red(), color.get_green(), color.get_blue());
 
 		setup_matrices(camera.get_projection_matrix(), camera.get_view_matrix(), modelMatrix);
-		mesh.draw_without_color();
 
 		glDisable(GL_POLYGON_OFFSET_LINE);
 		glPolygonMode(GL_FRONT, GL_FILL);

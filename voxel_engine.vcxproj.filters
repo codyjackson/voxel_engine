@@ -131,15 +131,13 @@
     <ClInclude Include="src\rendering\gl_rendering\binder.h" />
     <ClInclude Include="src\rendering\gl_rendering\error.h" />
     <ClInclude Include="src\rendering\gl_rendering\vertex_buffer_object.h" />
+    <ClInclude Include="src\game.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\rendering\color.cpp">
       <Filter>src\rendering</Filter>
     </ClCompile>
     <ClCompile Include="src\main.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="src\main_loop.cpp">
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="src\window.cpp">
@@ -208,6 +206,7 @@
     <ClCompile Include="src\rendering\gl_rendering\buffer.cpp" />
     <ClCompile Include="src\rendering\gl_rendering\error.cpp" />
     <ClCompile Include="src\rendering\gl_rendering\vertex_buffer_object.cpp" />
+    <ClCompile Include="src\game.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\shaders\test\test.vert" />

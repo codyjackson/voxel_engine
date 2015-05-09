@@ -42,9 +42,9 @@ public:
 
 	Intersection<Intersected> find_nearest_intersection(const Ray& r) const;
 
-	const Mesh& get_mesh() const;
+	std::shared_ptr<Mesh> get_mesh() const;
 	const glm::mat4& get_model_matrix() const;
-	Mesh get_voxel_mesh(const glm::ivec3& indices) const;
+	Mesh::Builder get_voxel_mesh_builder(const glm::ivec3& indices) const;
 
 	void add_voxel(const glm::ivec3& indices, const Color& color);
 	void delete_voxel(const glm::ivec3& indices);
@@ -81,7 +81,7 @@ private:
 		Voxel get_voxel_to_right() const;
 		Voxel get_voxel_to_left() const;
 
-		Mesh generate_mesh() const;
+		Mesh::Builder generate_mesh_builder() const;
 
 	private:
 		const Chunk& _chunk;
@@ -154,5 +154,5 @@ private:
 	std::array<std::array<std::array<Color, VoxelsPerSide::VALUE>, VoxelsPerSide::VALUE>, VoxelsPerSide::VALUE> _voxels;
 	Octree _octree;
 	glm::mat4 _modelMatrix;
-	Mesh _mesh;
+	std::shared_ptr<Mesh>_mesh;
 };

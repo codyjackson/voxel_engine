@@ -30,8 +30,8 @@ public:
 	glm::mat4 get_voxel_model_matrix(const Intersected& intersected) const;
 	glm::mat4 get_voxel_model_matrix(const glm::ivec3& indices) const;
 
-	Mesh get_mesh_of_voxel(const Intersected& intersected) const;
-	Mesh get_mesh_of_voxel(const glm::ivec3& indices) const;
+	std::shared_ptr<Mesh> get_mesh_of_voxel(const Intersected& intersected) const;
+	std::shared_ptr<Mesh> get_mesh_of_voxel(const glm::ivec3& indices) const;
 
 	void render(const Camera& camera) const;
 

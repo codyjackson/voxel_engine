@@ -1,21 +1,30 @@
 #pragma once
 
 #include "quad.h"
+
+#include "gl_rendering/vertex_buffer_object.h"
+
 #include <vector>
 
-class Mesh
+class Mesh : boost::noncopyable
 {
 public:
-	void push_back(const Quad& q);
-	void concatenate(const Mesh& m);
+	class Builder
+	{
+	public:
+		size_t size() const;
 
-	void clear();
+		Builder& push_back(const Quad& q);
+		Builder& concatenate(const Builder& m);
 
-	size_t size() const;
+		std::shared_ptr<Mesh> build() const;
 
-	void draw_with_color() const;
-	void draw_without_color() const;
+	private:
+		std::vector<Quad> _quads;
+	};
+protected:
+	Mesh(const std::vector<Quad>& quads);
 
 private:
-	std::vector<Quad> _quads;
+	VertexBufferObject _vbo;
 };

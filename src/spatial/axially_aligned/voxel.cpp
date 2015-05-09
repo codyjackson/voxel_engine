@@ -28,25 +28,30 @@ namespace AxiallyAligned
 		return Numerical::is_between(r.origin().x, left(), right()) && Numerical::is_between(r.origin().y, top(), bottom()) && Numerical::is_between(r.origin().z, front(), back());
 	}
 
-	Mesh Voxel::generate_mesh(const Color& c, bool isFrontVisible, bool isBackVisible, bool isTopVisible, bool isBottomVisible, bool isLeftVisible, bool isRightVisible) const
+	Mesh::Builder Voxel::generate_mesh_builder(const Color& c, bool isFrontVisible, bool isBackVisible, bool isTopVisible, bool isBottomVisible, bool isLeftVisible, bool isRightVisible) const
 	{
-		Mesh m;
+		Mesh::Builder builder;
 
 		if (isFrontVisible)
-			m.push_back(Quad::generate_xy_quad(c, _topLeftFront, Quad::CounterClockWise()));
+			builder.push_back(Quad::generate_xy_quad(c, _topLeftFront, Quad::CounterClockWise()));
 		if (isTopVisible)
-			m.push_back(Quad::generate_xz_quad(c, _topLeftFront, Quad::CounterClockWise()));
+			builder.push_back(Quad::generate_xz_quad(c, _topLeftFront, Quad::CounterClockWise()));
 		if (isLeftVisible)
-			m.push_back(Quad::generate_yz_quad(c, _topLeftFront, Quad::CounterClockWise()));
+			builder.push_back(Quad::generate_yz_quad(c, _topLeftFront, Quad::CounterClockWise()));
 
 		if (isBackVisible)
-			m.push_back(Quad::generate_xy_quad(c, _topLeftFront + (Constants::Vec3::forward * _sideLength), Quad::ClockWise()));
+			builder.push_back(Quad::generate_xy_quad(c, _topLeftFront + (Constants::Vec3::forward * _sideLength), Quad::ClockWise()));
 		if (isBottomVisible)
-			m.push_back(Quad::generate_xz_quad(c, _topLeftFront + (Constants::Vec3::down * _sideLength), Quad::ClockWise()));
+			builder.push_back(Quad::generate_xz_quad(c, _topLeftFront + (Constants::Vec3::down * _sideLength), Quad::ClockWise()));
 		if (isRightVisible)
-			m.push_back(Quad::generate_yz_quad(c, _topLeftFront + (Constants::Vec3::right * _sideLength), Quad::ClockWise()));
+			builder.push_back(Quad::generate_yz_quad(c, _topLeftFront + (Constants::Vec3::right * _sideLength), Quad::ClockWise()));
 
-		return m;
+		return builder;
+	}
+
+	std::shared_ptr<Mesh> Voxel::generate_mesh(const Color& c, bool isFrontVisible, bool isBackVisible, bool isTopVisible, bool isBottomVisible, bool isLeftVisible, bool isRightVisible) const
+	{
+		return generate_mesh_builder(c, isFrontVisible, isBackVisible, isTopVisible, isBottomVisible, isLeftVisible, isRightVisible).build();
 	}
 	
 	Intersection<Voxel::Intersected> Voxel::get_top_face_intersection(const Ray& r) const
