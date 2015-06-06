@@ -1,6 +1,8 @@
 #include "game.h"
 #include "window.h"
 
+#include "utility/filesystem.h"
+
 Game::Game(Window& window)
 	:_player(), 
 	_camera(Transform::make_transform(glm::vec3(), Orientation(), _player.get_transform())), 
@@ -48,6 +50,7 @@ Game::Game(Window& window)
 	//});
 
 	//window.input().mouse().lock_movement();
+	
 
 	std::string vertexPath = "C:/Users/sxenog/Documents/Projects/voxel_engine/src/shaders/test/test.vert";
 	std::string fragmentPath = "C:/Users/sxenog/Documents/Projects/voxel_engine/src/shaders/test/test.frag";
@@ -59,10 +62,15 @@ Game::Game(Window& window)
 	vao = VertexArrayObject::make<Vertex>();
 	buffer = std::make_shared<VertexBufferObject>(Buffer::Usage::STATIC_DRAW, verts, vao);
 	pro = std::make_shared<Program>(vertexPath, fragmentPath);
+
+	_watcher = std::make_shared<Filesystem::FileWatcher>(fragmentPath, [](){
+		std::cout << "File changed." << std::endl;
+	});
 }
 
 void Game::onIteration(Window& window, float timeStepInSeconds)
 {
+	Filesystem::FileWatcher::update_all_watchers();
 	//ui.tick();
 	/*player.tick(timeStepInSeconds);
 
