@@ -40,6 +40,5 @@ private:
 
 	std::shared_ptr<VertexArrayObject> vao;
 	std::shared_ptr<VertexBufferObject> buffer;
-	std::shared_ptr<Program> pro;
-	std::shared_ptr<Filesystem::FileWatcher> _watcher;
+	std::shared_ptr<ShaderProgram> pro;
 };

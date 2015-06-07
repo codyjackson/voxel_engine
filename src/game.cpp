@@ -61,11 +61,7 @@ Game::Game(Window& window)
 	};
 	vao = VertexArrayObject::make<Vertex>();
 	buffer = std::make_shared<VertexBufferObject>(Buffer::Usage::STATIC_DRAW, verts, vao);
-	pro = std::make_shared<Program>(vertexPath, fragmentPath);
-
-	_watcher = std::make_shared<Filesystem::FileWatcher>(fragmentPath, [](){
-		std::cout << "File changed." << std::endl;
-	});
+	pro = std::make_shared<ShaderProgram>(vertexPath, fragmentPath, true);
 }
 
 void Game::onIteration(Window& window, float timeStepInSeconds)

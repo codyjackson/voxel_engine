@@ -2,15 +2,22 @@
 
 #include "shader.h"
 
+#include "../../utility/filesystem.h"
+
 #include <boost/filesystem.hpp>
 
 typedef unsigned int GLuint;
 
-class Program
+namespace Impl {
+	class ShaderProgram;
+}
+
+class ShaderProgram : boost::noncopyable
 {
 public:
-	Program(const boost::filesystem::path& vertexPath, const boost::filesystem::path& fragmentPath);
-	~Program();
+	ShaderProgram(const boost::filesystem::path& vertexPath, const boost::filesystem::path& fragmentPath);
+	ShaderProgram(const boost::filesystem::path& vertexPath, const boost::filesystem::path& fragmentPath, bool liveReload);
+	~ShaderProgram();
 
 	void bind() const;
 	void unbind() const;
@@ -21,8 +28,11 @@ public:
 	};
 
 private:
-	VertexShader _vertexShader;
-	FragmentShader _fragmentShader;
-	GLuint _id;
+	void reload();
+
+	std::shared_ptr<Impl::ShaderProgram> _program;
+	std::shared_ptr<Filesystem::FileWatcher> _vertexWatcher;
+	std::shared_ptr<Filesystem::FileWatcher> _fragmentWatcher;
+
 };
 

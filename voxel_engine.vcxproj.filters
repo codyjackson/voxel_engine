@@ -137,6 +137,7 @@
     <ClInclude Include="src\lib\simple_file_watcher\FileWatcherLinux.h" />
     <ClInclude Include="src\lib\simple_file_watcher\FileWatcherOSX.h" />
     <ClInclude Include="src\lib\simple_file_watcher\FileWatcherWin32.h" />
+    <ClInclude Include="src\rendering\gl_rendering\program.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\rendering\color.cpp">

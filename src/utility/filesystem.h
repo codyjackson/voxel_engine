@@ -15,6 +15,8 @@ namespace Filesystem
 		FileWatcher(const boost::filesystem::path& path, const std::function<void()>& callback);
 		~FileWatcher();
 
+		boost::filesystem::path get_path() const;
+
 		static void update_all_watchers();
 
 	private:

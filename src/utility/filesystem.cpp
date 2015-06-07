@@ -111,6 +111,11 @@ namespace Filesystem
 		}
 	}
 
+	boost::filesystem::path FileWatcher::get_path() const
+	{
+		return _path;
+	}
+
 	void FileWatcher::update_all_watchers()
 	{
 		THE_FILE_WATCHER.update();

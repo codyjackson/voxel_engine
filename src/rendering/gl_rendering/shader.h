@@ -7,7 +7,11 @@
 
 typedef unsigned int GLuint;
 
-class Shader
+namespace Impl {
+	class ShaderProgram;
+}
+
+class Shader : public boost::noncopyable
 {
 public:
 	enum class Type
@@ -25,8 +29,9 @@ public:
 	~Shader();
 
 private:
-	friend class Program;
+	friend class Impl::ShaderProgram;
 	GLuint getId() const;
+
 	GLuint _id;
 };
 

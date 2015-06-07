@@ -37,6 +37,7 @@
     <ClInclude Include="src\rendering\color.h" />
     <ClInclude Include="src\rendering\gl_rendering\binder.h" />
     <ClInclude Include="src\rendering\gl_rendering\buffer.h" />
+    <ClInclude Include="src\rendering\gl_rendering\program.h" />
     <ClInclude Include="src\rendering\gl_rendering\shader.h" />
     <ClInclude Include="src\rendering\gl_rendering\error.h" />
     <ClInclude Include="src\rendering\gl_rendering\vertex_array_object.h" />
