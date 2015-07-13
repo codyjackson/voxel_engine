@@ -2,7 +2,7 @@ Voxel Engine
 ============
 A basic voxel rendering engine.
 
-[![Last Milestone Video](http://img.youtube.com/vi/3v-o6tqSvJM/0.jpg)](http://www.youtube.com/watch?v=3v-o6tqSvJM)
+[![Latest Milestone Video](https://github.com/codyjackson/voxel_engine/blob/master/media/youtube_thumbnail.png?raw=true)](http://www.youtube.com/watch?v=3v-o6tqSvJM)
 
 Project Setup
 ------------
